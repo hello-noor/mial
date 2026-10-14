@@ -12,7 +12,7 @@ A 49 s film of the model is in [`video/tubular-chain-conveyor.mp4`](video/tubula
 
 ## Open it
 
-Double-click `tubular-chain-conveyor.html` (one self-contained file; it loads three.js 0.170 and the Google Fonts from their CDNs, so it needs an internet connection).
+Double-click `index.html` (one self-contained file; it loads three.js 0.170 and the Google Fonts from their CDNs, so it needs an internet connection).
 
 ## What you can do
 
@@ -42,7 +42,7 @@ Double-click `tubular-chain-conveyor.html` (one self-contained file; it loads th
 ## Repository layout
 
 ```
-tubular-chain-conveyor.html   the built page (open this)
+index.html   the built page (open this)
 video/                        the film
 docs/                         the MIAL brochure (PDF) and preview images
 src/machine.src.js            the machine: geometry, solver, UI, film
@@ -55,11 +55,11 @@ tools/                        screenshot and film recording scripts + the lab ki
 ## Rebuild and record
 
 ```sh
-node src/assemble.mjs                       # rebuild tubular-chain-conveyor.html
+node src/assemble.mjs                       # rebuild index.html
 
 cd tools && npm install && npx playwright install chromium   # once; the film also needs ffmpeg
-node scripts/shot.mjs ../tubular-chain-conveyor.html ../out/review.png --root ..
-node scripts/record.mjs ../tubular-chain-conveyor.html ../video/tubular-chain-conveyor.mp4 --root ..
+node scripts/shot.mjs ../index.html ../out/review.png --root ..
+node scripts/record.mjs ../index.html ../video/tubular-chain-conveyor.mp4 --root ..
 ```
 
 The film is deterministic: the page runs in `?film=1` mode and its clock only moves when the recorder steps it.
