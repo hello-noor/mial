@@ -144,6 +144,54 @@ const lab = new Lab({
   .mat-sel button.on { background:#1d1b18; color:#f4f1ea; border-color:#1d1b18 }
   `
   document.head.appendChild(st)
+  // phone layout: its own style element so it wins over the desktop rules above
+  const mst = document.createElement('style')
+  mst.textContent = `
+@media (max-width:760px) {
+    .mial-head { left:10px; right:10px; top:10px; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(238,234,225,0.94) }
+    .mial-head img { height:22px }
+    .mial-head .sep { height:22px }
+    .mial-head b { font-size:13px }
+    .mial-head small { font-size:9px }
+    .mial-spec { left:10px; right:10px; top:82px; padding:12px 14px 14px; border-radius:14px; background:rgba(238,234,225,0.94) }
+    .mial-spec b { font-size:17px; margin-bottom:0.2em }
+    .mial-spec span { font-size:12px }
+    .mial-spec p, .lab-beat, .lab-brand, .lab-scale, .lab-how, .lab-pills { display:none !important }
+    .mial-btns { margin-top:10px; gap:6px }
+    .mial-all { margin-top:0; padding:0.42em 0.8em; font-size:11px }
+    .mial-all kbd { display:none }
+    .lab-side { top:auto; bottom:64px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:50vh; overflow:auto }
+    .lab-title { font-size:24px !important }
+    .lab-title i { display:none }
+    .lab-metric { margin-top:8px !important }
+    .lab-metric .lbl { font-size:11px }
+    .lab-big { font-size:44px !important }
+    .lab-sub { font-size:11px }
+    .lab-ctl { margin-top:10px !important }
+    .lab-ctl .row { font-size:11px; margin-bottom:0.35em }
+    .lab-ctl .ends { font-size:10px }
+    .kpis { margin-top:10px !important; padding-top:8px !important; gap:6px 8px }
+    .kpis small { font-size:8px }
+    .kpis b { font-size:14px }
+    .mat-sel .chips { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; padding-bottom:2px }
+    .mat-sel .chips::-webkit-scrollbar { display:none }
+    .mat-sel .grp { display:none }
+    .mat-sel button { flex:0 0 auto; font-size:11px }
+    .lab-modes { left:10px; right:10px; bottom:12px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; gap:6px; font-size:12px }
+    .lab-modes::-webkit-scrollbar { display:none }
+    .lab-modes button { flex:0 0 auto; padding:0.45em 0.85em; background:rgba(249,246,240,0.96) }
+    .lab-modes kbd { display:none }
+    .gate-hint { display:none !important }
+    .spc-lines, .faq-cols, .gal-card { grid-template-columns:1fr !important }
+    .spc-card, .faq-card { width:92vw }
+    .spc-tiles { grid-template-columns:repeat(3,1fr); gap:6px }
+    .spc-tile { padding:0.6em 0.6em 0.7em }
+    .spc-tile .q { font-size:18px }
+    .gal-card { width:92vw; gap:14px }
+    .gal-main img { max-height:40vh }
+  }
+`
+  document.head.appendChild(mst)
   const h = document.createElement('div'); h.className = 'mial-head'
   h.innerHTML = `<img alt="MIAL" src="data:image/png;base64,__MIAL_LOGO__"><span class="sep"></span><div><b>Tubular chain conveyor</b><small>CLEAN200 · Ø 204 mm · AISI 304</small></div>`
   lab.ui.appendChild(h)
