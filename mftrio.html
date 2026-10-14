@@ -2085,15 +2085,16 @@ lab.onTick((dt0, lab) => {
   // pallets and film
   for (let i = 0; i < NP; i++) {
     const p = sim.pallets[i], sh = shells[i]
-    if (!p) { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0); dummy.quaternion.copy(Q_ID); dummy.updateMatrix(); palI.setMatrixAt(i, dummy.matrix); sh.visible = false; continue }
+    if (!p) { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0); dummy.quaternion.copy(Q_ID); dummy.updateMatrix(); palI.setMatrixAt(i, dummy.matrix); sh.scale.set(0.01, 0.01, 0.01); lab.place(sh, 0, -9, 0); continue }
     dummy.position.set(p.x, ROLL_Y, p.z); dummy.quaternion.setFromAxisAngle(AX_Y, p.yaw); dummy.scale.set(1, 1, 1); dummy.updateMatrix(); palI.setMatrixAt(i, dummy.matrix)
     const wrapped = p.st === 'wrapping' || p.st === 'out'
     const prog = p.st === 'out' ? 1 : p.wrap
     const h = loadH() + 0.04
     const hh = wrapped ? Math.min(h, Math.max(0.05, h * Math.min(1, prog * 3))) : 0
-    sh.visible = wrapped && prog > 0.003 && lab.state.xray < 0.5
-    sh.scale.set(PAL.L + 0.05, hh, PAL.W + 0.05); sh.rotation.y = p.yaw
-    lab.place(sh, p.x, ROLL_Y + hh / 2, p.z)
+    // the kit shows every registered part each frame, so an unused shell is parked under the floor with a tiny (never zero) scale
+    const used = wrapped && prog > 0.003 && lab.state.xray < 0.5
+    sh.scale.set(PAL.L + 0.05, Math.max(0.01, hh), PAL.W + 0.05); sh.rotation.y = p.yaw
+    lab.place(sh, p.x, used ? ROLL_Y + hh / 2 : -9, p.z)
     sh.material.opacity = 0.12 + 0.4 * smoothstep(0, 1, prog)
   }
   palI.instanceMatrix.needsUpdate = true
@@ -2107,9 +2108,9 @@ lab.onTick((dt0, lab) => {
   lab.place(carr, 0, sim.wr.carY, 0)
   const rect = (a) => Math.min(0.6 / Math.max(1e-3, Math.abs(Math.cos(a))), 0.4 / Math.max(1e-3, Math.abs(Math.sin(a))))
   const xe = X_WRAP + rect(sim.wr.ang), xs = X_MAST - 0.57 - 0.145
-  webMesh.visible = !!wp && !sim.wr.stopped
+  const showWeb = !!wp && !sim.wr.stopped
   const wl = Math.max(0.05, xs - xe)
-  webMesh.scale.set(wl, 0.5, 1); lab.place(webMesh, xe + wl / 2, sim.wr.carY, 0)
+  webMesh.scale.set(wl, 0.5, 1); lab.place(webMesh, xe + wl / 2, showWeb ? sim.wr.carY : -9, 0)
   const stop = sim.wr.stopped
   lampG.emissiveIntensity = stop ? 0.1 : 3; lampR.emissiveIntensity = stop ? 5 + Math.sin(lab.time * 14) * 2 : 0.1
   // hero and kpis
