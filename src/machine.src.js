@@ -118,9 +118,28 @@ const lab = new Lab({
   .spc-apps { margin-top:0.8em; display:flex; flex-wrap:wrap; gap:0.4em }
   .spc-apps span { padding:0.35em 0.8em; border-radius:999px; border:1px solid rgba(40,36,30,0.22); font:400 clamp(10px,0.8vw,13px) 'Inter',sans-serif; color:#4d4a43 }
   .spc-foot { margin-top:1.2em; font:400 clamp(10px,0.74vw,12px)/1.5 'Inter',sans-serif; color:#8a857a }
+  .mial-btns { display:flex; flex-wrap:wrap; gap:0.5em; margin-top:1.1em }
+  .mial-btns .mial-all { margin-top:0 }
+  .faq { position:absolute; inset:0 0 8.5vh 0; display:none; align-items:center; justify-content:center; z-index:63; background:#eeeae1; pointer-events:auto }
+  .faq.on { display:flex }
+  .faq-card { position:relative; width:min(88vw,1500px); max-height:88vh; overflow:auto; padding:0 0.4vw }
+  .faq-x { position:absolute; right:0; top:0; width:2.4em; height:2.4em; border-radius:50%; border:1px solid rgba(40,36,30,0.25); background:#f9f6f0; font:400 20px/1 'Inter',sans-serif; cursor:pointer }
+  .faq h2 { margin:0; font:400 clamp(30px,3.3vw,60px)/1.05 'Instrument Serif',serif; letter-spacing:-0.01em; color:#1d1b18 } .faq h2 i { color:#7a7873 }
+  .faq .sub { margin:0.5em 0 1.6em; font:500 clamp(10px,0.8vw,13px)/1.3 'JetBrains Mono',monospace; letter-spacing:0.06em; text-transform:uppercase; color:#c4511a }
+  .faq-cols { display:grid; grid-template-columns:1fr 1fr; gap:2.4vw; align-items:start }
+  .faq-col h3 { margin:0 0 0.5em; padding-top:0.8em; border-top:2px solid #1d1b18; font:600 clamp(15px,1.3vw,22px)/1.1 'Inter',sans-serif; color:#1d1b18 }
+  .faq-col h3 small { display:block; margin-top:0.35em; font:400 clamp(10px,0.78vw,13px)/1.3 'Inter',sans-serif; color:#8a857a }
+  .faq details { border-bottom:1px solid rgba(40,36,30,0.14) }
+  .faq summary { cursor:pointer; list-style:none; padding:0.85em 1.6em 0.85em 0; position:relative; font:600 clamp(13px,1.02vw,18px)/1.35 'Inter',sans-serif; color:#1d1b18 }
+  .faq summary::-webkit-details-marker { display:none }
+  .faq summary::after { content:'+'; position:absolute; right:0.2em; top:0.7em; font:400 1.3em/1 'Inter',sans-serif; color:#c4511a }
+  .faq details[open] summary::after { content:'\\2212' }
+  .faq details p { margin:0 0 1em; padding-right:1.6em; font:400 clamp(12px,0.95vw,16px)/1.6 'Inter',sans-serif; color:#4d4a43 }
+  .faq-foot { margin-top:1.4em; font:400 clamp(10px,0.74vw,12px)/1.5 'Inter',sans-serif; color:#8a857a }
   .gate-hint { margin-top:0.5em; font:400 clamp(10px,0.78vw,13px)/1.4 'Inter',sans-serif; color:#8a857a }
-  .mat-sel .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:0.75em; pointer-events:auto }
-  .mat-sel button { display:inline-flex; align-items:center; gap:0.5em; padding:0.42em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.22); background:transparent; color:#4a463f; font:500 clamp(11px,0.8vw,14px) 'Inter',sans-serif; cursor:pointer }
+  .mat-sel .chips { display:flex; flex-wrap:wrap; gap:5px; margin-top:0.6em; pointer-events:auto }
+  .mat-sel .grp { flex-basis:100%; margin-top:0.25em; font:500 clamp(9px,0.66vw,11px)/1 'Inter',sans-serif; letter-spacing:0.09em; text-transform:uppercase; color:#8a857a }
+  .mat-sel button { display:inline-flex; align-items:center; gap:0.5em; padding:0.32em 0.7em; border-radius:999px; border:1px solid rgba(40,36,30,0.22); background:transparent; color:#4a463f; font:500 clamp(10px,0.74vw,13px) 'Inter',sans-serif; cursor:pointer }
   .mat-sel button i { width:0.7em; height:0.7em; border-radius:50%; background:var(--dot); box-shadow:inset 0 0 0 1px rgba(0,0,0,0.18) }
   .mat-sel button.on { background:#1d1b18; color:#f4f1ea; border-color:#1d1b18 }
   `
@@ -129,9 +148,10 @@ const lab = new Lab({
   h.innerHTML = `<img alt="MIAL" src="data:image/png;base64,__MIAL_LOGO__"><span class="sep"></span><div><b>Tubular chain conveyor</b><small>CLEAN200 · Ø 204 mm · AISI 304</small></div>`
   lab.ui.appendChild(h)
   const sp = document.createElement('div'); sp.className = 'mial-spec'
-  sp.innerHTML = '<b>CLEAN200</b><span>Drive unit ø 204</span><span>Max flow rate 60 m³/h</span><p>A closed stainless tube with a chain inside. <strong>Plastic discs, bolted at even spacing,</strong> gently drag the product from the hopper at the bottom up to the silo at the top. One gearmotor, up to 60 m³/h, over 50 % less energy than pneumatic or screw conveying, pet food breakage under 0.2 %.</p><button class="mial-all">All models and specs<kbd>D</kbd></button>'
+  sp.innerHTML = '<b>CLEAN200</b><span>Drive unit ø 204</span><span>Max flow rate 60 m³/h</span><p>A closed stainless tube with a chain inside. <strong>Plastic discs, bolted at even spacing,</strong> gently drag the product from the hopper at the bottom up to the silo at the top. One gearmotor, up to 60 m³/h, over 50 % less energy than pneumatic or screw conveying, pet food breakage under 0.2 %.</p><div class="mial-btns"><button class="mial-all">All models and specs<kbd>D</kbd></button><button class="mial-all mial-faqb">FAQ<kbd>F</kbd></button></div>'
   lab.ui.appendChild(sp)
   sp.querySelector('.mial-all').addEventListener('click', () => lab.toggle('models'))
+  sp.querySelector('.mial-faqb').addEventListener('click', () => lab.toggle('faq'))
   { const im = h.querySelector('img'); const src = im.src; const t = new Image(); t.onload = () => { const c = document.createElement('canvas'); c.width = t.width; c.height = t.height; const g = c.getContext('2d'); g.drawImage(t, 0, 0); const d = g.getImageData(0, 0, c.width, c.height); for (let i = 0; i < d.data.length; i += 4) { const m = Math.min(d.data[i], d.data[i + 1], d.data[i + 2]); const a = Math.max(0, Math.min(1, (250 - m) / 70)); d.data[i + 3] = Math.round(255 * a) } g.putImageData(d, 0, 0); im.src = c.toDataURL('image/png'); im.style.mixBlendMode = 'normal' }; t.src = src }
   lab.$('.lab-no').textContent = 'MIAL · CLEAN200'
   lab.$('.lab-title').innerHTML = 'Live<i>from the solver</i>'
@@ -188,12 +208,20 @@ const glassM = MAT.glass({ thickness: 0.004 })
 
 // ------------------------------------------------------------------ products: four materials from the brochure
 const PRODUCTS = [
-  { id: 'pet', name: 'Pet food', rho: 470, mu: 0.35, d: 0.012, cap: [0.36, 0.17, 0.065], dot: '#8a4a22', sc: [1, 1, 1], note: 'kibble' },
-  { id: 'rice', name: 'Rice', rho: 780, mu: 0.30, d: 0.006, cap: [0.72, 0.65, 0.48], dot: '#e8dfc6', sc: [0.5, 0.5, 1.0], note: 'grain' },
-  { id: 'coffee', name: 'Coffee', rho: 380, mu: 0.38, d: 0.009, cap: [0.1, 0.05, 0.025], dot: '#3a2012', sc: [0.9, 0.65, 1.0], note: 'beans' },
-  { id: 'granules', name: 'Plastic granules', rho: 560, mu: 0.22, d: 0.004, cap: [0.42, 0.58, 0.74], dot: '#8fb3d6', sc: [0.5, 0.5, 0.35], note: 'granules' },
+  // food
+  { id: 'malt', grp: 'Food', name: 'Malt', rho: 540, mu: 0.32, d: 0.0065, cap: [0.55, 0.38, 0.16], dot: '#c99a4a', sc: [0.5, 0.5, 0.9] },
+  { id: 'cereals', grp: 'Food', name: 'Cereals', rho: 770, mu: 0.30, d: 0.0055, cap: [0.62, 0.40, 0.10], dot: '#d19a2a', sc: [0.5, 0.5, 0.75] },
+  { id: 'fruit', grp: 'Food', name: 'Dried fruit', rho: 650, mu: 0.50, d: 0.012, cap: [0.20, 0.08, 0.07], dot: '#5a2a30', sc: [0.95, 0.8, 0.9] },
+  { id: 'rice', grp: 'Food', name: 'Rice', rho: 780, mu: 0.30, d: 0.006, cap: [0.72, 0.65, 0.48], dot: '#e8dfc6', sc: [0.5, 0.5, 1.0] },
+  { id: 'coffee', grp: 'Food', name: 'Coffee', rho: 380, mu: 0.38, d: 0.009, cap: [0.1, 0.05, 0.025], dot: '#3a2012', sc: [0.9, 0.65, 1.0] },
+  // non-food
+  { id: 'pet', grp: 'Non-food', name: 'Pet food', rho: 470, mu: 0.35, d: 0.012, cap: [0.36, 0.17, 0.065], dot: '#8a4a22', sc: [1, 1, 1] },
+  { id: 'feed', grp: 'Non-food', name: 'Feed', rho: 640, mu: 0.40, d: 0.004, cap: [0.40, 0.34, 0.18], dot: '#8c7a45', sc: [0.35, 0.35, 0.6] },
+  { id: 'pellets', grp: 'Non-food', name: 'Pellets', rho: 650, mu: 0.35, d: 0.006, cap: [0.60, 0.42, 0.22], dot: '#c99a5b', sc: [0.4, 0.4, 1.5] },
+  { id: 'granules', grp: 'Non-food', name: 'Plastic granules', rho: 560, mu: 0.22, d: 0.004, cap: [0.42, 0.58, 0.74], dot: '#8fb3d6', sc: [0.5, 0.5, 0.35] },
+  { id: 'chem', grp: 'Non-food', name: 'Chemicals', rho: 850, mu: 0.45, d: 0.002, cap: [0.74, 0.77, 0.8], dot: '#d9dee3', sc: [0.28, 0.28, 0.28] },
 ]
-let prod = PRODUCTS[0]
+let prod = PRODUCTS.find((p) => p.id === 'pet')
 const texCache = {}
 function drawProduct(id) {
   const c = document.createElement('canvas'); c.width = c.height = 512; const g = c.getContext('2d')
@@ -214,6 +242,40 @@ function drawProduct(id) {
       ell(x, y, rx, ry, a, `rgb(${Math.round(92 * v)},${Math.round(52 * v)},${Math.round(26 * v)})`, 'rgba(10,5,2,0.6)')
       g.save(); g.translate(x, y); g.rotate(a); g.strokeStyle = 'rgba(12,6,3,0.9)'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(-rx * 0.85, 0); g.bezierCurveTo(-rx * 0.3, -ry * 0.5, rx * 0.3, ry * 0.5, rx * 0.85, 0); g.stroke(); g.restore()
       ell(x - rx * 0.3, y - ry * 0.35, rx * 0.35, ry * 0.2, a, 'rgba(255,220,180,0.18)') }
+  } else if (id === 'malt') {
+    g.fillStyle = '#6e4e22'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 2300; i++) { const x = R() * 512, y = R() * 512, a = R() * PI, rx = 11 + R() * 5, ry = 4.6 + R() * 1.8, v = 0.82 + R() * 0.3
+      ell(x, y, rx, ry, a, `rgb(${Math.round(222 * v)},${Math.round(178 * v)},${Math.round(104 * v)})`, 'rgba(70,45,15,0.45)')
+      g.save(); g.translate(x, y); g.rotate(a); g.strokeStyle = 'rgba(90,60,25,0.55)'; g.lineWidth = 1.1; g.beginPath(); g.moveTo(-rx * 0.8, 0); g.lineTo(rx * 0.8, 0); g.stroke(); g.restore() }
+  } else if (id === 'cereals') {
+    g.fillStyle = '#6a4210'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 2000; i++) { const x = R() * 512, y = R() * 512, a = R() * PI, rx = 8.5 + R() * 3.5, ry = 5.2 + R() * 1.6, v = 0.85 + R() * 0.3
+      ell(x, y, rx, ry, a, `rgb(${Math.round(214 * v)},${Math.round(158 * v)},${Math.round(52 * v)})`, 'rgba(80,48,10,0.5)')
+      g.save(); g.translate(x, y); g.rotate(a + 0.15); g.strokeStyle = 'rgba(100,60,12,0.6)'; g.lineWidth = 1.3; g.beginPath(); g.moveTo(-rx * 0.7, ry * 0.15); g.quadraticCurveTo(0, -ry * 0.25, rx * 0.7, ry * 0.1); g.stroke(); g.restore()
+      ell(x - rx * 0.25, y - ry * 0.3, rx * 0.35, ry * 0.2, a, 'rgba(255,235,170,0.22)') }
+  } else if (id === 'fruit') {
+    g.fillStyle = '#26100a'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 520; i++) { const x = R() * 512, y = R() * 512, r = 11 + R() * 7, apricot = R() < 0.22, v = 0.75 + R() * 0.45
+      ell(x, y, r, r * (0.75 + R() * 0.25), R() * PI, apricot ? `rgb(${Math.round(222 * v)},${Math.round(130 * v)},${Math.round(36 * v)})` : `rgb(${Math.round(92 * v)},${Math.round(42 * v)},${Math.round(52 * v)})`, 'rgba(20,8,6,0.55)')
+      g.strokeStyle = apricot ? 'rgba(120,60,10,0.45)' : 'rgba(25,8,12,0.55)'; g.lineWidth = 1.2
+      for (let k = 0; k < 3; k++) { g.beginPath(); g.moveTo(x - r * 0.6 + R() * r * 0.3, y - r * 0.4 + k * r * 0.4); g.quadraticCurveTo(x, y - r * 0.2 + k * r * 0.35 + (R() - 0.5) * 4, x + r * 0.6, y - r * 0.4 + k * r * 0.4 + (R() - 0.5) * 3); g.stroke() }
+      ell(x - r * 0.3, y - r * 0.35, r * 0.3, r * 0.18, 0, 'rgba(255,230,210,0.2)') }
+  } else if (id === 'feed') {
+    g.fillStyle = '#2f2a18'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 2600; i++) { const x = R() * 512, y = R() * 512, a = R() * PI, L2 = 9 + R() * 6, W = 3.4 + R() * 1.1, v = 0.8 + R() * 0.35
+      g.save(); g.translate(x, y); g.rotate(a); g.fillStyle = `rgb(${Math.round(150 * v)},${Math.round(128 * v)},${Math.round(72 * v)})`; g.strokeStyle = 'rgba(40,32,12,0.55)'; g.lineWidth = 1
+      g.beginPath(); g.roundRect(-L2, -W, L2 * 2, W * 2, W * 0.6); g.fill(); g.stroke(); g.fillStyle = 'rgba(255,235,170,0.14)'; g.fillRect(-L2 * 0.8, -W * 0.7, L2 * 1.2, W * 0.5); g.restore() }
+  } else if (id === 'pellets') {
+    g.fillStyle = '#4a3318'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 900; i++) { const x = R() * 512, y = R() * 512, a = R() * PI, L2 = 16 + R() * 10, W = 4.8 + R() * 1.0, v = 0.82 + R() * 0.3
+      g.save(); g.translate(x, y); g.rotate(a); g.fillStyle = `rgb(${Math.round(206 * v)},${Math.round(158 * v)},${Math.round(98 * v)})`; g.strokeStyle = 'rgba(70,44,18,0.6)'; g.lineWidth = 1.1
+      g.beginPath(); g.roundRect(-L2, -W, L2 * 2, W * 2, 2); g.fill(); g.stroke()
+      g.strokeStyle = 'rgba(110,72,32,0.4)'; g.lineWidth = 0.9; for (let k = 0; k < 4; k++) { g.beginPath(); g.moveTo(-L2 * 0.9, -W * 0.6 + k * W * 0.4); g.lineTo(L2 * 0.9, -W * 0.6 + k * W * 0.4 + (R() - 0.5) * 1.5); g.stroke() } g.restore() }
+  } else if (id === 'chem') {
+    g.fillStyle = '#9ca3a9'; g.fillRect(0, 0, 512, 512)
+    for (let i = 0; i < 5200; i++) { const x = R() * 512, y = R() * 512, r = 2.4 + R() * 2.0, v = R()
+      ell(x, y, r, r, 0, `rgb(${Math.round(226 + 26 * v)},${Math.round(232 + 20 * v)},${Math.round(238 + 14 * v)})`, 'rgba(70,80,90,0.3)')
+      ell(x - r * 0.3, y - r * 0.3, r * 0.35, r * 0.3, 0, 'rgba(255,255,255,0.7)') }
   } else {
     g.fillStyle = '#4c6a88'; g.fillRect(0, 0, 512, 512)
     for (let i = 0; i < 3000; i++) { const x = R() * 512, y = R() * 512, r = 3.6 + R() * 2.6, v = R()
@@ -621,7 +683,8 @@ lab.$('.lab-metric').insertAdjacentElement('afterend', kpiEl)
 const kpiV = [...kpiEl.querySelectorAll('b span')]
 {
   const sel = document.createElement('div'); sel.className = 'lab-ctl on mat-sel'
-  sel.innerHTML = `<div class="row"><span>Product</span><b></b></div><div class="chips">${PRODUCTS.map((p) => `<button data-id="${p.id}" style="--dot:${p.dot}"><i></i>${p.name}</button>`).join('')}</div>`
+  const grp = (g) => `<div class="grp">${g}</div>${PRODUCTS.filter((p) => p.grp === g).map((p) => `<button data-id="${p.id}" title="${p.name}" style="--dot:${p.dot}"><i></i>${p.name}</button>`).join('')}`
+  sel.innerHTML = `<div class="row"><span>Product</span><b></b></div><div class="chips">${grp('Food')}${grp('Non-food')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
   sel.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setProduct(b.dataset.id) })
   addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'm' && e.target.tagName !== 'INPUT') setProduct(PRODUCTS[(PRODUCTS.indexOf(prod) + 1) % PRODUCTS.length].id) })
@@ -633,7 +696,7 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const fit = () => { if (!how.open) { how.style.maxHeight = ''; return } const top = innerHeight * 0.03, lim = lab.$('.mat-sel').getBoundingClientRect().top - top - 14; how.style.maxHeight = (lim > 260 ? lim : innerHeight * 0.9) + 'px' }
   how.addEventListener('toggle', fit); addEventListener('resize', fit)
 }
-lab.how(`A closed loop of ${fmt(L, 1)} m with ${fmt(NL)} round links and ${fmt(ND)} plastic discs. The chain runs at the nominal inverter speed; what you set is the opening of the flow control gate under the hopper (the slider), which meters the loading capacity. The product (pet food, rice, coffee or plastic granules: each with its own bulk density, friction and grain size) fills the tube between the discs up to 64 %, so the flow is the gate setting, capped by bore area x fill x chain speed (60 m³/h) and by what the hopper outlet can deliver (Beverloo). The chain tension is walked round the loop in 5 cm steps: sliding friction of chain and product, the 4.45 m lift, and the capstan gain on the two big bends; the take-up holds ${T0} N at the wheel and the drive supplies the difference between the tight and the slack side. Simplified: non-cohesive product, constant fill, no polygon effect on the sprocket. Chain wire, motor, gearbox and silo sizes are assumed.`, [
+lab.how(`A closed loop of ${fmt(L, 1)} m with ${fmt(NL)} round links and ${fmt(ND)} plastic discs. The chain runs at the nominal inverter speed; what you set is the opening of the flow control gate under the hopper (the slider), which meters the loading capacity. The product (malt, cereals, dried fruit, rice, coffee, pet food, feed, pellets, plastic granules or chemicals: each with its own bulk density, wall friction and grain size) fills the tube between the discs up to 64 %, so the flow is the gate setting, capped by bore area x fill x chain speed (60 m³/h) and by what the hopper outlet can deliver (Beverloo). The chain tension is walked round the loop in 5 cm steps: sliding friction of chain and product, the 4.45 m lift, and the capstan gain on the two big bends; the take-up holds ${T0} N at the wheel and the drive supplies the difference between the tight and the slack side. Simplified: non-cohesive product, constant fill, no polygon effect on the sprocket. Chain wire, motor, gearbox and silo sizes are assumed.`, [
   'Q = min(Q_set, A phi v)      A = 0.03017 m2, phi = 0.64',
   'v = (120 f / p)(1 - s) / i x R      p = 4, i = 58, R = 0.329 m',
   'dT/ds = m g (mu cos a + sin a) + mu T k',
@@ -807,7 +870,30 @@ spc.innerHTML = `<div class="spc-card"><button class="spc-x" aria-label="Close">
 lab.ui.appendChild(spc)
 spc.querySelector('.spc-x').addEventListener('click', () => lab.toggle('models', false))
 spc.addEventListener('click', (e) => { if (e.target === spc) lab.toggle('models', false) })
-lab.target.inspect = 0; lab.target.examples = 0; lab.target.models = 0
+// FAQ: the five questions from the MIAL page (answers condensed) plus five about this simulator
+const FAQ_SITE = [
+  ['What is a tube chain conveyor?', 'A mechanical system that moves granular and powdery bulk materials around a closed circuit. A steel chain fitted with discs runs inside the tube and carries the product steadily along the whole route.'],
+  ['What materials does it transport?', 'Food products such as malt, cereals, dried fruit, rice and coffee, and non-food products such as pet food, feed, pellets, plastic granules and chemical products. All ten can be selected in the Product buttons of this page.'],
+  ['Does the product break during transport?', 'Hardly at all. The enclosed tube and the slow, steady movement keep breakage below 0.2 % (the brochure quotes this for pet food, and notes that it varies with the hardness and size of the product).'],
+  ['Is the system suitable for complex routes?', 'Yes. One circuit can go vertically, horizontally and at angles, also over long distances, with flow and product under control throughout.'],
+  ['Can it be integrated into existing systems?', 'Yes. The modular layout can be connected to storage units such as silos and to packaging lines without major structural changes.'],
+]
+const FAQ_SIM = [
+  ['How do I change the throughput?', 'With the Flow gate opening slider (or the [ and ] keys). It moves the slide plate of the flow control gate under the hopper: the more it opens, the more the discs fill, up to 60 m³/h for the CLEAN200. The chain keeps running at its nominal speed.'],
+  ['Why do rice, coffee and pellets give different tonnes per hour?', 'The volume flow in m³/h is the same, but the bulk density is not: from about 380 kg/m³ for coffee to about 850 kg/m³ for chemicals. Heavier products also load the drive more, because of the lift and the friction on the wall.'],
+  ['What does Jam a bolt show?', 'A foreign steel bolt wedges between a disc and the first bend. It needs about 4.9 kN to crush through, the drive can pull about 3.4 kN at its torque limit, so the chain stops and the inverter trips. The chain tension stays near 4 kN, far from its breaking load.'],
+  ['Which models are there?', 'The CLEAN200, CLEAN159 and CLEAN100, and the CHAINMOVE159, CHAINMOVE100 and CHAINMOVE60, from 60 down to 2 m³/h. Press D for the specifications. The 3D model shows the CLEAN200.'],
+  ['What comes from the brochure and what is assumed?', 'Tube size, discs, drive type, voltage, power range, materials and capacities come from the brochure. The 2.2 kW motor, the 58:1 gearbox, the chain wire, the friction and density of each product and the silo size are assumptions. Open How it is computed for the equations.'],
+]
+const faq = document.createElement('div'); faq.className = 'faq'
+const faqCol = (title, sub, items, open) => `<div class="faq-col"><h3>${title}<small>${sub}</small></h3>${items.map(([q, a], i) => `<details${open && i === 0 ? ' open' : ''}><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`
+faq.innerHTML = `<div class="faq-card"><button class="faq-x" aria-label="Close">×</button><h2>Frequently asked <i>questions</i></h2><div class="sub">Tubular chain conveyor · MIAL</div>
+  <div class="faq-cols">${faqCol('About the conveyor', 'The questions on the MIAL product page, answers condensed', FAQ_SITE, true)}${faqCol('About this simulator', 'How to read and use what you see', FAQ_SIM, false)}</div>
+  <div class="faq-foot">Source of the first five questions: mialtecno.com, Tubular Chain Conveyor page. The answers are shortened here; see the page for the original wording.</div></div>`
+lab.ui.appendChild(faq)
+faq.querySelector('.faq-x').addEventListener('click', () => lab.toggle('faq', false))
+faq.addEventListener('click', (e) => { if (e.target === faq) lab.toggle('faq', false) })
+lab.target.inspect = 0; lab.target.examples = 0; lab.target.models = 0; lab.target.faq = 0
 
 // zoom to the first riser sight glass, in slow motion, as if inspecting it
 const INSPECT = { az: 24, el: 4, dist: 0.145, target: [XR, 2.5, 0] }
@@ -819,6 +905,7 @@ const camView = () => {
 const easeIO = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
 lab.onTick(() => {
   const wantG = lab.target.examples > 0.5
+  { const wantF = lab.target.faq > 0.5; if (wantF !== faq.classList.contains('on')) { faq.classList.toggle('on', wantF); if (wantF) { lab.toggle('models', false); if (galOn) lab.toggle('examples', false) } } }
   { const wantM = lab.target.models > 0.5; if (wantM !== spc.classList.contains('on')) { spc.classList.toggle('on', wantM); if (wantM && galOn) lab.toggle('examples', false) } }
   if (wantG !== galOn) { galOn = wantG; gal.classList.toggle('on', galOn); if (galOn) galShow(galIdx) }
   if (lab.filmMode) return
@@ -837,7 +924,8 @@ addEventListener('keydown', (e) => {
   if (k === 'i') lab.toggle('inspect')
   if (k === 'p') lab.toggle('examples')
   if (k === 'd') lab.toggle('models')
-  if (e.key === 'Escape') lab.toggle('models', false)
+  if (k === 'f') lab.toggle('faq')
+  if (e.key === 'Escape') { lab.toggle('models', false); lab.toggle('faq', false) }
   if (galOn) { if (e.key === 'Escape') lab.toggle('examples', false); if (e.key === 'ArrowRight') galShow(galIdx + 1); if (e.key === 'ArrowLeft') galShow(galIdx - 1) }
 })
 

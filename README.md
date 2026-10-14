@@ -17,12 +17,13 @@ Double-click `index.html` (one self-contained file; it loads three.js 0.170 and 
 ## What you can do
 
 - **Flow gate opening** (slider, or keys `[` and `]`): opens the flow control gate under the hopper, 0 to 60 m³/h. The discs fill more or less, the throughput and all KPIs follow.
-- **Product**: pet food, rice, coffee, plastic granules (key `M`). Each has its own bulk density, wall friction and grain size, so tonnes per hour, power and chain tension change.
+- **Product** (key `M` cycles): the ten products of the brochure. Food: malt, cereals, dried fruit, rice, coffee. Non-food: pet food, feed, pellets, plastic granules, chemicals. Each has its own look, bulk density, wall friction and grain size, so tonnes per hour, power and chain tension change.
 - **Modes**: Explode `E`, Cut away `C`, X-ray `X`, Slow motion `S`, Labels `L`, Pause `Space`.
 - **Inspect window** `I`: zooms to a riser sight glass in slow motion to see discs, chain and product climb.
 - **Plant examples** `P`: gallery of the plant layouts from the brochure (pages 9 and 13).
 - **All models and specs** `D`: CLEAN200 / 159 / 100 and CHAINMOVE159 / 100 / 60 at a glance.
 - **Jam a bolt** `B`: a steel bolt wedges between a disc and the first bend. It needs about 4.9 kN to crush through; the drive can pull about 3.4 kN at its 150 % torque limit, so the chain stalls and the inverter trips after 2 s. The chain itself stays far from its breaking load (about 4 kN against roughly 36 kN).
+- **FAQ** `F`: the five questions of the MIAL product page (answers condensed) and five about this simulator.
 - **How it is computed**: the model in plain words, with the equations.
 
 ## What is computed
