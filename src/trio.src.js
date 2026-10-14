@@ -45,7 +45,7 @@ const lab = new Lab({
   prompt: 'a vertical bagging machine, a palletizer and a pallet wrapper as one packaging line',
   no: 8, title: 'MF Trio Line', sub: '20 bags/min',
   size: 9.6,
-  view: PH ? { az: 14, el: 10, dist: 5.4, target: [4.75, 1.6, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.0, 0], fov: 30, frameX: -0.165 },
+  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.0, 0], fov: 30, frameX: -0.165 },
   cut: { a: [0, 0, 1], b: [0, 0, 1], center: [0, 0, 0], reach: 0.3 },
 })
 
@@ -664,7 +664,7 @@ const camView = () => {
   return { az: THREE.MathUtils.radToDeg(Math.atan2(o.x, o.z)), el: THREE.MathUtils.radToDeg(Math.asin(o.y / d)), dist: d / 2.4, target: [t.x, t.y, t.z] }
 }
 const cam = { from: null, to: null, k0: 0, on: false }
-const goView = (k) => { cam.from = camView(); cam.to = PH ? { ...VIEWS[k], dist: VIEWS[k].dist * (k === 'line' ? 2.7 : 2.2) } : VIEWS[k]; cam.k0 = performance.now(); cam.on = true }
+const goView = (k) => { cam.from = camView(); cam.to = PH ? { ...VIEWS[k], dist: VIEWS[k].dist * (k === 'line' ? 2.3 : 2.2) } : VIEWS[k]; cam.k0 = performance.now(); cam.on = true }
 lab.onTick(() => {
   { const w = lab.target.models > 0.5; if (w !== spc.classList.contains('on')) { spc.classList.toggle('on', w); if (w) lab.toggle('faq', false) } }
   { const w = lab.target.faq > 0.5; if (w !== faq.classList.contains('on')) { faq.classList.toggle('on', w); if (w) lab.toggle('models', false) } }
