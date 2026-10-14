@@ -50,6 +50,11 @@ const lab = new Lab({
   const st = document.createElement('style')
   st.textContent = `
   .lab-prompt, .lab-pills { display:none !important }
+  .sw { position:absolute; left:50%; top:3.2vh; transform:translateX(-50%); z-index:45; display:flex; gap:2px; padding:3px; border-radius:999px; background:rgba(249,246,240,0.92); border:1px solid rgba(40,36,30,0.16); pointer-events:auto; font:600 clamp(11px,0.82vw,14px) 'Inter',sans-serif }
+  .sw a { padding:0.42em 0.95em; border-radius:999px; color:#4a463f; text-decoration:none }
+  .sw a:hover { background:rgba(40,36,30,0.08) }
+  .sw a.on { background:#1d1b18; color:#f4f1ea }
+  .sw .home { padding:0.42em 0.7em }
   .mial-head { position:absolute; left:4.2vw; top:4.4vh; display:flex; align-items:center; gap:1.1vw; pointer-events:none }
   .mial-head img { height:clamp(26px,3.7vh,52px); mix-blend-mode:multiply; display:block }
   .mial-head .sep { width:1px; height:clamp(24px,3.4vh,46px); background:rgba(40,36,30,0.28) }
@@ -148,6 +153,8 @@ const lab = new Lab({
   const mst = document.createElement('style')
   mst.textContent = `
 @media (max-width:760px) {
+    .sw { left:10px; top:62px; transform:none; font-size:11px }
+    body.mob-open .sw { display:none }
     .mial-head { left:10px; right:10px; top:10px; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(238,234,225,0.94) }
     .mial-head img { height:22px }
     .mial-head .sep { height:22px }
@@ -201,6 +208,7 @@ const lab = new Lab({
   const h = document.createElement('div'); h.className = 'mial-head'
   h.innerHTML = `<img alt="MIAL" src="data:image/png;base64,__MIAL_LOGO__"><span class="sep"></span><div><b>Tubular chain conveyor</b><small>CLEAN200 · Ø 204 mm · AISI 304</small></div>`
   lab.ui.appendChild(h)
+  { const nv = document.createElement('nav'); nv.className = 'sw'; nv.setAttribute('aria-label', 'Simulators'); nv.innerHTML = '__NAV__'; lab.ui.appendChild(nv) }
   const sp = document.createElement('div'); sp.className = 'mial-spec'
   sp.innerHTML = '<b>CLEAN200</b><span>Drive unit ø 204</span><span>Max flow rate 60 m³/h</span><p>A closed stainless tube with a chain inside. <strong>Plastic discs, bolted at even spacing,</strong> gently drag the product from the hopper at the bottom up to the silo at the top. One gearmotor, up to 60 m³/h, over 50 % less energy than pneumatic or screw conveying, pet food breakage under 0.2 %.</p><div class="mial-btns"><button class="mial-all">All models and specs<kbd>D</kbd></button><button class="mial-all mial-faqb">FAQ<kbd>F</kbd></button></div>'
   lab.ui.appendChild(sp)
