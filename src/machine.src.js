@@ -321,8 +321,12 @@ const linkCurve = (() => {
 const linkGeo = new THREE.TubeGeometry(linkCurve, 22, 0.0044, 5, true)
 const discGeo = GEO.lathe([[0.015, 0], [0.05, 0], [0.0825, 0.015], [0.0894, 0.025], [0.0894, 0.0363], [0.0844, 0.0363], [0.0775, 0.0256], [0.05, 0.0144], [0.015, 0.0144]], 56)
 const hubGeo = GEO.lathe([[0, -0.015], [0.0206, -0.015], [0.0206, 0.0425], [0, 0.0425]], 24)
-const PLUG_TOP = 0.162, PLUG_BASE = 0.0159
-const plugGeo = GEO.lathe([[0, PLUG_BASE], [0.05, PLUG_BASE], [0.0775, 0.0271], [0.0844, 0.0378], [0.0844, PLUG_TOP], [0, PLUG_TOP]], 36)
+// the product rides on top of the disc (the disc pushes it): a thin filler in the dish, and a column on the rim whose
+// length follows the fill factor, so the quantity you see is proportional to the flow
+const RIM_Y = 0.0378, PLUG_BASE = 0.0159
+const L_FULL = 3 * (L / (3 * Math.round(L / (3 * PITCH_TARGET)))) - 0.012 - RIM_Y            // column length at the full fill factor
+const fillerGeo = GEO.lathe([[0, PLUG_BASE], [0.05, PLUG_BASE], [0.0775, 0.0271], [0.0844, RIM_Y], [0, RIM_Y]], 36)
+const bodyGeo = GEO.lathe([[0, 0], [0.0844, 0], [0.0844, 1], [0, 1]], 36)
 const inst = (geo, mat, n, name, o = {}) => {
   const m = new THREE.InstancedMesh(geo, mat, n); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false
   return lab.add(m, { name, count: n, ...o })
@@ -330,7 +334,8 @@ const inst = (geo, mat, n, name, o = {}) => {
 const chainI = inst(linkGeo, chainM, NL, 'Chain links', { explode: [0, 0, 0.55] })
 const discI = inst(discGeo, discM, ND, 'Plastic discs', { explode: [0, 0, 0.55] })
 const hubI = inst(hubGeo, chainM, ND, 'Disc bolts', { explode: [0, 0, 0.55] })
-const plugI = inst(plugGeo, kibble(3, 1.2), ND, 'Product', { explode: [0, 0, 0.55] })
+const plugI = inst(bodyGeo, kibble(3, 1.2), ND, 'Product', { explode: [0, 0, 0.55] })
+const fillI = inst(fillerGeo, kibble(3, 1.2), ND, 'Product in the dishes', { explode: [0, 0, 0.55], count: 0 })
 const dummy = new THREE.Object3D()
 const put = (s, roll, off, sx = 1, sy = 1) => {
   const [x, y, h] = at(s)
@@ -703,12 +708,16 @@ lab.onTick((dt, lab) => {
   for (let k = 0; k < ND; k++) {
     const s = ((k * P_DISC + trav) % L + L) % L
     put(s, 0, 0); discI.setMatrixAt(k, dummy.matrix); hubI.setMatrixAt(k, dummy.matrix)
-    const enter = smoothstep(S_IN - 0.05, S_IN + 0.2, s), room = clamp((S_OUT - s - 0.02) / (PLUG_TOP - PLUG_BASE), 0, 1)
-    const sc = s > S_IN - 0.05 && s < S_OUT ? enter * room * (sim.phiVis / PHI_MAX) : 0
-    if (sc > 0.02) put(s, 0, 0, 1, sc); else { dummy.scale.set(0, 0, 0); dummy.updateMatrix() }
+    const loaded = s > S_IN - 0.05 && s < S_OUT - 0.03
+    const f = loaded ? smoothstep(S_IN - 0.05, S_IN + 0.25, s) * clamp(sim.phiVis / PHI_MAX, 0, 1) : 0
+    const len = Math.min(L_FULL * f, Math.max(0, S_OUT - s - RIM_Y - 0.02))
+    const fk = Math.min(1, f * 4)
+    if (fk > 0.03) put(s, 0, 0, 1, fk); else { dummy.scale.set(0, 0, 0); dummy.updateMatrix() }
+    fillI.setMatrixAt(k, dummy.matrix)
+    if (len > 0.004) put(s, 0, RIM_Y, 1, len); else { dummy.scale.set(0, 0, 0); dummy.updateMatrix() }
     plugI.setMatrixAt(k, dummy.matrix)
   }
-  for (const m of [chainI, discI, hubI, plugI]) m.instanceMatrix.needsUpdate = true
+  for (const m of [chainI, discI, hubI, plugI, fillI]) m.instanceMatrix.needsUpdate = true
   spDrive.rotation.z = spWheel.rotation.z = trav / RS
   lab.place(gate, HX + 0.24 * sim.open, HY + 0.045, 0)
   if (sim.jam) { const [bx, by, , br] = boltPos(sim.boltS, clamp((sim.boltS - (S_JAM - 0.45)) / 0.45, 0, 1)); lab.place(bolt, bx, by, -0.026); bolt.rotation.set(0, 0, br); bolt.scale.setScalar(2.0) } else bolt.scale.setScalar(0.0001)
