@@ -1735,15 +1735,20 @@ const ribbon = (p0, p1, w, th = 0.004) => {
   const g = new THREE.BoxGeometry(w, th, len), m = new THREE.Matrix4().lookAt(b, a, new THREE.Vector3(0, 1, 0))
   m.setPosition(a.clone().add(b).multiplyScalar(0.5)); g.applyMatrix4(m); return g
 }
-const plateTex = (text, sub) => {
-  const c = document.createElement('canvas'); c.width = 512; c.height = 128; const g = c.getContext('2d')
-  g.fillStyle = '#14377a'; g.fillRect(0, 0, 512, 128)
-  g.fillStyle = '#ffffff'; g.textBaseline = 'middle'; g.font = '700 58px Inter, Arial, sans-serif'; g.fillText(text, 22, sub ? 48 : 66)
+const plateTex = (text, sub, aspect = 4) => {
+  const H = 128, W = Math.round(H * aspect)
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d')
+  g.fillStyle = '#14377a'; g.fillRect(0, 0, W, H)
+  g.fillStyle = '#ffffff'; g.textBaseline = 'middle'
+  let fs = 58; g.font = `700 ${fs}px Inter, Arial, sans-serif`
+  const tw = g.measureText(text).width, room = W - 44
+  if (tw > room) { fs = Math.floor(fs * room / tw); g.font = `700 ${fs}px Inter, Arial, sans-serif` }
+  if (aspect > 6) { g.textAlign = 'center'; g.fillText(text, W / 2, H / 2 + 2); g.textAlign = 'left' } else g.fillText(text, 22, sub ? 48 : H / 2 + 2)
   if (sub) { g.font = '500 24px Inter, Arial, sans-serif'; g.fillStyle = '#b9c8e8'; g.fillText(sub, 24, 98) }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t
 }
 const plate = (text, sub, w, h, x, y, z, ry = 0, name = 'Name plate') => {
-  const m = MAT.satin({ color: [1, 1, 1], map: plateTex(text, sub), roughness: 0.45, finish: null, noCap: true })
+  const m = MAT.satin({ color: [1, 1, 1], map: plateTex(text, sub, w / h), roughness: 0.45, finish: null, noCap: true })
   const o = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); o.position.set(x, y, z); o.rotation.y = ry
   return lab.add(o, { name, explode: [0, 0, ry === 0 ? 1.2 : -1.2] })
 }
@@ -1815,7 +1820,7 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
   for (const sz of [-1, 1]) f.push(box(HEAD_X1 - HEAD_X + 0.16, 0.2, 0.18, (HEAD_X + HEAD_X1) / 2, 2.8, sz * GZ, 0.012))
   for (const x of [HEAD_X, HEAD_X1]) f.push(box(0.12, 0.12, 2 * GZ, x, 2.2, 0, 0.008))
   lab.mesh(GEO.merge(f), steelBrushed, { name: 'Palletizer portal', explode: [0, 0, -1.2], count: 12, xray: 'shell' })
-  plate('MF SMART PALLETIZER', null, 1.5, 0.12, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.092, 0, 'Palletizer plate')
+  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.092, 0, 'Palletizer plate')
   lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.45, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.27, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
 }
 const xcar = lab.mesh(GEO.merge([box(0.22, 0.18, 2 * GZ + 0.06, 0, 0, 0, 0.012), box(0.3, 0.3, 0.06, 0, 0, GZ + 0.02, 0.01), box(0.3, 0.3, 0.06, 0, 0, -GZ - 0.02, 0.01)]), blue, { name: 'Cross member', pos: [X_PICK, 2.6, 0], explode: [0, 0.9, 0], count: 3 })
