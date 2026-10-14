@@ -1,4 +1,8 @@
-# MIAL tubular chain conveyor: interactive 3D simulator (CLEAN200)
+# Massini Industries 3D simulators: MIAL conveyor and MF TECNO Trio Line
+
+`index.html` is a simple chooser with two cards: **MIAL** (`mial.html`, the CLEAN200 tubular chain conveyor, described below) and **MF TECNO** (`mftrio.html`, the MF Trio Line: MF 54 vertical packaging machine, MF Smart Palletizer and MF Wrap 35 stretch wrapper). Both simulators have the same controls and a small switcher at the top.
+
+## MIAL tubular chain conveyor: interactive 3D simulator (CLEAN200)
 
 A single-page, physics-driven 3D model of the MIAL **CLEAN200** tubular chain conveyor (drive unit ø 204, up to 60 m³/h): a closed stainless tube with plastic discs bolted to a chain that lifts bulk product from a loading hopper at the bottom to a silo at the top. Every number on screen is computed by a small solver, not typed in.
 
@@ -12,7 +16,7 @@ A 49 s film of the model is in [`video/tubular-chain-conveyor.mp4`](video/tubula
 
 ## Open it
 
-Double-click `index.html` (one self-contained file; it loads three.js 0.170 and the Google Fonts from their CDNs, so it needs an internet connection).
+Double-click `index.html` and pick a line, or open `mial.html` / `mftrio.html` directly (each one a self-contained file; it loads three.js 0.170 and the Google Fonts from their CDNs, so it needs an internet connection).
 
 ## What you can do
 
@@ -40,15 +44,26 @@ Double-click `index.html` (one self-contained file; it loads three.js 0.170 and 
 
 **Source discrepancies:** the website lists "ChainMove200 ø 204, 60 m³/h"; the brochure range pages (14, 15) put 60 m³/h on the CLEAN200 and 30 m³/h on the ChainMove159, and the ChainMove data page (12) is inconsistent. The model follows pages 14 and 15.
 
+## MF Trio Line (`mftrio.html`)
+
+Three machines in sequence, simulated as a queue: the **MF 54** forms and seals bags (slider, up to 20 bags/min), they ride an infeed belt, the **portal palletizer** picks a row of three per 7.2 s cycle (500 cycles/h) and stacks them layer by layer, a full pallet rolls to the **MF Wrap 35** turntable (35 pallets/h) and is wrapped in stretch film. *Film runs out* stops the wrapper and the whole line backs up. Camera shortcuts `1` to `4` (whole line, MF 54, palletizer, wrapper), `D` specs, `F` FAQ, bag weight 5 / 10 / 20 kg, simulation speed 1x to 12x.
+
+**Taken from the MF TECNO flyer and presentation film:** the three machines and their sequence, up to 20 bags/min, up to 500 cycles/h, up to 35 pallets/h, single supply, tested integration, immediate delivery, contact details.
+**Assumed (the website was not reachable while building):** bag size and weight, 3 bags per palletizer cycle, 6 bags per layer on a 1200 x 800 pallet (360 kg per pallet), belt 0.5 m/s, turntable 8 rpm, the 8 bags/min limit of the 20 kg bag, and all the geometry.
+
 ## Repository layout
 
 ```
-index.html   the built page (open this)
+index.html   the chooser (MIAL or MF TECNO)
+mial.html    the MIAL simulator
+mftrio.html  the MF Trio Line simulator
 video/                        the film
 docs/                         the MIAL brochure (PDF) and preview images
-src/machine.src.js            the machine: geometry, solver, UI, film
+src/machine.src.js            MIAL: geometry, solver, UI, film
+src/trio.src.js               MF Trio Line: geometry, queue simulation, UI
+src/chooser.html              the chooser page
 src/head.html                 page shell with the inlined lab kit (tools/kit/lab-kit.js)
-src/assets/                   MIAL logo and the four brochure images, base64
+src/assets/                   MIAL and MF TECNO logos, card images and the four brochure images, base64
 src/assemble.mjs              builds the page from the above
 tools/                        screenshot and film recording scripts + the lab kit
 ```
@@ -56,11 +71,11 @@ tools/                        screenshot and film recording scripts + the lab ki
 ## Rebuild and record
 
 ```sh
-node src/assemble.mjs                       # rebuild index.html
+node src/assemble.mjs                       # rebuild index.html, mial.html, mftrio.html
 
 cd tools && npm install && npx playwright install chromium   # once; the film also needs ffmpeg
-node scripts/shot.mjs ../index.html ../out/review.png --root ..
-node scripts/record.mjs ../index.html ../video/tubular-chain-conveyor.mp4 --root ..
+node scripts/shot.mjs ../mial.html ../out/review.png --root ..
+node scripts/record.mjs ../mial.html ../video/tubular-chain-conveyor.mp4 --root ..
 ```
 
 The film is deterministic: the page runs in `?film=1` mode and its clock only moves when the recorder steps it.
@@ -68,4 +83,5 @@ The film is deterministic: the page runs in `?film=1` mode and its clock only mo
 ## Credits and rights
 
 - Built with the *Machine* skill for Claude Code (kit and scripts in `tools/`, MIT, see `tools/LICENSE`) and three.js.
+- The MF TECNO name, logo and flyer image belong to MF TECNO / Massini Industries srl, used here to illustrate the product.
 - The MIAL name, logo, brochure text and the plant images (pages 9 and 13) belong to MIAL / Massini Industries srl. They are included here to illustrate the product. This simulator is an independent illustration, not an official MIAL product.
