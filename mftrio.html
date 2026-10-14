@@ -1527,12 +1527,13 @@ const PI = Math.PI
 /* ------------------------------------------------------------------ research
  MF TECNO "MF Trio Line" (a Massini Industries brand): a packaging line ready to go, three machines in one integrated
  supply: MF 54 vertical packaging machine -> MF Smart Palletizer -> MF Wrap 35 stretch wrapper.
- From the MF TECNO flyer and presentation film: "3 machines, 1 single supply", "ready to ship", "tested integration",
- available for immediate delivery. Quoted capacities (film): MF 54 up to 20 bags/min, palletizer up to 500 cycles/h,
- wrapper up to 35 pallets/h.
- The MF TECNO website could not be reached while this page was built, so everything that is not in the flyer or the film
- is ASSUMED and marked as such in the page: bag weight and size, 3 bags per palletizer cycle, 6 bags per layer on a
- 1200 x 800 pallet, belt speed, wrapper turntable speed, bag rate limit of the larger bags.
+ From the MF TECNO flyer, film and website (mftecno.com/it, checked against the three product pages): "3 machines,
+ 1 single supply", "ready to ship", "tested integration", immediate delivery. Quoted capacities in the line: MF 54 up to
+ 20 bags/min (1200 bags/h, bags 5 to 20 kg, 230 x 300 to 470 x 680 mm), palletizer up to 500 cycles/h in the line (the MF PCA
+ Smart Pro product page says up to 800 cycles/h, load up to 50 kg, pallet up to 1800 mm incl. pallet, 800 x 1200 and 1000 x 1200,
+ 4 brushless axes), wrapper up to 35 pallets/h, capacity 2000 kg.
+ ASSUMED and marked as such in the page: the exact bag size, 3 bags per palletizer cycle, 6 bags per layer on a 1200 x 800
+ pallet, belt speed, turntable speed, bag rate limit of the 20 kg bag, all the geometry.
 
  Layout of the model (m): MF 54 on a platform at the left, bags drop on the infeed belt, a portal palletizer picks a row of
  three bags and stacks them on a pallet on the roller conveyor, the full pallet rolls to the turntable of the wrapper at the
@@ -1734,15 +1735,20 @@ const ribbon = (p0, p1, w, th = 0.004) => {
   const g = new THREE.BoxGeometry(w, th, len), m = new THREE.Matrix4().lookAt(b, a, new THREE.Vector3(0, 1, 0))
   m.setPosition(a.clone().add(b).multiplyScalar(0.5)); g.applyMatrix4(m); return g
 }
-const plateTex = (text, sub) => {
-  const c = document.createElement('canvas'); c.width = 512; c.height = 128; const g = c.getContext('2d')
-  g.fillStyle = '#14377a'; g.fillRect(0, 0, 512, 128)
-  g.fillStyle = '#ffffff'; g.textBaseline = 'middle'; g.font = '700 58px Inter, Arial, sans-serif'; g.fillText(text, 22, sub ? 48 : 66)
+const plateTex = (text, sub, aspect = 4) => {
+  const H = 128, W = Math.round(H * aspect)
+  const c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d')
+  g.fillStyle = '#14377a'; g.fillRect(0, 0, W, H)
+  g.fillStyle = '#ffffff'; g.textBaseline = 'middle'
+  let fs = 58; g.font = `700 ${fs}px Inter, Arial, sans-serif`
+  const tw = g.measureText(text).width, room = W - 44
+  if (tw > room) { fs = Math.floor(fs * room / tw); g.font = `700 ${fs}px Inter, Arial, sans-serif` }
+  if (aspect > 6) { g.textAlign = 'center'; g.fillText(text, W / 2, H / 2 + 2); g.textAlign = 'left' } else g.fillText(text, 22, sub ? 48 : H / 2 + 2)
   if (sub) { g.font = '500 24px Inter, Arial, sans-serif'; g.fillStyle = '#b9c8e8'; g.fillText(sub, 24, 98) }
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t
 }
 const plate = (text, sub, w, h, x, y, z, ry = 0, name = 'Name plate') => {
-  const m = MAT.satin({ color: [1, 1, 1], map: plateTex(text, sub), roughness: 0.45, finish: null, noCap: true })
+  const m = MAT.satin({ color: [1, 1, 1], map: plateTex(text, sub, w / h), roughness: 0.45, finish: null, noCap: true })
   const o = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); o.position.set(x, y, z); o.rotation.y = ry
   return lab.add(o, { name, explode: [0, 0, ry === 0 ? 1.2 : -1.2] })
 }
@@ -1814,7 +1820,7 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
   for (const sz of [-1, 1]) f.push(box(HEAD_X1 - HEAD_X + 0.16, 0.2, 0.18, (HEAD_X + HEAD_X1) / 2, 2.8, sz * GZ, 0.012))
   for (const x of [HEAD_X, HEAD_X1]) f.push(box(0.12, 0.12, 2 * GZ, x, 2.2, 0, 0.008))
   lab.mesh(GEO.merge(f), steelBrushed, { name: 'Palletizer portal', explode: [0, 0, -1.2], count: 12, xray: 'shell' })
-  plate('MF SMART PALLETIZER', null, 1.5, 0.12, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.092, 0, 'Palletizer plate')
+  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.092, 0, 'Palletizer plate')
   lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.45, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.27, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
 }
 const xcar = lab.mesh(GEO.merge([box(0.22, 0.18, 2 * GZ + 0.06, 0, 0, 0, 0.012), box(0.3, 0.3, 0.06, 0, 0, GZ + 0.02, 0.01), box(0.3, 0.3, 0.06, 0, 0, -GZ - 0.02, 0.01)]), blue, { name: 'Cross member', pos: [X_PICK, 2.6, 0], explode: [0, 0.9, 0], count: 3 })
@@ -1999,7 +2005,7 @@ lab.$('.lab-metric').insertAdjacentElement('afterend', kpiEl)
 const kpiV = [...kpiEl.querySelectorAll('b span')]
 {
   const sel = document.createElement('div'); sel.className = 'lab-ctl on mat-sel'
-  sel.innerHTML = `<div class="row"><span>Bag weight</span><b>assumed</b></div><div class="chips" data-k="kg">${[5, 10, 20].map((w) => `<button data-v="${w}">${w} kg</button>`).join('')}</div>
+  sel.innerHTML = `<div class="row"><span>Bag weight</span><b>5 to 20 kg</b></div><div class="chips" data-k="kg">${[5, 10, 20].map((w) => `<button data-v="${w}">${w} kg</button>`).join('')}</div>
     <div class="row" style="margin-top:0.9em"><span>Simulation speed</span><b>x real time</b></div><div class="chips" data-k="ts">${[1, 3, 6, 12].map((w) => `<button data-v="${w}">${w}×</button>`).join('')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
   const sync = () => sel.querySelectorAll('button').forEach((b) => b.classList.toggle('on', Number(b.dataset.v) === (b.parentNode.dataset.k === 'kg' ? kg : TS)))
@@ -2019,7 +2025,7 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const fit = () => { if (!how.open) { how.style.maxHeight = ''; return } const top = innerHeight * 0.03, lim = lab.$('.mat-sel').getBoundingClientRect().top - top - 14; how.style.maxHeight = (lim > 260 ? lim : innerHeight * 0.9) + 'px' }
   how.addEventListener('toggle', fit); addEventListener('resize', fit)
 }
-lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a bag at the speed you set (up to 20 bags/min, from the film). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> picks a row of three bags in one cycle of 7.2 s (500 cycles/h, from the film) and stacks them, two rows per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most (from the film). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (0.40 x 0.40 m, the thickness follows the weight), 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm, and a lower bag rate for the 20 kg bags (8 per minute). The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
+lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a bag at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> picks a row of three bags in one cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800) and stacks them, two rows per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm, and a lower bag rate for the 20 kg bags (8 per minute). The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
   'bags/h = 60 x rate      t/h = bags/h x kg',
   'cycles/h = bags/h / 3      cycle = 3600 / 500 = 7.2 s',
   'pallets/h = bags/h / (6 x layers)      wrapper cycle = 3600 / 35 = 102.9 s',
@@ -2136,9 +2142,9 @@ lab.breakIt({
 
 // ------------------------------------------------------------------ models and specs, FAQ
 const MODULES = [
-  ['MF 54', 'Vertical packaging machine', 20, 'bags/min', 20, 'Forms, fills and seals the bags from a roll of film. First of the three machines.', [['Role', 'Bagging'], ['Speed', 'Up to 20 bags/min'], ['In the line', 'Drops the bags on the infeed belt']]],
-  ['MF Smart Palletizer', 'Palletizer', 500, 'cycles/h', 500, 'A portal palletizer: it picks the bags from the belt and stacks them on the pallet layer by layer.', [['Role', 'Palletizing'], ['Speed', 'Up to 500 cycles/h'], ['In the line', 'Between the bagger and the wrapper']]],
-  ['MF Wrap 35', 'Stretch wrapper', 35, 'pallets/h', 35, 'A turntable wrapper: the pallet turns while a film carriage rises and descends the mast.', [['Role', 'Pallet wrapping'], ['Speed', 'Up to 35 pallets/h'], ['In the line', 'Last of the three machines']]],
+  ['MF 54', 'Vertical packaging machine', 20, 'bags/min', 20, 'Forms, fills and seals the bags from a roll of film. First of the three machines.', [['Speed', 'Up to 20 bags/min (1200/h)'], ['Bag weight', '5 to 20 kg'], ['Bag size', '230 x 300 to 470 x 680 mm'], ['Bag types', 'Pillow, gusseted (PE)'], ['Build', 'AISI 304 steel, brushless servo motors']]],
+  ['MF Smart Palletizer', 'Palletizer', 500, 'cycles/h', 500, 'A Cartesian palletizer for bags, boxes or bundles: it picks the bags from the belt and stacks them on the pallet layer by layer.', [['Speed in the line', 'Up to 500 cycles/h'], ['Speed, MF PCA Smart Pro page', 'Up to 800 cycles/h'], ['Max load', 'Up to 50 kg'], ['Pallets', '800 x 1200, 1000 x 1200 mm'], ['Max height', '1800 mm incl. pallet'], ['Axes', '4, brushless; PLC and touch screen']]],
+  ['MF Wrap 35', 'Stretch wrapper', 35, 'pallets/h', 35, 'Automatic stretch wrapper: the pallet turns while a film carriage rises and descends the mast (the website says both "rotating table" and "rotating arm"; the model shows the turntable).', [['Speed', 'Up to 35 pallets/h'], ['Capacity', '2000 kg'], ['Film', 'Motorised pre-stretch, automatic cut and weld'], ['Control', 'Inverter, PLC and touch screen, CE'], ['Options', 'Top sheet, top press, 90\u00b0 discharge, roller or chain platform']]],
 ]
 const spc = document.createElement('div'); spc.className = 'spc'
 spc.innerHTML = `<div class="spc-card"><button class="spc-x" aria-label="Close">×</button>
@@ -2147,7 +2153,7 @@ spc.innerHTML = `<div class="spc-card"><button class="spc-x" aria-label="Close">
     <div class="spc-tile"><small>Up to</small><div class="q">${q}<i>${u}</i></div><div class="bar"><span style="width:100%"></span></div></div>
     <div class="spc-rows">${rows.map(([k, v]) => `<div><span>${k}</span><b style="font-weight:500">${v}</b></div>`).join('')}</div></div>`).join('')}</div>
   <div class="spc-common"><b>3 machines, 1 single supply</b><b>Single point of contact from design to startup</b><b>Ready to ship: production in weeks, not months</b><b>Tested integration: mechanics, electrics and software</b><b>Available for immediate delivery</b></div>
-  <div class="spc-foot">Capacities are the ones quoted in the MF TECNO flyer and presentation film. Via del Lavoro 9, 06083 Bastia Umbra (PG), Italy · www.mftecno.com · info@mftecno.com · +39 075 8043623. Bag size and weight, bags per cycle and layer, belt and turntable speeds are assumptions of this simulator.</div></div>`
+  <div class="spc-foot">Data from the MF TECNO flyer, film and the product pages of mftecno.com. The Trio Line quotes 500 cycles/h for the palletizer; its own product page (MF PCA Smart Pro) says up to 800. Via del Lavoro 9, 06083 Bastia Umbra (PG), Italy · www.mftecno.com · info@mftecno.com · +39 075 8043623 · USA: MF TECNO USA, Hughson CA, 209-410-3637. Bags per cycle and layer, belt and turntable speeds are assumptions of this simulator.</div></div>`
 lab.ui.appendChild(spc)
 spc.querySelector('.spc-x').addEventListener('click', () => lab.toggle('models', false))
 spc.addEventListener('click', (e) => { if (e.target === spc) lab.toggle('models', false) })
@@ -2155,7 +2161,8 @@ const FAQ_LINE = [
   ['What is the MF Trio Line?', 'A packaging line ready to go: a vertical packaging machine (MF 54), a palletizer (MF Smart Palletizer) and a pallet wrapper (MF Wrap 35), in this sequence, in one integrated solution.'],
   ['Why one supply for three machines?', 'There is a single point of contact from design to startup, and the three machines come as a tested integration: proven mechanics, electrics and software, with zero surprises on the shop floor.'],
   ['How fast can it be delivered?', 'The line is available for immediate delivery. Compared with a custom solution the timelines are shorter: production starts in weeks, not months.'],
-  ['What speeds are quoted?', 'Up to 20 bags per minute for the MF 54, up to 500 cycles per hour for the palletizer and up to 35 pallets per hour for the wrapper.'],
+  ['What speeds are quoted?', 'Up to 20 bags per minute (1200 per hour) for the MF 54, up to 500 cycles per hour for the palletizer in the line and up to 35 pallets per hour for the wrapper. The palletizer product page (MF PCA Smart Pro) quotes up to 800 cycles per hour on its own.'],
+  ['Which bags and pallets can it handle?', 'The MF 54 makes pillow and gusseted PE bags of 5 to 20 kg, from 230 x 300 to 470 x 680 mm. The palletizer works on 800 x 1200 and 1000 x 1200 pallets up to 1800 mm high including the pallet. The wrapper takes loads up to 2000 kg.'],
   ['Where do I get the details?', 'On mftecno.com, or from MF TECNO in Bastia Umbra: info@mftecno.com, +39 075 8043623.'],
 ]
 const FAQ_SIM = [
@@ -2163,13 +2170,13 @@ const FAQ_SIM = [
   ['Why does the simulation run faster than real time?', 'One pallet takes about two minutes to build at full speed. The chips under the slider speed the animation up (1× to 12×); every figure on screen stays a real-time value.'],
   ['What does Film runs out show?', 'The wrapper stops mid-pallet. The next full pallet waits, the palletizer has nowhere to stack, the belt fills up and the MF 54 holds its bag. Press the button again to change the film roll and let the line empty out.'],
   ['Why is the 20 kg bag slower?', 'It is an assumption of the simulator: a bigger bag needs more time to fill and seal, so the rate is capped at 8 bags per minute. The 5 and 10 kg bags run up to the 20 bags/min of the film.'],
-  ['What comes from MF TECNO and what is assumed?', 'The three machines, their sequence and the three speeds come from the MF TECNO flyer and film. The bag sizes and weights, three bags per palletizer cycle, six per layer, the belt speed, the turntable speed and the 8-per-minute limit are assumptions. Open How it is computed for the model.'],
+  ['What comes from MF TECNO and what is assumed?', 'The three machines, their sequence and the three speeds come from the MF TECNO flyer, film and website, as do the 5 to 20 kg bag range and the pallet limits. The exact bag size, three bags per palletizer cycle, six per layer, the belt speed, the turntable speed and the 8-per-minute limit are assumptions. Open How it is computed for the model.'],
 ]
 const faq = document.createElement('div'); faq.className = 'faq'
 const faqCol = (title, sub, items, open) => `<div class="faq-col"><h3>${title}<small>${sub}</small></h3>${items.map(([q, a], i) => `<details${open && i === 0 ? ' open' : ''}><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`
 faq.innerHTML = `<div class="faq-card"><button class="faq-x" aria-label="Close">×</button><h2>Frequently asked <i>questions</i></h2><div class="sub">MF Trio Line · MF TECNO</div>
   <div class="faq-cols">${faqCol('About the line', 'Condensed from the MF TECNO flyer and film', FAQ_LINE, true)}${faqCol('About this simulator', 'How to read and use what you see', FAQ_SIM, false)}</div>
-  <div class="faq-foot">Source: MF TECNO, MF Trio Line flyer and presentation film.</div></div>`
+  <div class="faq-foot">Source: MF TECNO, MF Trio Line flyer, presentation film and the product pages of mftecno.com.</div></div>`
 lab.ui.appendChild(faq)
 faq.querySelector('.faq-x').addEventListener('click', () => lab.toggle('faq', false))
 faq.addEventListener('click', (e) => { if (e.target === faq) lab.toggle('faq', false) })
