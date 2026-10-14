@@ -63,7 +63,7 @@ const lab = new Lab({
   .mial-head .sep { width:1px; height:clamp(24px,3.4vh,46px); background:rgba(40,36,30,0.28) }
   .mial-head b { display:block; font:500 clamp(15px,1.45vw,26px)/1.1 'Inter',sans-serif; letter-spacing:-0.01em; color:#1d1b18 }
   .mial-head small { display:block; margin-top:0.25em; font:400 clamp(10px,0.82vw,14px)/1.2 'JetBrains Mono',monospace; letter-spacing:0.02em; color:#7b766c }
-  .mial-spec { position:absolute; left:4.2vw; top:24vh; pointer-events:none }
+  .mial-spec { position:absolute; left:4.2vw; top:14vh; pointer-events:none }
   .mial-spec b { display:block; font:600 clamp(18px,1.75vw,32px)/1.1 'Inter',sans-serif; letter-spacing:-0.01em; color:#1f4e9c; margin-bottom:0.45em }
   .mial-spec span { display:block; font:400 clamp(13px,1.25vw,23px)/1.45 'Inter',sans-serif; color:#1d1b18 }
   .mial-spec p { margin:1.3em 0 0; max-width:15.5vw; font:400 clamp(11px,0.82vw,14px)/1.55 'Inter',sans-serif; color:#5b574f }
