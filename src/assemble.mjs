@@ -37,7 +37,7 @@ page('mftrio.html', 'trio.src.js', {
 // the chooser is plain HTML, no three.js
 {
   const html = read('chooser.html')
-    .replace('__MIAL_LOGO__', b64('logo')).replace('__MF_LOGO__', b64('mflogo'))
+    .replace('__MIAL_LOGO__', b64('logo')).replace('__MF_LOGO__', b64('mflogo')).replace('__MASSINI_LOGO__', b64('massini'))
     .replace('__MIAL_IMG__', b64('mialcard')).replace('__MF_IMG__', b64('mfline'))
   writeFileSync(resolve(here, '../index.html'), html)
   console.log('built index.html')

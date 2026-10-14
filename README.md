@@ -48,8 +48,9 @@ Double-click `index.html` and pick a line, or open `mial.html` / `mftrio.html` d
 
 Three machines in sequence, simulated as a queue: the **MF 54** forms and seals bags (slider, up to 20 bags/min), they ride an infeed belt, the **portal palletizer** picks a row of three per 7.2 s cycle (500 cycles/h) and stacks them layer by layer, a full pallet rolls to the **MF Wrap 35** turntable (35 pallets/h) and is wrapped in stretch film. *Film runs out* stops the wrapper and the whole line backs up. Camera shortcuts `1` to `4` (whole line, MF 54, palletizer, wrapper), `D` specs, `F` FAQ, bag weight 5 / 10 / 20 kg, simulation speed 1x to 12x.
 
-**Taken from the MF TECNO flyer and presentation film:** the three machines and their sequence, up to 20 bags/min, up to 500 cycles/h, up to 35 pallets/h, single supply, tested integration, immediate delivery, contact details.
-**Assumed (the website was not reachable while building):** bag size and weight, 3 bags per palletizer cycle, 6 bags per layer on a 1200 x 800 pallet (360 kg per pallet), belt 0.5 m/s, turntable 8 rpm, the 8 bags/min limit of the 20 kg bag, and all the geometry.
+**Taken from the MF TECNO flyer, film and website (mftecno.com/it, checked against the three product pages):** the three machines and their sequence; MF 54 up to 20 bags/min (1200/h), bags of 5 to 20 kg, 230 x 300 to 470 x 680 mm, pillow and gusseted PE bags; palletizer up to 500 cycles/h in the line (its own page, MF PCA Smart Pro, says up to 800), load up to 50 kg, 800 x 1200 and 1000 x 1200 pallets, up to 1800 mm incl. pallet, 4 brushless axes; MF Wrap 35 up to 35 pallets/h, capacity 2000 kg, motorised pre-stretch, automatic cut and weld; single supply, tested integration, immediate delivery, contact details.
+**Assumed:** exact bag size (0.40 x 0.40 m), 3 bags per palletizer cycle, 6 bags per layer on a 1200 x 800 pallet (360 kg per pallet at 10 kg), belt 0.5 m/s, turntable 8 rpm, the 8 bags/min limit of the 20 kg bag, and all the geometry.
+**Source discrepancies:** the website home lists the standard line with an "MF 52, up to 80 BPM" bagger; the MF 54 page says 20 BPM, which the model follows. The Wrap 35 page says both "rotating table" and "rotating arm"; the model shows the turntable.
 
 ## Repository layout
 
@@ -63,7 +64,7 @@ src/machine.src.js            MIAL: geometry, solver, UI, film
 src/trio.src.js               MF Trio Line: geometry, queue simulation, UI
 src/chooser.html              the chooser page
 src/head.html                 page shell with the inlined lab kit (tools/kit/lab-kit.js)
-src/assets/                   MIAL and MF TECNO logos, card images and the four brochure images, base64
+src/assets/                   MIAL, MF TECNO and Massini logos, card images and the four brochure images, base64
 src/assemble.mjs              builds the page from the above
 tools/                        screenshot and film recording scripts + the lab kit
 ```
