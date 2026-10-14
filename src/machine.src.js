@@ -182,7 +182,7 @@ const lab = new Lab({
     .lab-modes button { flex:0 0 auto; padding:0.45em 0.85em; background:rgba(249,246,240,0.96) }
     .lab-modes kbd { display:none }
     .gate-hint { display:none !important }
-    .mial-head, .mial-spec, .lab-side { display:none }
+    .mial-spec, .lab-side { display:none }
     body.mob-open .mial-head { display:flex }
     body.mob-open .mial-spec, body.mob-open .lab-side { display:block }
     .mob-info { display:block; position:fixed; right:10px; bottom:12px; z-index:70; padding:0.45em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.3); background:#1d1b18; color:#f4f1ea; font:600 12px 'Inter',sans-serif; cursor:pointer }
