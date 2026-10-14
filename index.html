@@ -1705,6 +1705,12 @@ const lab = new Lab({
     .lab-modes button { flex:0 0 auto; padding:0.45em 0.85em; background:rgba(249,246,240,0.96) }
     .lab-modes kbd { display:none }
     .gate-hint { display:none !important }
+    .mial-head, .mial-spec, .lab-side { display:none }
+    body.mob-open .mial-head { display:flex }
+    body.mob-open .mial-spec, body.mob-open .lab-side { display:block }
+    .mob-info { display:block; position:fixed; right:10px; bottom:12px; z-index:70; padding:0.45em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.3); background:#1d1b18; color:#f4f1ea; font:600 12px 'Inter',sans-serif; cursor:pointer }
+    body.mob-open .mob-info { background:#f9f6f0; color:#1d1b18 }
+    .lab-modes { right:86px !important }
     .spc-lines, .faq-cols, .gal-card { grid-template-columns:1fr !important }
     .spc-card, .faq-card { width:92vw }
     .spc-tiles { grid-template-columns:repeat(3,1fr); gap:6px }
@@ -2257,6 +2263,10 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const grp = (g) => `<div class="grp">${g}</div>${PRODUCTS.filter((p) => p.grp === g).map((p) => `<button data-id="${p.id}" title="${p.name}" style="--dot:${p.dot}"><i></i>${p.name}</button>`).join('')}`
   sel.innerHTML = `<div class="row"><span>Product</span><b></b></div><div class="chips">${grp('Food')}${grp('Non-food')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
+  // phones: the info panel and product/gate controls stay hidden until this toggle opens them
+  const mobBtn = document.createElement('button'); mobBtn.className = 'mob-info'; mobBtn.textContent = 'Controls'
+  mobBtn.addEventListener('click', () => { const on = document.body.classList.toggle('mob-open'); mobBtn.textContent = on ? 'Close' : 'Controls' })
+  document.body.appendChild(mobBtn)
   sel.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) setProduct(b.dataset.id) })
   addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'm' && e.target.tagName !== 'INPUT') setProduct(PRODUCTS[(PRODUCTS.indexOf(prod) + 1) % PRODUCTS.length].id) })
   setProduct('pet')
