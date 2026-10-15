@@ -1779,14 +1779,13 @@ const XJ = X_DROP                                                           // t
   for (let y = 0.2; y < 1.95; y += 0.25) ld.push(box(0.03, 0.03, 0.4, -0.05, y, 0, 0.006))
   lab.mesh(GEO.merge(ld), steelM, { name: 'Ladder', explode: [-0.8, 0, 0.5], count: 9 })
   // hopper, product inlet
-  // square-section hopper: a flat-topped inlet box on a square funnel that narrows into the head
-  const hopG = GEO.merge([box(0.72, 0.3, 0.5, 0, 2.85, 0, 0.03), new THREE.CylinderGeometry(0.12, 0.42, 0.42, 4, 1).rotateY(PI / 4).translate(0, 2.49, 0)]).translate(XJ, 0, 0)
-  lab.mesh(hopG, steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
-  lab.mesh(GEO.pipe([[XJ, 3.0, 0], [XJ, 3.45, 0], [XJ - 0.3, 3.62, 0], [0.55, 3.62, 0]], 0.085, { seg: 40, radial: 14, tension: 0.2 }), steelM, { name: 'Product inlet', explode: [0, 1.6, 0] })
+  // open funnel hopper: wide open mouth at the top, narrowing into the head (no inlet pipe)
+  lab.mesh(new THREE.CylinderGeometry(0.12, 0.42, 0.7, 48, 1, true).translate(XJ, 2.65, 0), steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], count: 2 })
+  lab.mesh(new THREE.TorusGeometry(0.42, 0.016, 10, 56).rotateX(PI / 2).translate(XJ, 3.0, 0), steelBrushed, { name: 'Hopper rim', explode: [0, 1.2, 0] })
   // forming collar and tube
   lab.mesh(GEO.lathe([[0, 2.3], [0.28, 2.3], [0.28, 2.18], [0.105, 1.99], [0.105, 1.38], [0, 1.38]], 48).translate(XJ, 0, 0), chrome, { name: 'Forming tube', explode: [0, 0.4, 0.9], xray: 'shell' })
-  // four filling spouts hang out of the collar; the empty bag is wrapped around them
-  const spouts = []; for (const dx of [-0.09, 0.09]) for (const dz of [-0.09, 0.09]) spouts.push(cylY(0.03, 0.9, XJ + dx, 1.57, dz, 14))
+  // four filling spouts hang out of the collar and end at the seal; the empty bag hangs from there
+  const spouts = []; for (const dx of [-0.09, 0.09]) for (const dz of [-0.09, 0.09]) spouts.push(cylY(0.035, 0.45, XJ + dx, 1.25, dz, 14))
   lab.mesh(GEO.merge(spouts), chrome, { name: 'Filling spouts', explode: [0, 0.5, 0], count: 4 })
   // film reel and web
   lab.mesh(GEO.merge([cylZ(0.26, 0.3, 0.62, 2.62, -0.5, 40), cylZ(0.07, 0.36, 0.62, 2.62, -0.5, 18), box(0.05, 0.9, 0.05, 0.62, 2.45, -0.62, 0.008)]), MAT.plastic({ color: [0.9, 0.92, 0.95], roughness: 0.3, cap: [0.9, 0.92, 0.95] }), { name: 'Film reel', explode: [0, 0.4, -1.1], count: 3 })
@@ -1794,8 +1793,8 @@ const XJ = X_DROP                                                           // t
 }
 // sealing jaws, two blocks closing across the tube bottom
 const jawG = GEO.rbox(0.46, 0.16, 0.13, 0.012, 3)
-const jawA = lab.mesh(jawG, chrome, { name: 'Sealing jaws', pos: [XJ, 1.28, 0.2], explode: [0, 0, 1.0], count: 2 })
-const jawB = lab.mesh(jawG.clone(), chrome, { name: 'Sealing jaw (rear)', pos: [XJ, 1.28, -0.2], explode: [0, 0, -1.0], count: 1 })
+const jawA = lab.mesh(jawG, chrome, { name: 'Sealing jaws', pos: [XJ, 1.08, 0.2], explode: [0, 0, 1.0], count: 2 })
+const jawB = lab.mesh(jawG.clone(), chrome, { name: 'Sealing jaw (rear)', pos: [XJ, 1.08, -0.2], explode: [0, 0, -1.0], count: 1 })
 
 // ------------------------------------------------------------------ infeed belt
 const beltT = (() => { const c = document.createElement('canvas'); c.width = 64; c.height = 16; const g = c.getContext('2d'); g.fillStyle = '#1b1c1e'; g.fillRect(0, 0, 64, 16); g.fillStyle = '#2c2e31'; g.fillRect(0, 0, 4, 16); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(14, 1); t.colorSpace = THREE.SRGBColorSpace; return t })()
@@ -1957,7 +1956,7 @@ function stepSim(dt) {
   const belt = sim.bags.filter((b) => b.st === 'belt').sort((a, b) => b.x - a.x)
   belt.forEach((b, i) => { const lim = i === 0 ? X_STOP - 0.2 : belt[i - 1].x - BAG.L; b.x = Math.min(b.x + BELT_V * dt, lim); b.y = BELT_Y + t / 2 })
   const falling = sim.bags.filter((b) => b.st === 'fall')
-  for (const b of falling) { b.t += dt; const k = clamp(b.t / 0.3); b.y = lerp(1.0, BELT_Y + t / 2, k * k); b.q = 1 - k; if (k >= 1) { b.st = 'belt'; b.x = X_DROP; b.y = BELT_Y + t / 2; b.q = 0 } }
+  for (const b of falling) { b.t += dt; const k = clamp(b.t / 0.3); b.y = lerp(0.65, BELT_Y + t / 2, k * k); b.q = 1 - k; if (k >= 1) { b.st = 'belt'; b.x = X_DROP; b.y = BELT_Y + t / 2; b.q = 0 } }
   const entryClear = !belt.some((b) => b.x < X_DROP + BAG.L + 0.02) && falling.length === 0
 
   // ---- MF 54: forms a bag, seals, drops it
@@ -2076,8 +2075,8 @@ lab.onTick((dt0, lab) => {
   beltT.offset.x = (beltT.offset.x - BELT_V * dtr / 2.75 * 14) % 1
   // jaws
   sim.jaw = approach(sim.jaw ?? 0.07, sim.jawClose ? 0 : 0.07, 0.08, dtr)
-  lab.place(jawA, XJ, 1.28, 0.065 + sim.jaw); lab.place(jawB, XJ, 1.28, -(0.065 + sim.jaw))
-  { const hh = 0.1 + 0.3 * sim.form.f; sack.visible = !!sim.form.bag; sack.scale.set(1, hh, 1); lab.place(sack, XJ, 1.22 - hh / 2, 0) }
+  lab.place(jawA, XJ, 1.08, 0.065 + sim.jaw); lab.place(jawB, XJ, 1.08, -(0.065 + sim.jaw))
+  { const hh = 0.1 + 0.3 * sim.form.f; sack.visible = !!sim.form.bag; sack.scale.set(1, hh, 1); lab.place(sack, XJ, 1.05 - hh / 2, 0) }
   // gantry
   const P = sim.pz.pose
   lab.place(xcar, P.x, 2.55, 0); lab.place(chain, P.x + 0.19, 3.43, -GZ); lab.place(zsl, P.x, 2.4, P.z)
