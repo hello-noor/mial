@@ -551,7 +551,7 @@ const ledG = MAT.glow({ emissive: [0.2, 1, 0.35], emissiveIntensity: 3, noCap: t
 lab.mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.009, 16).rotateX(PI / 2), ledG, { name: 'Run lamp', pos: [CAB.x - 0.07, 0.98, CAB.z + 0.154], explode: [0, 0, 1.3], count: 0 })
 lab.mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.009, 16).rotateX(PI / 2), ledR, { name: 'Trip lamp', pos: [CAB.x + 0.07, 0.98, CAB.z + 0.154], explode: [0, 0, 1.3], count: 0 })
 lab.mesh(GEO.merge([place(GEO.lathe([[0, 0], [0.009, 0], [0.009, 0.2], [0, 0.2]], 12), CAB.x + 0.21, 0.6, CAB.z + 0.16), box(0.018, 0.22, 0.028, CAB.x + 0.21, 0.7, CAB.z + 0.17, 0.006)]), chrome, { name: 'Door handle', explode: [0, 0, 1.3], count: 0 })
-lab.mesh(GEO.pipe([[CAB.x, 1.37, CAB.z], [CAB.x, 1.6, CAB.z + 0.04], [-0.52, 2.0, 0.36], [-0.52, 5.8, 0.36], [-0.1, 5.88, 0.36], [motorX + 0.2, 5.88, 0.36], [motorX + 0.2, YD + 0.2, GZ], [motorX + 0.2, YD + 0.19, GZ]], 0.014, { seg: 120, radial: 12 }), rubber, { name: 'Motor cable', explode: [0, 0, 1.5] })
+lab.mesh(GEO.pipe([[CAB.x, 1.37, CAB.z], [CAB.x, 1.6, CAB.z + 0.04], [-0.52, 2.0, -0.5], [-0.52, 5.3, -0.5], [-0.1, 5.3, -0.5], [motorX + 0.2, 5.3, -0.5], [motorX + 0.2, YD + 0.2, GZ], [motorX + 0.2, YD + 0.19, GZ]], 0.014, { seg: 120, radial: 12 }), rubber, { name: 'Motor cable', explode: [0, 0, 1.5] })
 
 // ------------------------------------------------------------------ loading hopper with the flow control gate
 const HX = X_IN, HY = YB + TUBE_RO
