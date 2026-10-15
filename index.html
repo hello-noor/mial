@@ -45,11 +45,9 @@
   @keyframes drift { to { transform:translate3d(3%,-2%,0) scale(1.05) } }
   .eyebrow { font:600 13px/1 'Inter',sans-serif; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim); opacity:0; animation:rise .9s .1s forwards }
   .hero h1.claim { margin:18px 0 0; font:700 clamp(44px,8.4vw,136px)/1.08 'Inter',sans-serif; letter-spacing:-0.05em; overflow:visible }
-  .claim .w { display:inline-block; opacity:0; transform:translateY(0.55em); filter:blur(14px); animation:word 1.3s cubic-bezier(.16,1,.3,1) forwards; animation-delay:calc(.3s + var(--i) * .17s) }
-  .claim .grad { padding:0 0.06em 0.16em; margin-bottom:-0.16em; background:linear-gradient(100deg,#ff9a5a 0%,#ffffff 30%,#8fb4ff 50%,#ffffff 70%,#ff9a5a 100%) 0 0/250% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; animation:word 1.3s cubic-bezier(.16,1,.3,1) forwards, shine 4.5s linear 2s infinite; animation-delay:calc(.3s + var(--i) * .17s), 2s }
-  @keyframes word { to { opacity:1; transform:none; filter:blur(0) } }
-  @keyframes shine { from { background-position:100% 0 } to { background-position:-150% 0 } }
-  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .claim .grad { background:linear-gradient(100deg,#e0622b 0%,#1d1d1f 30%,#2b5fd9 50%,#1d1d1f 70%,#e0622b 100%) 0 0/250% 100%; -webkit-background-clip:text; background-clip:text } }
+  .claim .w { display:inline-block; opacity:0; animation:word 1.1s ease-out forwards, flow 7s linear infinite; animation-delay:calc(.3s + var(--i) * .17s), calc(var(--i) * -1.4s); padding:0 0.06em 0.16em; margin-bottom:-0.16em; color:transparent; background:linear-gradient(90deg,#ee7319 0%,#c15a4a 35%,#1f4e9c 70%,#ee7319 100%) 0 0/300% 100%; -webkit-background-clip:text; background-clip:text }
+  @keyframes word { from { opacity:0; transform:translateY(0.4em) } to { opacity:1; transform:none } }
+  @keyframes flow { from { background-position:0% 0 } to { background-position:300% 0 } }
   @media (prefers-reduced-motion:reduce) { .claim .w { opacity:1; transform:none; animation:none } }
   .hero p { max-width:36em; margin:26px auto 0; font:400 clamp(18px,2vw,24px)/1.4 'Inter',sans-serif; color:var(--dim); opacity:0; animation:rise 1s .4s forwards }
   .cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:34px; opacity:0; animation:rise 1s .55s forwards }
@@ -127,10 +125,10 @@
 <header class="hero">
   <div class="eyebrow">Massini Industries · 3D simulators</div>
   <h1 class="claim" aria-label="Massini: built to flow, made to grow.">
-    <span class="w" style="--i:0">Massini:</span> <span class="w" style="--i:1">built</span> <span class="w" style="--i:2">to</span> <span class="w grad" style="--i:3">flow,</span><br>
-    <span class="w grad" style="--i:4">made to grow.</span>
+    <span class="w" style="--i:0">Massini:</span> <span class="w" style="--i:1">built</span> <span class="w" style="--i:2">to</span> <span class="w" style="--i:3">flow,</span><br>
+    <span class="w" style="--i:4">made to grow.</span>
   </h1>
-  <p>Two flagship machines, cut open and taken apart in 3D. Every number on screen is computed, not typed in.</p>
+  <p>Massini Industries designs and builds conveying and packaging systems in Assisi, Italy. Two flagship lines, explained in 3D.</p>
   <div class="cta">
     <a class="btn" href="#mial">Explore MIAL · Tubular chain conveyor</a>
     <a class="btn ghost" href="#mf">Explore MF Trio Line · Packaging line</a>
