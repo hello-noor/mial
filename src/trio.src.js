@@ -345,10 +345,10 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
 // over two pulleys, and a block that runs up and down it. A grey Z beam, fixed in length, hangs from that block. The grey gripper carriage
 // slides along the Z beam (it does not telescope). Two curved hooks hang under the carriage and take the bag from above.
 const xcar = lab.mesh(GEO.merge([box(0.62, 0.5, 0.44, 0, 0, -GZ, 0.014), box(0.22, 0.2, 0.22, 0, 0, Z_COL - 0.04, 0.01)]), blue, { name: 'Gantry carriage (X, along the line)', pos: [X_PICK, 2.8, 0], explode: [0, 0.9, 0], count: 2 })
-const column = lab.mesh(box(0.26, 3.1, 0.26, 0, 0, Z_COL, 0.012), blue, { name: 'Vertical column (Y)', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.6] })
-const colBelt = lab.mesh(box(0.05, 2.9, 0.03, 0, 0, Z_COL + 0.14, 0.008), dark, { name: 'Drive belt in the column', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.9] })
-const pulleys = lab.mesh(GEO.merge([cylZ(0.07, 0.05, 0, 3.6, Z_COL + 0.14, 24), cylZ(0.07, 0.05, 0, 0.62, Z_COL + 0.14, 24)]), dark, { name: 'Belt pulleys (top and bottom)', pos: [X_PICK, 0, 0], explode: [0, 0.8, 0.9] })
-const yCar = lab.mesh(box(0.34, 0.24, 0.34, 0, 0, 0, 0.02), blue, { name: 'Column block (Y, up and down)', pos: [X_PICK, YC + 0.3, Z_COL], explode: [0, 1.0, 0.8] })
+const COL_TOP = 2.95                                                       // the column hangs from the carriage; its top is fixed, its lower end moves with the arm
+const column = lab.mesh(box(0.26, 1, 0.26, 0, 0, Z_COL, 0.012), blue, { name: 'Vertical column (Y, slides in the carriage)', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.6] })
+const colBelt = lab.mesh(box(0.05, 1, 0.03, 0, 0, Z_COL + 0.14, 0.008), dark, { name: 'Drive belt in the column', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.9] })
+const pulleys = lab.mesh(cylZ(0.07, 0.05, 0, COL_TOP, Z_COL + 0.14, 24), dark, { name: 'Belt pulley (top, in the carriage)', pos: [X_PICK, 0, 0], explode: [0, 0.8, 0.9] })
 const zBeam = lab.mesh(GEO.rbox(0.2, 0.16, Z_END - Z_COL, 0.03, 2), blue, { name: 'Z beam (fixed length)', pos: [X_PICK, YC + 0.3, (Z_COL + Z_END) / 2], explode: [0, 1.2, 0.5] })
 const gcar = lab.mesh(GEO.rbox(0.46, 0.2, 0.4, 0.04, 2), steelBrushed, { name: 'Gripper carriage (Z, slides on the beam)', pos: [X_PICK, YC + 0.3, 0], explode: [0, 1.2, 1.2] })
 const hookG = (sx, sz) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.17, 0.2], [0.2, 0.1], [0.2, 0.0], [0.15, -0.05], [0.07, -0.04]].map(([x, y]) => new THREE.Vector3(sx * x, y, sz * 0.12))), 24, 0.014, 8, false)
@@ -631,8 +631,12 @@ lab.onTick((dt0, lab) => {
   lab.place(carousel, HUB_X, 1.78, 0); carousel.rotation.y = sf * PI / 2 - PI
   // gantry
   const P = sim.pz.pose
-  lab.place(xcar, P.x, 2.8, 0); lab.place(column, P.x, 2.125, 0); lab.place(colBelt, P.x, 2.125, 0); lab.place(pulleys, P.x, 0, 0)
-  lab.place(yCar, P.x, P.y + 0.3, Z_COL); lab.place(zBeam, P.x, P.y + 0.3, (Z_COL + Z_END) / 2)
+  // the column slides down from its fixed top; the Z arm hangs from its lower end, so the arm moves up and down with it
+  const colBot = P.y + 0.3, colLen = COL_TOP - colBot, colMid = (COL_TOP + colBot) / 2
+  lab.place(xcar, P.x, 2.8, 0); lab.place(pulleys, P.x, 0, 0)
+  lab.place(column, P.x, colMid, 0); column.scale.y = colLen
+  lab.place(colBelt, P.x, colMid, 0); colBelt.scale.y = Math.max(0.05, colLen - 0.15)
+  lab.place(zBeam, P.x, colBot, (Z_COL + Z_END) / 2)
   lab.place(gcar, P.x, P.y + 0.3, P.z); lab.place(hooks, P.x, P.y, P.z)
   // powder: grains pour from the hopper, converge through the dosing chamber and the funnel, and fall down the spout into the bag being filled
   {
