@@ -33,13 +33,13 @@ const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2, X_QUEUE = 6.0          // X_QUEU
 const BAG = { L: 0.40, T0: 0.13 }                                         // square pillow bag, 0.40 x 0.40, 0.13 thick at 10 kg
 const PAL = { L: 1.2, W: 0.8, H: 0.144 }
 const PER_ROW = 1, ROWS_PER_LAYER = 6, PER_LAYER = PER_ROW * ROWS_PER_LAYER   // one bag per cycle; 3 x 2 bags per layer
-const CYCLE_S = 3600 / 500                                                // palletizer cycle, s (500 cycles/h)
+let PZ_RATE = 500, CYCLE_S = 3600 / 500                                   // palletizer rate, cycles/h (500 or 800 from the panel) and the cycle, s
 const WRAP_TOTAL_S = 3600 / 35                                            // wrapper cycle, s (35 pallets/h)
 const IN_S = 8, OUT_S = 4, WRAP_S = WRAP_TOTAL_S - IN_S - OUT_S
 const BELT_V = 0.5, TT_RPM = 8
 const BPM_MAX = 20
 const SHIP_TAU = 300                                                       // s, smoothing of the shipped rate
-const PZ_BPM = 3600 / CYCLE_S / 60                                        // the palletizer takes one bag per cycle: 500 cycles/h = 8.3 bags/min
+let PZ_BPM = 3600 / CYCLE_S / 60                                        // the palletizer takes one bag per cycle: 500 cycles/h = 8.3 bags/min
 const YC = 1.75                                                           // travel height of the gripper (underside of the plate)
 const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.3                              // gantry posts: beam behind the line
 const Z_LANE = 0                                                          // roller lane, wrapper and belt share the axis z = 0
@@ -470,7 +470,7 @@ window.__sim = sim                                                       // read
 const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
 const maxLayers = () => Math.floor((PAL_MAX_H - PAL.H) / BAG_KG[kg].t)
 const outRate = () => (sim.beltN > 0 ? cfg().cap : Math.min(sim.rate, cfg().cap))   // line output, bags/min
-const cfg = () => ({ ...BAG_KG[kg], layers: Math.min(LY ?? BAG_KG[kg].layers, maxLayers()) })
+const cfg = () => ({ ...BAG_KG[kg], cap: PZ_BPM, layers: Math.min(LY ?? BAG_KG[kg].layers, maxLayers()) })
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
 function resetLine() {
@@ -604,22 +604,27 @@ sim.hist = []; sim.histAcc = 0
   const sel = document.createElement('div'); sel.className = 'lab-ctl on mat-sel'
   sel.innerHTML = `<div class="row"><span>Bag weight</span><b>5 to 20 kg</b></div><div class="chips" data-k="kg">${[5, 10, 20].map((w) => `<button data-v="${w}">${w} kg</button>`).join('')}</div>
     <div class="row" style="margin-top:0.9em"><span>Pallet height</span><b class="ly-val">6 layers</b></div><div class="chips" data-k="ly">${[3, 6, 9, 12].map((w) => `<button data-v="${w}">${w}</button>`).join('')}</div>
+    <div class="row" style="margin-top:0.9em"><span>Palletizer</span><b class="pz-val">500 cycles/h</b></div><div class="chips" data-k="pz">${[500, 800].map((w) => `<button data-v="${w}">${w} cycles/h</button>`).join('')}</div>
     <div class="row" style="margin-top:0.9em"><span>Simulation speed</span><b>x real time</b></div><div class="chips" data-k="ts">${[1, 3, 6, 12, 24].map((w) => `<button data-v="${w}">${w}×</button>`).join('')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
+  // the palletizer's rate: its cycle and its capacity in bags/min follow
+  const setPalletRate = (r) => { PZ_RATE = r; CYCLE_S = 3600 / r; PZ_BPM = 3600 / CYCLE_S / 60; lab.$('.lab-title i').textContent = `Up to 20 bags/min · ${r} cycles/h` }
   const sync = () => {
     sel.querySelectorAll('button').forEach((b) => {
       const k = b.parentNode.dataset.k, v = Number(b.dataset.v)
-      b.classList.toggle('on', k === 'kg' ? v === kg : k === 'ly' ? v === cfg().layers : v === TS)
+      b.classList.toggle('on', k === 'kg' ? v === kg : k === 'ly' ? v === cfg().layers : k === 'pz' ? v === PZ_RATE : v === TS)
       if (k === 'ly') b.disabled = v > maxLayers()
     })
     sel.querySelector('.ly-val').textContent = `${cfg().layers} layers · ${cfg().layers * PER_LAYER} bags`
+    sel.querySelector('.pz-val').textContent = `${PZ_RATE} cycles/h`
   }
   sel.addEventListener('click', (e) => {
     const b = e.target.closest('button'); if (!b || b.disabled) return
     const v = Number(b.dataset.v), k = b.parentNode.dataset.k
     if (k === 'kg') { if (v !== kg) { kg = v; LY = null; resetLine() } }
     else if (k === 'ly') { if (v !== cfg().layers) { LY = v; resetLine() } }
-    else TS = v
+    else if (k === 'pz') setPalletRate(v)
+    else if (k === 'ts') TS = v
     sync()
   })
   sync()
