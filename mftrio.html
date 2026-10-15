@@ -1566,6 +1566,7 @@ const YC = 1.75                                                           // tra
 const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.15                             // gantry posts
 const BAG_KG = { 5: { t: 0.065, layers: 12, cap: PZ_BPM }, 10: { t: 0.13, layers: 6, cap: PZ_BPM }, 20: { t: 0.26, layers: 3, cap: PZ_BPM } }
 let kg = 10
+let LY = null                                                             // pallet height in layers, null = the default for the bag weight
 const PH = innerWidth <= 760                                              // phone layout: the whole line has to fit the narrow screen
 
 const lab = new Lab({
@@ -1610,6 +1611,7 @@ const lab = new Lab({
   .kpis b { display:block; margin-top:0.2em; font:600 clamp(15px,1.4vw,27px)/1.1 'JetBrains Mono',monospace; letter-spacing:-0.02em; color:#1d1b18; white-space:nowrap }
   .kpis b i { font:500 0.55em 'Inter',sans-serif; color:#8a857a; margin-left:0.25em; letter-spacing:0 }
   .kpis.bad b { color:#c4511a }
+  @media (min-width:761px) { .lab-modes { right:30vw; left:4.2vw } }
   @media (max-height:920px) { .gate-hint { display:none } .lab-big { font-size:clamp(48px,5.6vw,100px) !important } .lab-title { font-size:clamp(34px,3.6vw,64px) !important } .lab-metric { margin-top:1.6vh !important } .lab-ctl { margin-top:1.8vh !important } .kpis { margin-top:1.4vh; padding-top:1vh } }
   @media (max-height:760px) { .mial-spec p { display:none } .lab-title i { display:none } }
   .mial-all { margin-top:1.1em; padding:0.5em 0.95em; border-radius:999px; border:1px solid rgba(31,78,156,0.55); background:transparent; color:#1f4e9c; font:600 clamp(11px,0.82vw,14px) 'Inter',sans-serif; cursor:pointer; pointer-events:auto }
@@ -1926,7 +1928,9 @@ const sim = {
   out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], pickN: 0, cyc: 0, wrapBusy: 0,
 }
 window.__sim = sim                                                       // read-only handle for tests and screenshots
-const cfg = () => BAG_KG[kg]
+const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
+const maxLayers = () => Math.floor((PAL_MAX_H - PAL.H) / BAG_KG[kg].t)
+const cfg = () => ({ ...BAG_KG[kg], layers: Math.min(LY ?? BAG_KG[kg].layers, maxLayers()) })
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
 function resetLine() {
@@ -2034,13 +2038,23 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
 {
   const sel = document.createElement('div'); sel.className = 'lab-ctl on mat-sel'
   sel.innerHTML = `<div class="row"><span>Bag weight</span><b>5 to 20 kg</b></div><div class="chips" data-k="kg">${[5, 10, 20].map((w) => `<button data-v="${w}">${w} kg</button>`).join('')}</div>
+    <div class="row" style="margin-top:0.9em"><span>Pallet height</span><b class="ly-val">6 layers</b></div><div class="chips" data-k="ly">${[3, 6, 9, 12].map((w) => `<button data-v="${w}">${w}</button>`).join('')}</div>
     <div class="row" style="margin-top:0.9em"><span>Simulation speed</span><b>x real time</b></div><div class="chips" data-k="ts">${[1, 3, 6, 12].map((w) => `<button data-v="${w}">${w}×</button>`).join('')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
-  const sync = () => sel.querySelectorAll('button').forEach((b) => b.classList.toggle('on', Number(b.dataset.v) === (b.parentNode.dataset.k === 'kg' ? kg : TS)))
+  const sync = () => {
+    sel.querySelectorAll('button').forEach((b) => {
+      const k = b.parentNode.dataset.k, v = Number(b.dataset.v)
+      b.classList.toggle('on', k === 'kg' ? v === kg : k === 'ly' ? v === cfg().layers : v === TS)
+      if (k === 'ly') b.disabled = v > maxLayers()
+    })
+    sel.querySelector('.ly-val').textContent = `${cfg().layers} layers · ${cfg().layers * PER_LAYER} bags`
+  }
   sel.addEventListener('click', (e) => {
-    const b = e.target.closest('button'); if (!b) return
-    const v = Number(b.dataset.v)
-    if (b.parentNode.dataset.k === 'kg') { if (v !== kg) { kg = v; resetLine() } } else TS = v
+    const b = e.target.closest('button'); if (!b || b.disabled) return
+    const v = Number(b.dataset.v), k = b.parentNode.dataset.k
+    if (k === 'kg') { if (v !== kg) { kg = v; LY = null; resetLine() } }
+    else if (k === 'ly') { if (v !== cfg().layers) { LY = v; resetLine() } }
+    else TS = v
     sync()
   })
   sync()
