@@ -240,7 +240,7 @@ const plate = (text, sub, w, h, x, y, z, ry = 0, name = 'Name plate') => {
 }
 
 // ------------------------------------------------------------------ MF 54 vertical packaging machine
-let powHop, powFun, powBag, fillSack                                         // powder volumes and the sack at the fill station, created with the MF 54 below
+let powHop, powFun, powBag                                                 // powder volumes, created with the MF 54 below
 const XJ = 1.25, HUB_X = 1.625, CR = 0.375                                   // XJ: fill station under the funnel; the carousel hub sits half way to the drop station X_DROP above the belt
 const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
 {
@@ -275,9 +275,7 @@ const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
   const powM = MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.9, cap: [0.9, 0.9, 0.9] })
   powHop = lab.mesh(new THREE.CylinderGeometry(0.12 * 0.92, 0.42 * 0.92, 0.6, 4, 1).rotateY(PI / 4).scale(1, 1, 0.66).translate(XJ, 2.62, 0), powM, { name: 'Powder in hopper', explode: [0, 1.0, 0], count: 1 })
   powFun = lab.mesh(new THREE.CylinderGeometry(0.19, 0.055, 0.26, 36).translate(XJ, 1.88, 0), powM, { name: 'Powder in funnel', explode: [0, 0.6, 0], count: 1 })
-  powBag = lab.mesh(new THREE.BoxGeometry(1, 1, 1), powM, { name: 'Powder in bag', explode: [0, 0, 0], count: 1 })
-  const sackM = MAT.plastic({ color: [0.93, 0.95, 0.98], roughness: 0.2 })
-  fillSack = lab.mesh(GEO.rbox(0.36, 1, 0.40, 0.055, 2), sackM, { name: 'Bag being filled', explode: [0, 0, 0], count: 1 })
+  powBag = lab.mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0), powM, { name: 'Powder in bag', explode: [0, 0, 0], count: 1 })
   lab.mesh(cylY(0.05, 0.2, HUB_X, 1.86, 0, 16), steelM, { name: 'Carousel post', explode: [0, 0.4, 0], count: 1 })
 }
 // the filling carousel: a hub under the platform with four arms, each carrying a hanging spout. It indexes 90 degrees at a time:
@@ -634,11 +632,8 @@ lab.onTick((dt0, lab) => {
     dust.instanceMatrix.needsUpdate = true
   }
   const powShow = lab.target.cut > 0.5 || lab.target.xray > 0.5                 // powder only in the cut away and X-ray views
-  // the sack at the fill station: its height grows with the fill; the powder is a solid inside it
-  const hh = 0.12 + 0.36 * sim.form.f
-  fillSack.visible = !!sim.form.bag; powBag.visible = powShow && !!sim.form.bag
-  if (sim.form.bag) { fillSack.scale.set(1, hh, 1); lab.place(fillSack, XJ, 1.32 - hh / 2, 0); powBag.scale.set(0.3, hh * 0.86, 0.32); lab.place(powBag, XJ, 1.32 - hh / 2, 0) }
-  dust.visible = powShow; powHop.visible = powFun.visible = powShow
+  dust.visible = powShow; powHop.visible = powFun.visible = powShow; powBag.visible = powShow && !!sim.form.bag
+  if (sim.form.bag) { const f = sim.form.f, h = Math.max(0.02, 0.34 * f); powBag.scale.set(0.28, h, 0.3); lab.place(powBag, XJ, 1.32 - 0.36 * f / 2 + 0.36 * f / 2 - h, 0) }
   // bag instances
   const hold = P.y
   let n = 0
@@ -646,7 +641,7 @@ lab.onTick((dt0, lab) => {
     if (b.st === 'free') { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0); dummy.quaternion.copy(Q_ID); dummy.updateMatrix(); bagI.setMatrixAt(b.i, dummy.matrix); continue }
     n++
     let x, y, z, yaw = 0, q = 0, sx = 1
-    if (b.st === 'arm') { const al = PI - (sf - b.arm) * PI / 2; x = HUB_X + CR * Math.cos(al); z = CR * Math.sin(al); sx = Math.max(0.2, b.f); if (sim.car.phase === 'fill' && b.arm === sim.car.s % 4) sx = 0; y = 1.32 - 0.36 * sx / 2; q = 1 }   // hangs from its spout, grows as it fills
+    if (b.st === 'arm') { const al = PI - (sf - b.arm) * PI / 2; x = HUB_X + CR * Math.cos(al); z = CR * Math.sin(al); sx = Math.max(0.2, b.f); y = 1.32 - 0.36 * sx / 2; q = 1 }   // hangs from its spout, grows as it fills
     else if (b.st === 'fall') { x = X_DROP; z = 0; y = b.y; q = b.q }
     else if (b.st === 'belt') { x = b.x; y = b.y; z = 0 }
     else if (b.st === 'grip') { x = P.x + b.dx; y = hold - t / 2; z = P.z }
