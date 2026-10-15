@@ -68,7 +68,7 @@
   .facts { display:flex; justify-content:center; gap:clamp(18px,4vw,64px); flex-wrap:wrap; margin:40px auto 0 }
   .facts div { min-width:120px } .facts b { display:block; font:600 clamp(26px,3vw,40px)/1 'Inter',sans-serif; letter-spacing:-0.03em }
   .facts small { display:block; margin-top:8px; font:400 14px/1.3 'Inter',sans-serif; color:var(--dim) }
-  .shot { position:relative; max-width:760px; margin:clamp(40px,7vh,72px) auto 0; border-radius:28px; overflow:hidden; background:var(--card); box-shadow:0 40px 120px rgba(0,0,0,0.5); transform:perspective(1400px) rotateX(3deg); transition:transform .8s cubic-bezier(.2,.7,.2,1) }
+  .shot { display:block; position:relative; width:min(100%,640px); margin:clamp(40px,6vh,60px) auto 0; border-radius:28px; overflow:hidden; background:var(--card); box-shadow:0 40px 120px rgba(0,0,0,0.5); transform:perspective(1400px) rotateX(3deg); transition:transform .8s cubic-bezier(.2,.7,.2,1) }
   .shot img, .shot video { display:block; width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; transition:transform 1.2s cubic-bezier(.2,.7,.2,1) }
   .shot:hover { transform:perspective(1400px) rotateX(0) }
   .shot:hover img, .shot:hover video { transform:scale(1.03) }
@@ -76,7 +76,7 @@
   .links a { color:var(--blue) } .links a:hover { text-decoration:underline }
 
   /* the key numbers, in a bento box */
-  .bento { max-width:1180px; margin:0 auto; padding:clamp(60px,10vh,110px) 20px 0; display:grid; grid-template-columns:repeat(4,1fr); gap:14px }
+  .bento { max-width:1000px; margin:clamp(34px,5vh,56px) auto 0; padding:0; display:grid; grid-template-columns:repeat(4,1fr); gap:14px }
   .tile { position:relative; overflow:hidden; border-radius:26px; padding:clamp(20px,2.2vw,30px); background:var(--card); border:1px solid var(--line); min-height:170px; display:flex; flex-direction:column; justify-content:space-between; transition:transform .5s cubic-bezier(.2,.7,.2,1) }
   .tile:hover { transform:translateY(-3px) }
   .tile.big { grid-column:span 2; grid-row:span 2; min-height:0; background:radial-gradient(90% 80% at 0% 0%, rgba(255,122,46,0.22), transparent 60%), var(--card) }
@@ -126,9 +126,9 @@
 
 <header class="hero">
   <div class="eyebrow">Massini Industries · 3D simulators</div>
-  <h1 class="claim" aria-label="Massini makes great machines.">
-    <span class="w" style="--i:0">Massini</span> <span class="w" style="--i:1">makes</span><br>
-    <span class="w grad" style="--i:2">great</span> <span class="w grad" style="--i:3">machines.</span>
+  <h1 class="claim" aria-label="Massini: built to flow, made to grow.">
+    <span class="w" style="--i:0">Massini:</span> <span class="w" style="--i:1">built</span> <span class="w" style="--i:2">to</span> <span class="w grad" style="--i:3">flow,</span><br>
+    <span class="w grad" style="--i:4">made to grow.</span>
   </h1>
   <p>Two flagship machines, cut open and taken apart in 3D. Every number on screen is computed, not typed in.</p>
   <div class="cta">
@@ -138,20 +138,17 @@
   <div class="scroll-cue"></div>
 </header>
 
-<section class="bento" aria-label="Key numbers">
-  <div class="tile big mial rv"><small>MIAL · Tubular chain conveyor</small><b>60<i>m³/h</i></b><p>Up to, CLEAN200, ø 204 mm drive unit</p></div>
-  <div class="tile mial rv"><b>&gt;50<i>%</i></b><p>less energy than pneumatic or screw conveying</p></div>
-  <div class="tile mial rv"><b>&lt;0.2<i>%</i></b><p>pet food breakage</p></div>
-  <div class="tile wide mf rv"><small>MF TECNO · Packaging line</small><b>20<i>bags/min</i></b><p>MF 54 vertical bagging, 5 to 20 kg</p></div>
-  <div class="tile mf rv"><b>500<i>/800</i></b><p>palletizer cycles per hour</p></div>
-  <div class="tile mf rv"><b>35<i>pallets/h</i></b><p>MF Wrap 35 stretch wrapper</p></div>
-  <div class="tile wide mial rv"><b>ø 204<i>mm</i></b><p>MIAL drive unit, AISI 304 stainless, galvanized or stainless tube</p></div>
-</section>
 <section class="stage" id="mial">
   <div class="kicker rv">Tubular chain conveyor</div>
   <h2 class="rv">MIAL CLEAN200.</h2>
   <p class="sub rv">A closed stainless tube with a chain and plastic discs that lifts bulk product from a hopper to a silo. Feed, pet food and more.</p>
-  <a class="shot rv" href="mial.html" aria-label="Open the MIAL simulator">
+  <div class="bento">
+  <div class="tile big mial rv"><small>CLEAN200 · drive unit ø 204 mm</small><b>60<i>m³/h</i></b><p>Up to, from hopper to silo</p></div>
+  <div class="tile mial rv"><b>&gt;50<i>%</i></b><p>less energy than pneumatic or screw</p></div>
+  <div class="tile mial rv"><b>&lt;0.2<i>%</i></b><p>pet food breakage</p></div>
+  <div class="tile wide mial rv"><b>AISI 304<i>stainless</i></b><p>closed tube, plastic discs bolted to the chain, one gearmotor</p></div>
+  </div>
+    <a class="shot rv" href="mial.html" aria-label="Open the MIAL simulator">
     <video autoplay muted loop playsinline preload="metadata" poster="data:image/jpeg;base64,__MIAL_IMG__" aria-label="The MIAL CLEAN200 cut away, exploded and X-ray, looping"><source src="video/home-mial.mp4" type="video/mp4"></video>
   </a>
   <div class="links rv"><a href="mial.html">Open the simulator →</a><a href="https://www.mialtecno.com/en/tubular-chain-conveyor/" target="_blank" rel="noopener">MIAL product page ↗</a></div>
@@ -167,7 +164,13 @@
   <div class="kicker rv">Packaging line</div>
   <h2 class="rv">MF Trio Line.</h2>
   <p class="sub rv">A vertical bagging machine, a palletizer and a pallet wrapper, in one integrated line. Bags, pallets and wrap, ready to ship.</p>
-  <a class="shot rv" href="mftrio.html" aria-label="Open the MF Trio Line simulator">
+  <div class="bento">
+  <div class="tile big mf rv"><small>MF 54 · vertical bagging</small><b>20<i>bags/min</i></b><p>Up to, 5 to 20 kg bags</p></div>
+  <div class="tile mf rv"><b>500<i>/800</i></b><p>palletizer cycles per hour</p></div>
+  <div class="tile mf rv"><b>35<i>pallets/h</i></b><p>MF Wrap 35 stretch wrapper</p></div>
+  <div class="tile wide mf rv"><b>1 supply<i>3 machines</i></b><p>bagging, palletizing and wrapping in one integrated line</p></div>
+  </div>
+    <a class="shot rv" href="mftrio.html" aria-label="Open the MF Trio Line simulator">
     <video autoplay muted loop playsinline preload="metadata" poster="data:image/jpeg;base64,__MF_IMG__" aria-label="The MF Trio Line exploded, X-ray and cut away, looping"><source src="video/home-trio.mp4" type="video/mp4"></video>
   </a>
   <div class="links rv"><a href="mftrio.html">Open the simulator →</a><a href="https://www.mftecno.com/" target="_blank" rel="noopener">MF TECNO ↗</a></div>
