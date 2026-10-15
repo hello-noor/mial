@@ -1,7 +1,7 @@
 {
   "name": "mial-tools",
   "version": "1.0.0",
-  "description": "Screenshot and film recording scripts (from the Machine skill, MIT) used to render the simulator",
+  "description": "Screenshot and film recording scripts (MIT) used to render the simulator",
   "type": "module",
   "license": "MIT",
   "scripts": {
