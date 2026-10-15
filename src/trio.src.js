@@ -155,7 +155,7 @@ const lab = new Lab({
     .mial-btns { margin-top:10px; gap:6px }
     .mial-all { margin-top:0; padding:0.42em 0.8em; font-size:11px }
     .mial-all kbd { display:none }
-    .lab-side { top:auto; bottom:150px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:60vh; overflow:auto }
+    .lab-side { top:auto; bottom:150px; touch-action:pan-y; overscroll-behavior:contain; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:60vh; overflow:auto }
     .lab-title { font-size:24px !important }
     .lab-title i { display:none }
     .lab-metric { margin-top:8px !important }
@@ -270,6 +270,11 @@ const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
   lab.mesh(new THREE.CylinderGeometry(0.5, 0.2, 0.6, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.8).rotateZ(0.45).translate(XJ - 0.13, 3.34, 0), hopM, { name: 'Open hopper', explode: [-0.3, 1.4, 0], count: 2 })
   // funnel under the dosing unit, through the platform, ending just above the spout at the fill station
   lab.mesh(new THREE.CylinderGeometry(0.2, 0.06, 0.26, 36, 1, true).translate(XJ, 1.88, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
+  // the powder inside the hopper, funnel and bag: only shown in cut away and X-ray
+  const powM = MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.9, cap: [0.9, 0.9, 0.9] })
+  powHop = lab.mesh(new THREE.CylinderGeometry(0.12 * 0.92, 0.42 * 0.92, 0.6, 4, 1).rotateY(PI / 4).scale(1, 1, 0.66).translate(XJ, 2.62, 0), powM, { name: 'Powder in hopper', explode: [0, 1.0, 0], count: 1 })
+  powFun = lab.mesh(new THREE.CylinderGeometry(0.19, 0.055, 0.26, 36).translate(XJ, 1.88, 0), powM, { name: 'Powder in funnel', explode: [0, 0.6, 0], count: 1 })
+  powBag = lab.mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0), powM, { name: 'Powder in bag', explode: [0, 0, 0], count: 1 })
   lab.mesh(cylY(0.05, 0.2, HUB_X, 1.86, 0, 16), steelM, { name: 'Carousel post', explode: [0, 0.4, 0], count: 1 })
 }
 // the filling carousel: a hub under the platform with four arms, each carrying a hanging spout. It indexes 90 degrees at a time:
@@ -378,8 +383,9 @@ const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
 // the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
+let powHop, powFun, powBag
 const DUST_N = 220
-const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.011, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
+const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.016, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
 dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
 lab.add(dust, { name: 'Powder', explode: [0, 0, 0], count: 2 })
 const dustP = Array.from({ length: DUST_N }, () => ({ live: false, x: 0, y: 0, z: 0 }))
@@ -513,6 +519,7 @@ function stepSim(dt) {
   // ---- measured rate: smoothed, and zero while the line is backed up
   const running = !F.stalled && rateSet > 0.05 && F.bag
   sim.rate = approach(sim.rate, running ? rateSet : 0, 2.5, dt)
+  sim.shown = (sim.shown ?? 0) + (sim.rate - (sim.shown ?? 0)) * (1 - Math.exp(-dt / 2.5))   // averaged, so the readout does not jump
   sim.stalledS = F.stalled ? sim.stalledS + dt : 0
 }
 
@@ -564,7 +571,7 @@ lab.how(`Three machines in sequence. The <b>MF 54</b> carries an empty bag on ea
   'wrapper busy % = pallets/h / 35',
 ])
 const LB = (t, at, value, side = 'right') => lab.label(lab.machine, t, { at, value, side })
-LB('MF 54', [XJ + 0.3, 2.1, 0], () => `${fmt(sim.rate, 1)} bags/min`)
+LB('MF 54', [XJ + 0.3, 2.1, 0], () => `${fmt(sim.shown ?? 0, 1)} bags/min`)
 LB('Infeed belt', [2.2, 0.8, 0.3], () => `${sim.bags.filter((b) => b.st === 'belt').length} bags waiting`)
 LB('Smart Palletizer', [4.1, 2.9, -GZ], () => `${fmt(outRate() * 60 / PER_ROW)} cycles/h`)
 LB('Pallet', [X_PAL, 1.25, 0.5], () => { const p = stationPallet(); return p ? `layer ${Math.min(cfg().layers, Math.floor(p.row / ROWS_PER_LAYER) + 1)} / ${cfg().layers}` : '--' })
@@ -621,7 +628,9 @@ lab.onTick((dt0, lab) => {
     })
     dust.instanceMatrix.needsUpdate = true
   }
-  dust.visible = lab.target.cut > 0.5 || lab.target.xray > 0.5                 // powder only in the cut away and X-ray views
+  const powShow = lab.target.cut > 0.5 || lab.target.xray > 0.5                 // powder only in the cut away and X-ray views
+  dust.visible = powShow; powHop.visible = powFun.visible = powShow; powBag.visible = powShow && !!sim.form.bag
+  if (sim.form.bag) { const f = sim.form.f, h = Math.max(0.02, 0.34 * f); powBag.scale.set(0.28, h, 0.3); lab.place(powBag, XJ, 1.32 - 0.36 * f / 2 + 0.36 * f / 2 - h, 0) }
   // bag instances
   const hold = P.y
   let n = 0
@@ -681,8 +690,8 @@ lab.onTick((dt0, lab) => {
   kpiV[0].textContent = fmt(bph); kpiV[1].textContent = fmt(tph, 2); kpiV[2].textContent = fmt(pph, 1)
   kpiV[3].textContent = fmt(bph / PER_ROW); kpiV[4].textContent = fmt(pph / 35 * 100); kpiV[5].textContent = sp ? `${Math.min(c.layers, Math.floor(sp.row / ROWS_PER_LAYER) + 1)}/${c.layers}` : '--'
   kpiEl.classList.toggle('bad', stop)
-  drawDisplay(`${fmt(sim.rate, 1)} /min`, stop ? 'LINE BACKED UP' : sim.form.stalled ? 'BELT FULL' : 'RUN', stop && sim.rate < 0.3)
-  lab.setHero(sim.rate, { state: st, sub, bad: stop })
+  drawDisplay(`${fmt(sim.shown ?? 0, 1)} /min`, stop ? 'LINE BACKED UP' : sim.form.stalled ? 'BELT FULL' : 'RUN', stop && sim.rate < 0.3)
+  lab.setHero(sim.shown ?? 0, { state: st, sub, bad: stop })
 })
 lab.breakIt({
   label: 'Film runs out',
