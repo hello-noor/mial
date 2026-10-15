@@ -27,7 +27,7 @@ const PI = Math.PI
 */
 
 // ------------------------------------------------------------------ constants
-const BELT_Y = 0.75, X_DROP = 1.25, X_STOP = 3.7, X_PICK = 3.5             // belt top, bag drop, belt end, pick position (one bag)
+const BELT_Y = 0.75, X_DROP = 2.0, X_STOP = 3.7, X_PICK = 3.5             // belt top, bag drop, belt end, pick position (one bag)
 const ROLL_Y = 0.2                                                       // top of the rollers and of the turntable
 const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2
 const BAG = { L: 0.40, T0: 0.13 }                                         // square pillow bag, 0.40 x 0.40, 0.13 thick at 10 kg
@@ -234,15 +234,17 @@ const plate = (text, sub, w, h, x, y, z, ry = 0, name = 'Name plate') => {
 }
 
 // ------------------------------------------------------------------ MF 54 vertical packaging machine
-const XJ = X_DROP                                                           // tube axis
+const XJ = 1.25, HUB_X = 1.625, CR = 0.375                                   // XJ: fill station under the funnel; the carousel hub sits half way to the drop station X_DROP above the belt
+const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
 {
+  // electrical cabinet at the front, stainless forming column behind it
   const cab = [
-    box(0.85, 1.95, 0.9, 0.58, 0.975, 0, 0.02),
-    box(0.62, 0.62, 0.8, XJ - 0.02, 1.66, 0, 0.02),                         // head with the film unit
+    box(0.85, 1.95, 0.5, 0.58, 0.975, 0.2, 0.02),
     box(0.9, 0.06, 0.96, 0.58, 0.03, 0, 0.01),
   ]
   for (const x of [0.4, 0.78]) { cab.push(box(0.34, 0.78, 0.012, x, 0.62, 0.456, 0.003)); cab.push(cylX(0.011, 0.07, x + 0.12, 0.62, 0.47, 12)) }
-  lab.mesh(GEO.merge(cab), white, { name: 'MF 54 cabinet', explode: [0, 0, -1.0], xray: 'shell', count: 3 })
+  lab.mesh(GEO.merge(cab), white, { name: 'MF 54 electrical cabinet', explode: [0, 0, -1.0], xray: 'shell', count: 3 })
+  lab.mesh(box(0.85, 1.95, 0.5, 0.58, 0.975, -0.3, 0.02), steelBrushed, { name: 'Forming column', explode: [0, 0, -1.4], xray: 'shell', count: 3 })
   lab.mesh(GEO.merge([box(0.3, 0.2, 0.014, 0.58, 1.42, 0.463, 0.005)]), dark, { name: 'Touch screen', explode: [0, 0, 1.2] })
   plate('MF 54', 'VERTICAL BAGGING MACHINE', 0.5, 0.125, 0.58, 1.78, 0.461, 0, 'MF 54 plate')
   // platform, rails, ladder
@@ -255,32 +257,37 @@ const XJ = X_DROP                                                           // t
   const ld = [box(0.04, 1.95, 0.04, -0.05, 0.975, -0.2, 0.008), box(0.04, 1.95, 0.04, -0.05, 0.975, 0.2, 0.008)]
   for (let y = 0.2; y < 1.95; y += 0.25) ld.push(box(0.03, 0.03, 0.4, -0.05, y, 0, 0.006))
   lab.mesh(GEO.merge(ld), steelM, { name: 'Ladder', explode: [-0.8, 0, 0.5], count: 9 })
-  // hopper, product inlet
-  // square-section hopper: a flat-topped inlet box on a square funnel that narrows into the head
-  const hopG = GEO.merge([box(0.72, 0.3, 0.5, 0, 2.85, 0, 0.03), new THREE.CylinderGeometry(0.12, 0.42, 0.42, 4, 1).rotateY(PI / 4).translate(0, 2.49, 0)]).translate(XJ, 0, 0)
-  lab.mesh(hopG, steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
-  lab.mesh(GEO.pipe([[XJ, 3.0, 0], [XJ, 3.45, 0], [XJ - 0.3, 3.62, 0], [0.55, 3.62, 0]], 0.085, { seg: 40, radial: 14, tension: 0.2 }), steelM, { name: 'Product inlet', explode: [0, 1.6, 0] })
-  // forming collar and tube
-  lab.mesh(GEO.lathe([[0, 2.3], [0.28, 2.3], [0.28, 2.18], [0.105, 1.99], [0.105, 1.38], [0, 1.38]], 48).translate(XJ, 0, 0), chrome, { name: 'Forming tube', explode: [0, 0.4, 0.9], xray: 'shell' })
-  // four filling spouts hang out of the collar; the empty bag is wrapped around them
-  const spouts = []; for (const dx of [-0.09, 0.09]) for (const dz of [-0.09, 0.09]) spouts.push(cylY(0.03, 0.9, XJ + dx, 1.57, dz, 14))
-  lab.mesh(GEO.merge(spouts), chrome, { name: 'Filling spouts', explode: [0, 0.5, 0], count: 4 })
-  // film reel and web
-  lab.mesh(GEO.merge([cylZ(0.26, 0.3, 0.62, 2.62, -0.5, 40), cylZ(0.07, 0.36, 0.62, 2.62, -0.5, 18), box(0.05, 0.9, 0.05, 0.62, 2.45, -0.62, 0.008)]), MAT.plastic({ color: [0.9, 0.92, 0.95], roughness: 0.3, cap: [0.9, 0.92, 0.95] }), { name: 'Film reel', explode: [0, 0.4, -1.1], count: 3 })
-  lab.mesh(ribbon([0.78, 2.5, -0.5], [XJ - 0.05, 2.27, -0.2], 0.3), MAT.plastic({ color: [0.95, 0.96, 0.98], roughness: 0.2, noCap: true }), { name: 'Film web', explode: [0, 0.4, -0.6] })
+  // dosing unit on the platform: two stainless boxes, a blue gear motor and logos
+  lab.mesh(GEO.merge([box(0.62, 0.5, 0.52, XJ, 2.25, 0, 0.02), box(0.62, 0.55, 0.52, XJ, 2.78, 0, 0.02)]), steelBrushed, { name: 'Dosing unit', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
+  lab.mesh(GEO.merge([cylX(0.085, 0.22, XJ + 0.37, 2.8, 0.12, 24), cylZ(0.1, 0.012, XJ - 0.14, 2.82, 0.266, 28), cylZ(0.07, 0.012, XJ - 0.14, 2.25, 0.266, 28)]), blue, { name: 'Gear motor and logos', explode: [0.4, 1.0, 0.6], count: 3 })
+  // open hopper on top, tilted outward: a wide rectangular mouth sloping down into the dosing unit
+  lab.mesh(new THREE.CylinderGeometry(0.42, 0.2, 0.6, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.8).rotateZ(-0.35).translate(XJ + 0.16, 3.38, 0), hopM, { name: 'Open hopper', explode: [0.3, 1.4, 0], count: 2 })
+  // funnel under the dosing unit, through the platform, ending just above the spout at the fill station
+  lab.mesh(new THREE.CylinderGeometry(0.2, 0.06, 0.26, 36, 1, true).translate(XJ, 1.88, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
+  lab.mesh(cylY(0.05, 0.2, HUB_X, 1.86, 0, 16), steelM, { name: 'Carousel post', explode: [0, 0.4, 0], count: 1 })
 }
-// sealing jaws, two blocks closing across the tube bottom
-const jawG = GEO.rbox(0.46, 0.16, 0.13, 0.012, 3)
-const jawA = lab.mesh(jawG, chrome, { name: 'Sealing jaws', pos: [XJ, 1.28, 0.2], explode: [0, 0, 1.0], count: 2 })
-const jawB = lab.mesh(jawG.clone(), chrome, { name: 'Sealing jaw (rear)', pos: [XJ, 1.28, -0.2], explode: [0, 0, -1.0], count: 1 })
+// the filling carousel: a hub under the platform with four arms, each carrying a hanging spout. It indexes 90 degrees at a time:
+// fill station under the funnel, side, drop station above the belt, side
+const carousel = new THREE.Group()
+{
+  const g = [cylY(0.1, 0.05, 0, 0, 0, 32)]
+  for (let i = 0; i < 4; i++) {
+    const a = -i * PI / 2
+    g.push(new THREE.BoxGeometry(CR, 0.05, 0.07).translate(CR / 2, 0, 0).rotateY(a))
+    g.push(cylY(0.05, 0.46, CR, -0.23, 0, 18).rotateY(a))
+    g.push(cylY(0.065, 0.04, CR, -0.46, 0, 18).rotateY(a))
+  }
+  carousel.add(new THREE.Mesh(GEO.merge(g), chrome))
+}
+lab.add(carousel, { name: 'Filling carousel (4 spouts)', explode: [0, 0.8, 0], count: 13 })
 
 // ------------------------------------------------------------------ infeed belt
 const beltT = (() => { const c = document.createElement('canvas'); c.width = 64; c.height = 16; const g = c.getContext('2d'); g.fillStyle = '#1b1c1e'; g.fillRect(0, 0, 64, 16); g.fillStyle = '#2c2e31'; g.fillRect(0, 0, 4, 16); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(14, 1); t.colorSpace = THREE.SRGBColorSpace; return t })()
 {
-  const x0 = 0.95, x1 = X_STOP + 0.05, len = x1 - x0, cx = (x0 + x1) / 2
+  const x0 = 1.7, x1 = X_STOP + 0.05, len = x1 - x0, cx = (x0 + x1) / 2
   const fr = [box(len, 0.1, 0.04, cx, 0.62, 0.3, 0.008), box(len, 0.1, 0.04, cx, 0.62, -0.3, 0.008), box(len, 0.1, 0.02, cx, 0.785, 0.31, 0.004), box(len, 0.1, 0.02, cx, 0.785, -0.31, 0.004), box(0.02, 0.12, 0.5, X_STOP + 0.04, 0.81, 0, 0.004)]
-  for (const x of [1.2, 2.3, 3.45]) for (const sz of [-1, 1]) fr.push(box(0.05, 0.6, 0.05, x, 0.3, sz * 0.3, 0.008))
-  for (const x of [1.2, 2.3, 3.45]) fr.push(box(0.04, 0.04, 0.6, x, 0.12, 0, 0.006))
+  for (const x of [1.9, 2.7, 3.45]) for (const sz of [-1, 1]) fr.push(box(0.05, 0.6, 0.05, x, 0.3, sz * 0.3, 0.008))
+  for (const x of [1.9, 2.7, 3.45]) fr.push(box(0.04, 0.04, 0.6, x, 0.12, 0, 0.006))
   fr.push(cylZ(0.045, 0.56, x0, 0.69, 0, 20), cylZ(0.045, 0.56, x1, 0.69, 0, 20))
   lab.mesh(GEO.merge(fr), frameM, { name: 'Infeed conveyor frame', explode: [0, -0.2, -1.3], count: 16, xray: 'shell' })
   const bm = MAT.rubber({ map: beltT, roughness: 0.7, finish: null })
@@ -364,8 +371,6 @@ const bagM = MAT.plastic({ color: [1, 1, 1], map: bagTex, roughness: 0.3, clearc
 const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
-const sack = new THREE.Mesh(GEO.rbox(0.36, 1, 0.40, 0.055, 2), bagM)                     // the bag being formed and filled, unit height, scaled each frame
-lab.add(sack, { name: 'Bag being filled', explode: [0, 1.2, 1.8], count: 1 })
 const palGeo = (() => {
   const p = []
   for (const x of [-0.55, 0, 0.55]) { p.push(box(0.145, 0.022, 0.8, x, 0.011, 0, 0.003)); for (const z of [-0.35, 0, 0.35]) p.push(box(0.1, 0.1, 0.1, x, 0.072, z, 0.004)) }
@@ -392,17 +397,18 @@ let TS = 3                                                              // simul
 const sim = {
   bags: Array.from({ length: NB }, (_, i) => ({ i, st: 'free', x: 0, y: -9, z: 0, f: 0, q: 0, t: 0, pal: null, lx: 0, ly: 0, lz: 0, dx: 0 })),
   pallets: [], palId: 0,
-  form: { f: 0, bag: null, stalled: false }, bagger: { rate: 0, set: 12 },
+  form: { f: 0, bag: null, stalled: false }, car: { s: 0, rot: 0, phase: 'fill' }, bagger: { rate: 0, set: 12 },
   pz: { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0, did: 0 },
   wr: { stopped: false, ang: 0, carY: 0.7, wrap: 0 },
   out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], pickN: 0, cyc: 0, wrapBusy: 0,
 }
+window.__sim = sim                                                       // read-only handle for tests and screenshots
 const cfg = () => BAG_KG[kg]
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
 function resetLine() {
   for (const b of sim.bags) { b.st = 'free'; b.pal = null; b.y = -9 }
-  sim.pallets = []; sim.form = { f: 0, bag: null, stalled: false }
+  sim.pallets = []; sim.form = { f: 0, bag: null, stalled: false }; sim.car = { s: 0, rot: 0, phase: 'fill' }
   Object.assign(sim.pz, { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0 })
   Object.assign(sim.wr, { ang: 0, carY: 0.7, wrap: 0 })
   sim.drops = []; sim.stalledS = 0
@@ -434,19 +440,28 @@ function stepSim(dt) {
   const belt = sim.bags.filter((b) => b.st === 'belt').sort((a, b) => b.x - a.x)
   belt.forEach((b, i) => { const lim = i === 0 ? X_STOP - 0.2 : belt[i - 1].x - BAG.L; b.x = Math.min(b.x + BELT_V * dt, lim); b.y = BELT_Y + t / 2 })
   const falling = sim.bags.filter((b) => b.st === 'fall')
-  for (const b of falling) { b.t += dt; const k = clamp(b.t / 0.3); b.y = lerp(1.0, BELT_Y + t / 2, k * k); b.q = 1 - k; if (k >= 1) { b.st = 'belt'; b.x = X_DROP; b.y = BELT_Y + t / 2; b.q = 0 } }
+  for (const b of falling) { b.t += dt; const k = clamp(b.t / 0.3); b.y = lerp(1.14, BELT_Y + t / 2, k * k); b.q = 1 - k; if (k >= 1) { b.st = 'belt'; b.x = X_DROP; b.y = BELT_Y + t / 2; b.q = 0 } }
   const entryClear = !belt.some((b) => b.x < X_DROP + BAG.L + 0.02) && falling.length === 0
 
-  // ---- MF 54: forms a bag, seals, drops it
-  const bg = sim.bagger, F = sim.form
+  // ---- MF 54: the carousel arms index by 90 degrees. The bag on the arm under the funnel fills; the bag on the arm above the belt drops
+  const bg = sim.bagger, F = sim.form, car = sim.car
   const rateSet = Math.min(bg.set, c.cap)
-  if (!F.bag) { const nb = freeBag(); if (nb) { F.bag = nb; nb.st = 'form'; F.f = 0 } }
+  const RT = 1.2                                                                   // seconds for one 90 degree step
+  const iF = car.s % 4, iD = (car.s + 2) % 4                                       // arm at the fill station, arm at the drop station
+  const atD = () => sim.bags.find((b) => b.st === 'arm' && b.arm === iD && b.f >= 1)
   F.stalled = false
-  if (F.bag && rateSet > 0.05) {
-    if (F.f < 1) F.f = Math.min(1, F.f + dt * rateSet / 60)
-    if (F.f >= 1) { if (entryClear) { const b = F.bag; b.st = 'fall'; b.t = 0; b.x = X_DROP; b.f = 1; F.bag = null; sim.drops.push(sim.clock); } else F.stalled = true }
+  if (car.phase === 'fill') {
+    if (!F.bag) { const nb = freeBag(); if (nb) { F.bag = nb; nb.st = 'arm'; nb.arm = iF; nb.f = 0; F.f = 0 } }
+    const dBag = atD()
+    if (dBag && entryClear) { dBag.st = 'fall'; dBag.t = 0; dBag.x = X_DROP; sim.drops.push(sim.clock) }
+    if (F.bag && rateSet > 0.05) {
+      if (F.f < 1) { F.f = Math.min(1, F.f + dt / Math.max(0.4, 60 / rateSet - RT)); F.bag.f = F.f }
+      if (F.f >= 1) { if (!atD()) { car.phase = 'rot'; car.rot = 0 } else F.stalled = true }
+    }
+  } else {
+    car.rot += dt / RT
+    if (car.rot >= 1) { car.s++; car.rot = 0; car.phase = 'fill'; F.bag = null; F.f = 0 }
   }
-  sim.jawClose = F.f > 0.93 || F.f < 0.05 ? 1 : 0
 
   // ---- palletizer: picks one bag, stacks it in the layer pattern (3 x 2, turned every other layer)
   const pz = sim.pz, sp = stationPallet()
@@ -515,7 +530,7 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const fit = () => { if (!how.open) { how.style.maxHeight = ''; return } const top = innerHeight * 0.03, lim = lab.$('.mat-sel').getBoundingClientRect().top - top - 14; how.style.maxHeight = (lim > 260 ? lim : innerHeight * 0.9) + 'px' }
   how.addEventListener('toggle', fit); addEventListener('resize', fit)
 }
-lab.how(`Three machines in sequence. The <b>MF 54</b> forms a bag around four filling spouts, fills it and seals it at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> stands behind the line: its blue arm hangs from the beam and reaches out over the belt, and the large gripper takes the bags one at a time (as in the flyer photo) in a cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800), so the line cannot go faster than 8.3 bags/min. It stacks them, 3 x 2 per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), one bag per cycle, 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm. The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
+lab.how(`Three machines in sequence. The <b>MF 54</b> carries an empty bag on each of four hanging spouts around a turning carousel: under the hopper the bag fills, then the carousel turns it to the belt, where it drops, at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> stands behind the line: its blue arm hangs from the beam and reaches out over the belt, and the large gripper takes the bags one at a time (as in the flyer photo) in a cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800), so the line cannot go faster than 8.3 bags/min. It stacks them, 3 x 2 per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), one bag per cycle, 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm. The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
   'bags/h = 60 x rate      t/h = bags/h x kg',
   'cycles/h = bags/h / 3      cycle = 3600 / 500 = 7.2 s',
   'pallets/h = bags/h / (6 x layers)      wrapper cycle = 3600 / 35 = 102.9 s',
@@ -552,9 +567,8 @@ lab.onTick((dt0, lab) => {
   const c = cfg(), t = c.t, ts = t / BAG.T0
   beltT.offset.x = (beltT.offset.x - BELT_V * dtr / 2.75 * 14) % 1
   // jaws
-  sim.jaw = approach(sim.jaw ?? 0.07, sim.jawClose ? 0 : 0.07, 0.08, dtr)
-  lab.place(jawA, XJ, 1.28, 0.065 + sim.jaw); lab.place(jawB, XJ, 1.28, -(0.065 + sim.jaw))
-  { const hh = 0.1 + 0.3 * sim.form.f; sack.visible = !!sim.form.bag; sack.scale.set(1, hh, 1); lab.place(sack, XJ, 1.22 - hh / 2, 0) }
+  const sf = sim.car.s + (sim.car.phase === 'rot' ? easeIO(clamp(sim.car.rot)) : 0)   // carousel position in 90 degree steps
+  lab.place(carousel, HUB_X, 1.78, 0); carousel.rotation.y = sf * PI / 2 - PI
   // gantry
   const P = sim.pz.pose
   lab.place(xcar, P.x, 2.55, 0); lab.place(chain, P.x + 0.19, 3.43, -GZ); lab.place(zsl, P.x, 2.4, P.z)
@@ -570,8 +584,8 @@ lab.onTick((dt0, lab) => {
     if (b.st === 'free') { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0); dummy.quaternion.copy(Q_ID); dummy.updateMatrix(); bagI.setMatrixAt(b.i, dummy.matrix); continue }
     n++
     let x, y, z, yaw = 0, q = 0, sx = 1
-    if (b.st === 'form') { x = XJ; z = 0; y = -9; sx = 0 }                                      // drawn as the sack below
-    else if (b.st === 'fall') { x = XJ; z = 0; y = b.y; q = b.q }
+    if (b.st === 'arm') { const al = PI - (sf - b.arm) * PI / 2; x = HUB_X + CR * Math.cos(al); z = CR * Math.sin(al); sx = Math.max(0.2, b.f); y = 1.32 - 0.36 * sx / 2; q = 1 }   // hangs from its spout, grows as it fills
+    else if (b.st === 'fall') { x = X_DROP; z = 0; y = b.y; q = b.q }
     else if (b.st === 'belt') { x = b.x; y = b.y; z = 0 }
     else if (b.st === 'grip') { x = P.x + b.dx; y = hold - t / 2; z = P.z }
     else { const p = b.pal; const cs = Math.cos(p.yaw), sn = Math.sin(p.yaw); x = p.x + b.lx * cs + b.lz * sn; z = p.z - b.lx * sn + b.lz * cs; y = ROLL_Y + b.ly; yaw = p.yaw }
