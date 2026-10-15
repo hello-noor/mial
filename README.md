@@ -83,6 +83,6 @@ The film is deterministic: the page runs in `?film=1` mode and its clock only mo
 
 ## Credits and rights
 
-- Built with the *Machine* skill for Claude Code (kit and scripts in `tools/`, MIT, see `tools/LICENSE`) and three.js.
+- Built with three.js. The lab kit and the recording scripts in `tools/` are MIT-licensed, see `tools/LICENSE`.
 - The MF TECNO name, logo and flyer image belong to MF TECNO / Massini Industries srl, used here to illustrate the product.
 - The MIAL name, logo, brochure text and the plant images (pages 9 and 13) belong to MIAL / Massini Industries srl. They are included here to illustrate the product. This simulator is an independent illustration, not an official MIAL product.
