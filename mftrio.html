@@ -1779,11 +1779,15 @@ const XJ = X_DROP                                                           // t
   for (let y = 0.2; y < 1.95; y += 0.25) ld.push(box(0.03, 0.03, 0.4, -0.05, y, 0, 0.006))
   lab.mesh(GEO.merge(ld), steelM, { name: 'Ladder', explode: [-0.8, 0, 0.5], count: 9 })
   // hopper, product inlet
-  const hop = GEO.lathe([[0, 3.0], [0.4, 3.0], [0.4, 2.6], [0.12, 2.3], [0, 2.3]], 56)
-  lab.mesh(GEO.merge([hop, GEO.lathe([[0.37, 3.0], [0.43, 3.0], [0.43, 3.03], [0.37, 3.03]], 56).translate(XJ * 0, 0, 0)]).translate(XJ, 0, 0), steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
+  // square-section hopper: a flat-topped inlet box on a square funnel that narrows into the head
+  const hopG = GEO.merge([box(0.72, 0.3, 0.5, 0, 2.85, 0, 0.03), new THREE.CylinderGeometry(0.12, 0.42, 0.42, 4, 1).rotateY(PI / 4).translate(0, 2.49, 0)]).translate(XJ, 0, 0)
+  lab.mesh(hopG, steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
   lab.mesh(GEO.pipe([[XJ, 3.0, 0], [XJ, 3.45, 0], [XJ - 0.3, 3.62, 0], [0.55, 3.62, 0]], 0.085, { seg: 40, radial: 14, tension: 0.2 }), steelM, { name: 'Product inlet', explode: [0, 1.6, 0] })
   // forming collar and tube
   lab.mesh(GEO.lathe([[0, 2.3], [0.28, 2.3], [0.28, 2.18], [0.105, 1.99], [0.105, 1.38], [0, 1.38]], 48).translate(XJ, 0, 0), chrome, { name: 'Forming tube', explode: [0, 0.4, 0.9], xray: 'shell' })
+  // four filling spouts hang out of the collar; the empty bag is wrapped around them
+  const spouts = []; for (const dx of [-0.09, 0.09]) for (const dz of [-0.09, 0.09]) spouts.push(cylY(0.03, 0.9, XJ + dx, 1.57, dz, 14))
+  lab.mesh(GEO.merge(spouts), chrome, { name: 'Filling spouts', explode: [0, 0.5, 0], count: 4 })
   // film reel and web
   lab.mesh(GEO.merge([cylZ(0.26, 0.3, 0.62, 2.62, -0.5, 40), cylZ(0.07, 0.36, 0.62, 2.62, -0.5, 18), box(0.05, 0.9, 0.05, 0.62, 2.45, -0.62, 0.008)]), MAT.plastic({ color: [0.9, 0.92, 0.95], roughness: 0.3, cap: [0.9, 0.92, 0.95] }), { name: 'Film reel', explode: [0, 0.4, -1.1], count: 3 })
   lab.mesh(ribbon([0.78, 2.5, -0.5], [XJ - 0.05, 2.27, -0.2], 0.3), MAT.plastic({ color: [0.95, 0.96, 0.98], roughness: 0.2, noCap: true }), { name: 'Film web', explode: [0, 0.4, -0.6] })
@@ -1883,6 +1887,8 @@ const bagM = MAT.plastic({ color: [1, 1, 1], map: bagTex, roughness: 0.3, clearc
 const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
+const sack = new THREE.Mesh(GEO.rbox(0.36, 1, 0.40, 0.055, 2), bagM)                     // the bag being formed and filled, unit height, scaled each frame
+lab.add(sack, { name: 'Bag being filled', explode: [0, 1.2, 1.8], count: 1 })
 const palGeo = (() => {
   const p = []
   for (const x of [-0.55, 0, 0.55]) { p.push(box(0.145, 0.022, 0.8, x, 0.011, 0, 0.003)); for (const z of [-0.35, 0, 0.35]) p.push(box(0.1, 0.1, 0.1, x, 0.072, z, 0.004)) }
@@ -2032,7 +2038,7 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const fit = () => { if (!how.open) { how.style.maxHeight = ''; return } const top = innerHeight * 0.03, lim = lab.$('.mat-sel').getBoundingClientRect().top - top - 14; how.style.maxHeight = (lim > 260 ? lim : innerHeight * 0.9) + 'px' }
   how.addEventListener('toggle', fit); addEventListener('resize', fit)
 }
-lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a bag at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> stands behind the line: its blue arm hangs from the beam and reaches out over the belt, and the large gripper takes the bags one at a time (as in the flyer photo) in a cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800), so the line cannot go faster than 8.3 bags/min. It stacks them, 3 x 2 per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), one bag per cycle, 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm. The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
+lab.how(`Three machines in sequence. The <b>MF 54</b> forms a bag around four filling spouts, fills it and seals it at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> stands behind the line: its blue arm hangs from the beam and reaches out over the belt, and the large gripper takes the bags one at a time (as in the flyer photo) in a cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800), so the line cannot go faster than 8.3 bags/min. It stacks them, 3 x 2 per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), one bag per cycle, 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm. The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
   'bags/h = 60 x rate      t/h = bags/h x kg',
   'cycles/h = bags/h / 3      cycle = 3600 / 500 = 7.2 s',
   'pallets/h = bags/h / (6 x layers)      wrapper cycle = 3600 / 35 = 102.9 s',
@@ -2071,6 +2077,7 @@ lab.onTick((dt0, lab) => {
   // jaws
   sim.jaw = approach(sim.jaw ?? 0.07, sim.jawClose ? 0 : 0.07, 0.08, dtr)
   lab.place(jawA, XJ, 1.28, 0.065 + sim.jaw); lab.place(jawB, XJ, 1.28, -(0.065 + sim.jaw))
+  { const hh = 0.1 + 0.3 * sim.form.f; sack.visible = !!sim.form.bag; sack.scale.set(1, hh, 1); lab.place(sack, XJ, 1.22 - hh / 2, 0) }
   // gantry
   const P = sim.pz.pose
   lab.place(xcar, P.x, 2.55, 0); lab.place(chain, P.x + 0.19, 3.43, -GZ); lab.place(zsl, P.x, 2.4, P.z)
@@ -2086,7 +2093,7 @@ lab.onTick((dt0, lab) => {
     if (b.st === 'free') { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0); dummy.quaternion.copy(Q_ID); dummy.updateMatrix(); bagI.setMatrixAt(b.i, dummy.matrix); continue }
     n++
     let x, y, z, yaw = 0, q = 0, sx = 1
-    if (b.st === 'form') { const f = sim.form.f; x = XJ; z = 0; y = 1.2 - BAG.L * f / 2; q = 1; sx = Math.max(0.05, f) }
+    if (b.st === 'form') { x = XJ; z = 0; y = -9; sx = 0 }                                      // drawn as the sack below
     else if (b.st === 'fall') { x = XJ; z = 0; y = b.y; q = b.q }
     else if (b.st === 'belt') { x = b.x; y = b.y; z = 0 }
     else if (b.st === 'grip') { x = P.x + b.dx; y = hold - t / 2; z = P.z }
