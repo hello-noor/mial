@@ -49,7 +49,7 @@ const lab = new Lab({
   prompt: 'a vertical bagging machine, a palletizer and a pallet wrapper as one packaging line',
   no: 8, title: 'MF Trio Line', sub: '20 bags/min',
   size: 9.6,
-  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0], fov: 30, frameX: -0.165 },
+  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0], fov: 30, frameX: 0.1 },
   cut: { a: [0, 0, 1], b: [0, 0, 1], center: [0, 0, 0], reach: 0.3 },
 })
 
