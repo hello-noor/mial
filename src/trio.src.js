@@ -205,7 +205,13 @@ const lab = new Lab({
     .gate-hint { display:none !important }
     .mial-spec, .lab-side { display:none }
     body.mob-open .mial-head { display:flex }
-    body.mob-open .mial-spec, body.mob-open .lab-side { display:block }
+    body.mob-open .mial-spec { display:none }
+    body.mob-open .lab-side { display:block; top:70px; bottom:150px; max-height:none }
+    .mob-kpi { display:grid; position:fixed; left:10px; right:10px; bottom:118px; z-index:60; grid-template-columns:repeat(4,1fr); gap:6px; padding:8px 10px; border-radius:14px; background:rgba(249,246,240,0.95); box-shadow:0 8px 24px rgba(0,0,0,0.12) }
+    body.mob-open .mob-kpi { display:none }
+    .mob-kpi small { display:block; font:500 8px/1.2 'Inter',sans-serif; letter-spacing:0.06em; text-transform:uppercase; color:#8a857a }
+    .mob-kpi b { display:block; margin-top:2px; font:600 15px/1 'JetBrains Mono',monospace; color:#1d1b18 }
+    .mob-kpi em { display:block; font:400 9px/1.2 'Inter',sans-serif; font-style:normal; color:#8a857a; margin-top:2px }
     .mob-info { display:block; position:fixed; right:10px; top:62px; bottom:auto; z-index:70; padding:0.45em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.3); background:#1d1b18; color:#f4f1ea; font:600 12px 'Inter',sans-serif; cursor:pointer }
     body.mob-open .mob-info { background:#f9f6f0; color:#1d1b18 }
     .spc-lines, .faq-cols { grid-template-columns:1fr !important }
@@ -631,6 +637,9 @@ sim.hist = []; sim.histAcc = 0
   const mobBtn = document.createElement('button'); mobBtn.className = 'mob-info'; mobBtn.textContent = 'Controls'
   mobBtn.addEventListener('click', () => { const on = document.body.classList.toggle('mob-open'); mobBtn.textContent = on ? 'Close' : 'Controls' })
   document.body.appendChild(mobBtn)
+  const mobKpi = document.createElement('div'); mobKpi.className = 'mob-kpi'
+  mobKpi.innerHTML = [['Shipped /min', 'shp'], ['Bagged /min', 'bag'], ['Pallets /h', 'pph'], ['Queue', 'q']].map(([l, k]) => `<div><small>${l}</small><b data-m="${k}">0</b></div>`).join('')
+  document.body.appendChild(mobKpi)
 }
 {
   const how = lab.$('.lab-how')
@@ -681,6 +690,7 @@ function drawSpark() {
   sctx.lineWidth = 1.3; sctx.strokeStyle = '#8a857a'; sctx.beginPath(); h.forEach((q, i) => (i ? sctx.lineTo : sctx.moveTo).call(sctx, X(off + i), Y(q.pal))); sctx.stroke()
   sctx.lineWidth = 2; sctx.strokeStyle = '#d96a2b'; sctx.beginPath(); h.forEach((q, i) => (i ? sctx.lineTo : sctx.moveTo).call(sctx, X(off + i), Y(q.shipped))); sctx.stroke()
 }
+const mobV = (k) => document.querySelector(`.mob-kpi [data-m="${k}"]`)
 lab.onTick((dt0, lab) => {
   sim.bagger.set = spd.value
   const dtr = dt0 * TS
@@ -793,6 +803,7 @@ lab.onTick((dt0, lab) => {
   if (laneDots.childElementCount !== 2) laneDots.innerHTML = '<i></i><i></i>';
   [...laneDots.children].forEach((d, i) => d.classList.toggle('on', i < lane))
   totEl('bags').textContent = fmt(sim.shipEv.reduce((x, e) => x + e.n, 0), 0)
+  mobV('shp').textContent = fmt(sim.shipped ?? 0, 1); mobV('bag').textContent = fmt(bagged, 1); mobV('pph').textContent = fmt(pph, 1); mobV('q').textContent = lane
   totEl('pal').textContent = fmt(sim.out, 0)
   linePanel.classList.toggle('bad', stop)
   // history, one sample every 10 simulated seconds
