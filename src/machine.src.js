@@ -217,7 +217,7 @@ const lab = new Lab({
   sp.querySelector('.mial-faqb').addEventListener('click', () => lab.toggle('faq'))
   { const im = h.querySelector('img'); const src = im.src; const t = new Image(); t.onload = () => { const c = document.createElement('canvas'); c.width = t.width; c.height = t.height; const g = c.getContext('2d'); g.drawImage(t, 0, 0); const d = g.getImageData(0, 0, c.width, c.height); for (let i = 0; i < d.data.length; i += 4) { const m = Math.min(d.data[i], d.data[i + 1], d.data[i + 2]); const a = Math.max(0, Math.min(1, (250 - m) / 70)); d.data[i + 3] = Math.round(255 * a) } g.putImageData(d, 0, 0); im.src = c.toDataURL('image/png'); im.style.mixBlendMode = 'normal' }; t.src = src }
   lab.$('.lab-no').textContent = 'MIAL · CLEAN200'
-  lab.$('.lab-title').innerHTML = 'Live<i>from the solver</i>'
+  lab.$('.lab-title').innerHTML = 'Operating point<i>Drive ø 204 · up to 60 m³/h</i>'
 }
 
 // ------------------------------------------------------------------ the circuit (planar, in x y)

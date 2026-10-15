@@ -193,7 +193,7 @@ const lab = new Lab({
   sp.querySelector('.mial-specb').addEventListener('click', () => lab.toggle('models'))
   sp.querySelector('.mial-faqb').addEventListener('click', () => lab.toggle('faq'))
   lab.$('.lab-no').textContent = 'MF TECNO · MF TRIO LINE'
-  lab.$('.lab-title').innerHTML = 'Live<i>from the simulation</i>'
+  lab.$('.lab-title').innerHTML = 'Operating point<i>Up to 20 bags/min · 500 cycles/h</i>'
 }
 
 // ------------------------------------------------------------------ materials
