@@ -1801,17 +1801,18 @@ const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
   const ld = [box(0.04, 1.95, 0.04, -0.05, 0.975, -0.2, 0.008), box(0.04, 1.95, 0.04, -0.05, 0.975, 0.2, 0.008)]
   for (let y = 0.2; y < 1.95; y += 0.25) ld.push(box(0.03, 0.03, 0.4, -0.05, y, 0, 0.006))
   lab.mesh(GEO.merge(ld), steelM, { name: 'Ladder', explode: [-0.8, 0, 0.5], count: 9 })
-  // dosing unit on the platform: two stainless boxes, a blue gear motor and logos
-  lab.mesh(GEO.merge([box(0.62, 0.5, 0.52, XJ, 2.25, 0, 0.02), box(0.62, 0.55, 0.52, XJ, 2.78, 0, 0.02)]), steelBrushed, { name: 'Dosing unit', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
+  // dosing chamber on the platform: a round stainless shell, so the powder inside it shows in cut away and X-ray
+  lab.mesh(GEO.shell([[0, 2.0], [0.3, 2.0], [0.3, 3.05], [0, 3.05]], 0.02, 48).translate(XJ, 0, 0), steelBrushed, { name: 'Dosing chamber', explode: [0, 1.0, 0], xray: 'shell', count: 1 })
   lab.mesh(GEO.merge([cylX(0.085, 0.22, XJ + 0.37, 2.8, 0.12, 24), cylZ(0.1, 0.012, XJ - 0.14, 2.82, 0.266, 28), cylZ(0.07, 0.012, XJ - 0.14, 2.25, 0.266, 28)]), blue, { name: 'Gear motor and logos', explode: [0.4, 1.0, 0.6], count: 3 })
-  // open hopper on top: a wide rectangular mouth that leans away from the carousel, toward the ladder side (-x), its neck standing on the dosing unit
-  lab.mesh(new THREE.CylinderGeometry(0.5, 0.2, 0.6, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.8).rotateZ(0.45).translate(XJ - 0.13, 3.34, 0), hopM, { name: 'Open hopper', explode: [-0.3, 1.4, 0], count: 2 })
-  // funnel under the dosing unit, through the platform, ending just above the spout at the fill station
-  lab.mesh(new THREE.CylinderGeometry(0.2, 0.06, 0.26, 36, 1, true).translate(XJ, 1.88, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
-  // the powder inside the hopper, funnel and bag: only shown in cut away and X-ray
-  const powM = MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.9, cap: [0.9, 0.9, 0.9] })
-  powHop = lab.mesh(new THREE.CylinderGeometry(0.12 * 0.92, 0.42 * 0.92, 0.6, 4, 1).rotateY(PI / 4).scale(1, 1, 0.66).translate(XJ, 2.62, 0), powM, { name: 'Powder in hopper', explode: [0, 1.0, 0], count: 1 })
-  powFun = lab.mesh(new THREE.CylinderGeometry(0.19, 0.055, 0.26, 36).translate(XJ, 1.88, 0), powM, { name: 'Powder in funnel', explode: [0, 0.6, 0], count: 1 })
+  // open hopper on top: a stainless cone shell, its neck standing on the dosing chamber
+  lab.mesh(GEO.shell([[XJ - 0.26, 3.0], [XJ + 0.26, 3.0], [XJ + 0.5, 3.7], [XJ - 0.5, 3.7]].map(([x, y]) => [x - XJ, y]), 0.012, 48).translate(XJ, 0, 0), hopM, { name: 'Open hopper', explode: [0, 1.4, 0], count: 1 })
+  // funnel under the dosing chamber, through the platform, ending at the spout over the fill station
+  lab.mesh(GEO.shell([[0, 1.72], [0.07, 1.72], [0.2, 2.0], [0, 2.0]], 0.012, 48).translate(XJ, 0, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
+  // the powder: one solid column from the spout up to the top of the hopper, sitting inside the shells. Shown in cut away and X-ray
+  const powM = MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.9, cap: [0.92, 0.92, 0.9] })
+  const powCol = (y0, y1, rs) => GEO.lathe([[0, y0], ...rs.map(([r, y]) => [r, y]), [0, y1]], 48).translate(XJ, 0, 0)
+  powFun = lab.mesh(powCol(1.04, 2.0, [[0.05, 1.04], [0.07, 1.72], [0.19, 2.0]]), powM, { name: 'Powder in funnel', explode: [0, 0.6, 0], count: 1 })
+  powHop = lab.mesh(powCol(2.0, 3.3, [[0.26, 2.0], [0.26, 3.0], [0.4, 3.3]]), powM, { name: 'Powder in dosing chamber and hopper', explode: [0, 1.0, 0], count: 1 })
   powBag = lab.mesh(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0), powM, { name: 'Powder in bag', explode: [0, 0, 0], count: 1 })
   lab.mesh(cylY(0.05, 0.2, HUB_X, 1.86, 0, 16), steelM, { name: 'Carousel post', explode: [0, 0.4, 0], count: 1 })
 }
