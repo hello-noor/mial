@@ -1566,7 +1566,7 @@ const PI = Math.PI
 // ------------------------------------------------------------------ constants
 const BELT_Y = 0.75, X_DROP = 2.0, X_STOP = 3.7, X_PICK = 3.5             // belt top, bag drop, belt end, pick position (one bag)
 const ROLL_Y = 0.2                                                       // top of the rollers and of the turntable
-const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2, X_QUEUE = 6.5          // X_QUEUE: the waiting place on the lane, before the turntable
+const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2, X_QUEUE = 6.0          // X_QUEUE: the front place of the queue on the lane, before the turntable; pallets wait behind it, 1.3 m apart
 const BAG = { L: 0.40, T0: 0.13 }                                         // square pillow bag, 0.40 x 0.40, 0.13 thick at 10 kg
 const PAL = { L: 1.2, W: 0.8, H: 0.144 }
 const PER_ROW = 1, ROWS_PER_LAYER = 6, PER_LAYER = PER_ROW * ROWS_PER_LAYER   // one bag per cycle; 3 x 2 bags per layer
@@ -1575,6 +1575,7 @@ const WRAP_TOTAL_S = 3600 / 35                                            // wra
 const IN_S = 8, OUT_S = 4, WRAP_S = WRAP_TOTAL_S - IN_S - OUT_S
 const BELT_V = 0.5, TT_RPM = 8
 const BPM_MAX = 20
+const SHIP_TAU = 300                                                       // s, smoothing of the shipped rate
 const PZ_BPM = 3600 / CYCLE_S / 60                                        // the palletizer takes one bag per cycle: 500 cycles/h = 8.3 bags/min
 const YC = 1.75                                                           // travel height of the gripper (underside of the plate)
 const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.3                              // gantry posts: beam behind the line
@@ -1971,7 +1972,7 @@ const sim = {
   form: { f: 0, bag: null, stalled: false }, car: { s: 0, rot: 0, phase: 'fill' }, bagger: { rate: 0, set: 12 },
   pz: { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0, did: 0 },
   wr: { stopped: false, ang: 0, carY: 0.7, wrap: 0 },
-  out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], picks: [], pickN: 0, cyc: 0, wrapBusy: 0,
+  out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], picks: [], shipEv: [], shipped: 0, shipEMA: 0, pickN: 0, cyc: 0, wrapBusy: 0,
 }
 window.__sim = sim                                                       // read-only handle for tests and screenshots
 const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
@@ -1985,10 +1986,10 @@ function resetLine() {
   sim.pallets = []; sim.form = { f: 0, bag: null, stalled: false }; sim.car = { s: 0, rot: 0, phase: 'fill' }
   Object.assign(sim.pz, { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0 })
   Object.assign(sim.wr, { ang: 0, carY: 0.7, wrap: 0 })
-  sim.drops = []; sim.picks = []; sim.stalledS = 0
+  sim.drops = []; sim.picks = []; sim.shipEv = []; sim.shipped = 0; sim.shipEMA = 0; sim.stalledS = 0
 }
 const stationPallet = () => sim.pallets.find((p) => ['loading', 'ready'].includes(p.st))
-const laneBusy = () => sim.pallets.some((p) => ['xfer', 'toWrap'].includes(p.st))   // one place in the queue on the lane
+const laneBusy = () => sim.pallets.some((p) => p.st === 'xfer' || (p.st === 'toWrap' && p.x < X_PAL + 1.3))   // the lane is clear where a pallet joins it
 const loadH = () => PAL.H + cfg().layers * cfg().t
 
 function stepSim(dt) {
@@ -2002,12 +2003,15 @@ function stepSim(dt) {
     else if (p.st === 'xfer') { p.z = Math.max(Z_LANE, p.z - dt * 0.5); if (p.z <= Z_LANE) p.st = 'toWrap' }
     else if (p.st === 'toWrap') {
       const busy = sim.pallets.some((q) => q !== p && ['wrapping', 'out'].includes(q.st))   // the turntable is taken: wait in the queue
-      p.x = Math.min(busy ? X_QUEUE : X_WRAP, p.x + dt * (X_WRAP - X_PAL) / IN_S); if (p.x >= X_WRAP) { p.st = 'wrapping'; p.wrap = 0; sim.wr.ang = 0 }
+      const ahead = sim.pallets.filter((q) => q !== p && q.st === 'toWrap' && q.x > p.x)
+      let lim = busy ? X_QUEUE : X_WRAP
+      if (ahead.length) lim = Math.min(lim, Math.min(...ahead.map((q) => q.x)) - 1.3)
+      p.x = Math.max(p.x, Math.min(lim, p.x + dt * (X_WRAP - X_PAL) / IN_S)); if (p.x >= X_WRAP) { p.st = 'wrapping'; p.wrap = 0; sim.wr.ang = 0 }
     }
     else if (p.st === 'wrapping') {
       if (!sim.wr.stopped) { p.wrap = Math.min(1, p.wrap + dt / WRAP_S); sim.wr.ang += dt * TT_RPM * 2 * PI / 60; if (p.wrap >= 1) { p.st = 'out'; p.tt = 0 } }
       p.yaw = sim.wr.ang
-    } else if (p.st === 'out') { p.yaw = sim.wr.ang; p.tt += dt; if (p.tt > 0.4) { p.z += dt * 2.4 / OUT_S; p.x = X_WRAP } if (p.z > 2.4) { p.st = 'gone'; sim.out++; sim.bagsDone += p.row * PER_ROW } }
+    } else if (p.st === 'out') { p.yaw = sim.wr.ang; p.tt += dt; if (p.tt > 0.4) { p.z += dt * 2.4 / OUT_S; p.x = X_WRAP } if (p.z > 2.4) { p.st = 'gone'; sim.out++; sim.bagsDone += p.row * PER_ROW; sim.shipEv.push({ t: sim.clock, n: p.row * PER_ROW }); sim.shipEMA += p.row * PER_ROW / SHIP_TAU } }
   }
   if (!sim.pallets.some((q) => q.st === 'wrapping' || q.st === 'out')) { const a = sim.wr.ang % (2 * PI); sim.wr.ang = approach(a, a > PI ? 2 * PI : 0, 0.5, dt) }
   for (const p of sim.pallets.filter((q) => q.st === 'gone')) { for (const b of sim.bags) if (b.pal === p) { b.st = 'free'; b.pal = null; b.y = -9 } }
@@ -2078,11 +2082,12 @@ function stepSim(dt) {
   sim.picks = sim.picks.filter((t) => sim.clock - t < 60)
   sim.outShown = sim.picks.filter((t) => sim.clock - t < 30).length * 2                            // palletizer picks in the last 30 s, per minute
   sim.shown = sim.drops.filter((t) => sim.clock - t < 30).length * 2                              // bags dropped on the belt in the last 30 s, per minute
+  sim.shipEMA *= Math.exp(-dt / SHIP_TAU); sim.shipped = sim.shipEMA * 60          // bags per minute leaving the wrapper, smoothed over about 5 minutes
   sim.stalledS = F.stalled ? sim.stalledS + dt : 0
 }
 
 // ------------------------------------------------------------------ controls and readouts
-lab.hero({ label: 'Bagging rate', unit: 'bags/min', max: BPM_MAX, digits: 1 })
+lab.hero({ label: 'Shipped after wrapping', unit: 'bags/min', max: BPM_MAX, digits: 1 })
 const spd = lab.slider({ id: 'speed', label: 'MF 54 speed', min: 0, max: BPM_MAX, value: 8, step: 0.5, ends: ['Stopped', `Up to ${BPM_MAX} bags/min`], fmt: (v) => `${fmt(v, 1)} bags/min` })
 spd.wrap.insertAdjacentHTML('beforeend', '<div class="gate-hint">Drag to set the speed of the vertical packaging machine (keys [ and ]). Palletizer and wrapper follow.</div>')
 addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.key === '[') spd.set(spd.value - 1); if (e.key === ']') spd.set(spd.value + 1) })
@@ -2242,15 +2247,16 @@ lab.onTick((dt0, lab) => {
   const bph = outRate() * 60, tph = bph * kg / 1000, pph = Math.min(35, bph / (c.layers * PER_LAYER))
   const sp = stationPallet()
   const backed = sim.stalledS > 1.5 || (sim.form.stalled && sim.rate < 0.3)
-  const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at palletizer limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : 'steady'
+  const queued = sim.pallets.filter((q) => q.st === 'toWrap').length
+  const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.shipEv.length === 0 ? 'filling the line' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at palletizer limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : queued ? `${queued} pallet${queued > 1 ? 's' : ''} queued` : 'steady'
   const sub = stop
     ? `<span class="bad">film out · wrapper stopped · pallet waits, palletizer idle${backed ? ', MF 54 holding its bag' : ''}</span>`
-    : `Palletized ${fmt(sim.outShown ?? 0, 1)} bags/min · ${kg} kg bags · ${c.layers} layers · ${c.layers * PER_LAYER} bags per pallet`
+    : `Shipped ${fmt(sim.shipped * 60)} bags/h · bagged ${fmt(sim.shown ?? 0, 1)}/min · palletized ${fmt(sim.outShown ?? 0, 1)}/min · ${kg} kg bags`
   kpiV[0].textContent = fmt(bph); kpiV[1].textContent = fmt(tph, 2); kpiV[2].textContent = fmt(pph, 1)
   kpiV[3].textContent = fmt(bph / PER_ROW); kpiV[4].textContent = fmt(pph / 35 * 100); kpiV[5].textContent = sp ? `${Math.min(c.layers, Math.floor(sp.row / ROWS_PER_LAYER) + 1)}/${c.layers}` : '--'
   kpiEl.classList.toggle('bad', stop)
   drawDisplay(`${fmt(sim.shown ?? 0, 1)} /min`, stop ? 'LINE BACKED UP' : sim.form.stalled ? 'BELT FULL' : 'RUN', stop && sim.rate < 0.3)
-  lab.setHero(sim.shown ?? 0, { state: st, sub, bad: stop })
+  lab.setHero(sim.shipped ?? 0, { state: st, sub, bad: stop })
 })
 lab.breakIt({
   label: 'Film runs out',
