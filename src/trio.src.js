@@ -240,6 +240,7 @@ const plate = (text, sub, w, h, x, y, z, ry = 0, name = 'Name plate') => {
 }
 
 // ------------------------------------------------------------------ MF 54 vertical packaging machine
+let powHop, powFun, powBag                                                 // powder volumes, created with the MF 54 below
 const XJ = 1.25, HUB_X = 1.625, CR = 0.375                                   // XJ: fill station under the funnel; the carousel hub sits half way to the drop station X_DROP above the belt
 const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
 {
@@ -383,7 +384,6 @@ const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
 // the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
-let powHop, powFun, powBag
 const DUST_N = 220
 const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.016, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
 dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
