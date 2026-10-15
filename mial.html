@@ -1592,6 +1592,7 @@ const lab = new Lab({
   .sw a:hover { background:rgba(40,36,30,0.08) }
   .sw a.on { background:#1d1b18; color:#f4f1ea }
   .sw .home { padding:0.42em 0.7em }
+  .sw { align-items:center } .sw a { display:inline-flex; align-items:center; line-height:1 } .sw svg { display:block }
   .mial-head { position:absolute; left:4.2vw; top:4.4vh; display:flex; align-items:center; gap:1.1vw; pointer-events:none }
   .mial-head img { height:clamp(26px,3.7vh,52px); mix-blend-mode:multiply; display:block }
   .mial-head .sep { width:1px; height:clamp(24px,3.4vh,46px); background:rgba(40,36,30,0.28) }
@@ -1707,7 +1708,7 @@ const lab = new Lab({
     .mial-btns { margin-top:10px; gap:6px }
     .mial-all { margin-top:0; padding:0.42em 0.8em; font-size:11px }
     .mial-all kbd { display:none }
-    .lab-side { top:auto; bottom:64px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:50vh; overflow:auto }
+    .lab-side { top:auto; bottom:96px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:72vh; overflow:auto }
     .lab-title { font-size:24px !important }
     .lab-title i { display:none }
     .lab-metric { margin-top:8px !important }
@@ -1724,17 +1725,15 @@ const lab = new Lab({
     .mat-sel .chips::-webkit-scrollbar { display:none }
     .mat-sel .grp { display:none }
     .mat-sel button { flex:0 0 auto; font-size:11px }
-    .lab-modes { left:10px; right:10px; bottom:12px; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; gap:6px; font-size:12px }
-    .lab-modes::-webkit-scrollbar { display:none }
+    .lab-modes { left:8px; right:8px; bottom:10px; flex-wrap:wrap; justify-content:center; gap:6px; font-size:12px }
     .lab-modes button { flex:0 0 auto; padding:0.45em 0.85em; background:rgba(249,246,240,0.96) }
     .lab-modes kbd { display:none }
     .gate-hint { display:none !important }
     .mial-spec, .lab-side { display:none }
     body.mob-open .mial-head { display:flex }
     body.mob-open .mial-spec, body.mob-open .lab-side { display:block }
-    .mob-info { display:block; position:fixed; right:10px; bottom:12px; z-index:70; padding:0.45em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.3); background:#1d1b18; color:#f4f1ea; font:600 12px 'Inter',sans-serif; cursor:pointer }
+    .mob-info { display:block; position:fixed; right:10px; top:62px; bottom:auto; z-index:70; padding:0.45em 0.85em; border-radius:999px; border:1px solid rgba(40,36,30,0.3); background:#1d1b18; color:#f4f1ea; font:600 12px 'Inter',sans-serif; cursor:pointer }
     body.mob-open .mob-info { background:#f9f6f0; color:#1d1b18 }
-    .lab-modes { right:86px !important }
     .spc-lines, .faq-cols, .gal-card { grid-template-columns:1fr !important }
     .spc-card, .faq-card { width:92vw }
     .spc-tiles { grid-template-columns:repeat(3,1fr); gap:6px }
