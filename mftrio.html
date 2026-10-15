@@ -1896,6 +1896,13 @@ const bagM = MAT.plastic({ color: [1, 1, 1], map: bagTex, roughness: 0.3, clearc
 const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
+// the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
+const DUST_N = 220
+const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.011, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
+dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
+lab.add(dust, { name: 'Powder', explode: [0, 0, 0], count: 2 })
+const dustP = Array.from({ length: DUST_N }, () => ({ live: false, x: 0, y: 0, z: 0 }))
+let dustAcc = 0
 const palGeo = (() => {
   const p = []
   for (const x of [-0.55, 0, 0.55]) { p.push(box(0.145, 0.022, 0.8, x, 0.011, 0, 0.003)); for (const z of [-0.35, 0, 0.35]) p.push(box(0.1, 0.1, 0.1, x, 0.072, z, 0.004)) }
@@ -2114,6 +2121,23 @@ lab.onTick((dt0, lab) => {
   const gap = lerp(0.06, 0.0, sim.pz.grip)
   lab.place(clA, P.x - 0.2 - 0.01 - gap, P.y + 0.03, P.z); lab.place(clB, P.x + 0.2 + 0.01 + gap, P.y + 0.03, P.z)
   clA.scale.y = clB.scale.y = Math.min(0.12, t * 0.85) + 0.03
+  // powder: grains spawn at the hopper outlet while the bag at the fill station is filling, and fall down the spout into the bag
+  {
+    const flowing = sim.form.bag && sim.car.phase === 'fill' && sim.rate > 0.3
+    dustAcc += flowing ? dtr * sim.rate * 60 / 12 : 0
+    for (; dustAcc >= 1; dustAcc -= 1) {
+      const g = dustP.find((d) => !d.live); if (!g) break
+      const sp = [-0.09, 0.09][Math.floor(Math.random() * 2)], sq = [-0.09, 0.09][Math.floor(Math.random() * 2)]
+      Object.assign(g, { live: true, x: XJ + sp + (Math.random() - 0.5) * 0.02, y: 2.0, z: sq + (Math.random() - 0.5) * 0.02 })
+    }
+    dummy.quaternion.copy(Q_ID)
+    dustP.forEach((g, i) => {
+      if (g.live) { g.y -= dtr * 1.6; if (g.y < 1.0) g.live = false }
+      if (g.live) { dummy.position.set(g.x, g.y, g.z); dummy.scale.set(1, 1, 1) } else { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0) }
+      dummy.updateMatrix(); dust.setMatrixAt(i, dummy.matrix)
+    })
+    dust.instanceMatrix.needsUpdate = true
+  }
   // bag instances
   const hold = P.y
   let n = 0
