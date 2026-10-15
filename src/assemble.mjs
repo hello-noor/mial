@@ -11,11 +11,13 @@ const here = dirname(fileURLToPath(import.meta.url))
 const read = (p) => readFileSync(resolve(here, p), 'utf8')
 const b64 = (p) => read(`assets/${p}.b64`).trim()
 const head = read('head.html')
+const BASE = 'https://hello-noor.github.io/mial'                                   // public URL of the GitHub Pages site (absolute links for social previews)
 
 function page(out, srcFile, { title, description }, fill) {
   const shell = head
     .replace(/<title>.*?<\/title>/, `<title>${title}</title>`)
     .replace(/<meta name="description" content=".*?">/, `<meta name="description" content="${description}">`)
+    .replaceAll('__OG_TITLE__', title).replaceAll('__OG_DESC__', description).replaceAll('__OG_URL__', `${BASE}/${out}`)
   writeFileSync(resolve(here, '..', out), shell + '<script type="module">\n' + fill(read(srcFile)) + '\n</script>\n</body>\n</html>\n')
   console.log('built', out)
 }

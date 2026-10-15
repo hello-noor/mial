@@ -3,27 +3,50 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MIAL · MF TECNO · 3D simulators</title>
-<meta name="description" content="Interactive 3D simulators of Massini Industries machines: the MIAL tubular chain conveyor and the MF TECNO MF Trio Line.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:site_name" content="Massini Industries">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Massini Industries · 3D simulators">
+<meta property="og:description" content="Massini Industries, Assisi: the MIAL tubular chain conveyor and the MF TECNO MF Trio Line, as interactive 3D simulators.">
+<meta property="og:url" content="https://hello-noor.github.io/mial/">
+<meta property="og:image" content="https://hello-noor.github.io/mial/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Massini Industries · 3D simulators">
+<meta name="twitter:description" content="Massini Industries, Assisi: the MIAL tubular chain conveyor and the MF TECNO MF Trio Line, as interactive 3D simulators.">
+<meta name="twitter:image" content="https://hello-noor.github.io/mial/og-image.png">
+<title>Massini Industries · 3D simulators</title>
+<meta name="description" content="Massini Industries, Assisi: the MIAL tubular chain conveyor and the MF TECNO MF Trio Line, as interactive 3D simulators.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root { --paper:#eeeae1; --ink:#1d1b18; --mute:#7b766c; --accent:#d96a2b }
+  :root { --paper:#eeeae1; --ink:#1d1b18; --mute:#7b766c; --accent:#d96a2b; --night:#17150f }
   * { box-sizing:border-box }
   html, body { margin:0; min-height:100%; background:var(--paper); color:var(--ink); font-family:'Inter',system-ui,sans-serif }
-  main { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:clamp(20px,5vh,56px) clamp(16px,4.2vw,72px) }
-  .brand { display:inline-block; margin-bottom:clamp(14px,2.4vh,26px) }
-  .brand img { height:clamp(26px,3vw,46px); width:auto; display:block }
-  header small { display:block; font:500 clamp(10px,0.8vw,13px)/1.3 'JetBrains Mono',monospace; letter-spacing:0.06em; text-transform:uppercase; color:#c4511a }
-  h1 { margin:0.35em 0 0.2em; font:400 clamp(34px,4.4vw,76px)/1.02 'Instrument Serif',serif; letter-spacing:-0.01em }
-  h1 i { color:#7a7873 }
-  header p { margin:0 0 clamp(18px,4vh,40px); max-width:46em; font:400 clamp(13px,1.05vw,18px)/1.55 'Inter',sans-serif; color:#5b574f }
+
+  /* hero: dark band so the Massini logo reads at full contrast */
+  .hero { position:relative; overflow:hidden; background:radial-gradient(120% 90% at 85% 0%, #2a261e 0%, var(--night) 55%); color:#f4f1ea; padding:clamp(28px,5vh,56px) clamp(16px,4.2vw,72px) clamp(36px,6vh,64px) }
+  .hero::after { content:''; position:absolute; left:0; right:0; bottom:0; height:4px; background:linear-gradient(90deg,#ee7319 0%,#c15a4a 45%,#1f4e9c 100%) }
+  .massini { display:block; height:clamp(46px,5.4vw,78px); width:auto }
+  .hero small { display:block; margin-top:clamp(18px,3vh,30px); font:500 clamp(10px,0.8vw,13px)/1.3 'JetBrains Mono',monospace; letter-spacing:0.08em; text-transform:uppercase; color:#e98a4f }
+  .hero h1 { margin:0.3em 0 0.25em; font:400 clamp(38px,4.8vw,84px)/1.02 'Instrument Serif',serif; letter-spacing:-0.01em }
+  .hero h1 i { color:#a39e92 }
+  .lead { margin:0; max-width:52em; font:400 clamp(14px,1.15vw,19px)/1.6 'Inter',sans-serif; color:#d8d3c7 }
+  .lead b { color:#fff; font-weight:600 }
+  .hero .links { margin-top:clamp(18px,3vh,28px); display:flex; flex-wrap:wrap; gap:10px }
+  .hero .links a { font:500 clamp(12px,0.9vw,14px) 'Inter',sans-serif; color:#f4f1ea; text-decoration:none; padding:0.5em 1.05em; border-radius:999px; border:1px solid rgba(244,241,234,0.3) }
+  .hero .links a:hover { border-color:#f4f1ea }
+
+  /* cards */
+  main { padding:clamp(28px,5vh,56px) clamp(16px,4.2vw,72px) clamp(24px,4vh,48px) }
   .cards { display:grid; grid-template-columns:1fr 1fr; gap:clamp(14px,2vw,32px) }
   .card { display:flex; flex-direction:column; border-radius:18px; overflow:hidden; text-decoration:none; color:inherit; background:#f9f6f0; border:1px solid rgba(40,36,30,0.14); box-shadow:0 1px 0 rgba(0,0,0,0.04),0 18px 50px rgba(0,0,0,0.08); transition:transform .25s ease, box-shadow .25s ease }
   .card:hover, .card:focus-visible { transform:translateY(-4px); box-shadow:0 1px 0 rgba(0,0,0,0.04),0 26px 64px rgba(0,0,0,0.16); outline:none }
   .card:focus-visible { box-shadow:0 0 0 3px var(--accent),0 26px 64px rgba(0,0,0,0.16) }
-  .shot { aspect-ratio:16/9; background:#e9e4d8 center/cover no-repeat }
+  .shot { aspect-ratio:16/9; background:#e9e4d8 center/cover no-repeat; border-bottom:1px solid rgba(40,36,30,0.1) }
   .body { padding:clamp(14px,1.6vw,26px) clamp(16px,1.8vw,30px) clamp(16px,1.8vw,28px); display:flex; flex-direction:column; gap:0.7em; flex:1 }
   .logo { height:clamp(24px,2.6vw,40px); width:auto; align-self:flex-start; display:block; mix-blend-mode:multiply }
   .card h2 { margin:0.2em 0 0; font:400 clamp(26px,2.6vw,46px)/1.05 'Instrument Serif',serif; letter-spacing:-0.01em }
@@ -31,21 +54,23 @@
   .tags { display:flex; flex-wrap:wrap; gap:0.4em; margin-top:auto; padding-top:0.6em }
   .tags span { padding:0.3em 0.75em; border-radius:999px; border:1px solid rgba(40,36,30,0.22); font:400 clamp(10px,0.78vw,13px) 'Inter',sans-serif; color:#4d4a43 }
   .go { margin-top:0.4em; font:600 clamp(12px,0.92vw,15px) 'Inter',sans-serif; color:#c4511a }
-  footer { margin-top:clamp(16px,3vh,32px); font:400 clamp(10px,0.76vw,12px)/1.5 'Inter',sans-serif; color:var(--mute) }
-  @media (max-width:760px) { .cards { grid-template-columns:1fr } main { justify-content:flex-start } }
+  footer { padding:0 clamp(16px,4.2vw,72px) clamp(20px,3vh,36px); font:400 clamp(10px,0.76vw,12px)/1.5 'Inter',sans-serif; color:var(--mute) }
+  footer a { color:inherit }
+  @media (max-width:760px) { .cards { grid-template-columns:1fr } }
 </style>
 </head>
 <body>
+<header class="hero">
+  <img class="massini" alt="Massini Industries" src="data:image/png;base64,__MASSINI_LOGO__">
+  <small>Massini Industries · Assisi, Italy · 3D simulators</small>
+  <h1>See how our best machines work, <i>in 3D</i></h1>
+  <p class="lead">Run, cut open and take apart two flagship machines from Massini Industries: the <b>MIAL CLEAN200</b> tubular chain conveyor for feed and pet food, and the <b>MF TECNO Trio Line</b> that bags, palletizes and wraps. Every number on screen is computed live.</p>
+  <div class="links"><a href="https://www.massiniindustries.com/" target="_blank" rel="noopener">massiniindustries.com ↗</a></div>
+</header>
 <main>
-  <header>
-    <a class="brand" href="https://www.massiniindustries.com/" target="_blank" rel="noopener" aria-label="Massini Industries"><img alt="Massini" src="data:image/png;base64,__MASSINI_LOGO__"></a>
-    <small>Massini Industries · 3D simulators</small>
-    <h1>Two machines, <i>two simulators</i></h1>
-    <p>Pick a line. Each page is an interactive 3D model you can run, cut open and take apart, with every number computed live.</p>
-  </header>
   <div class="cards">
     <a class="card" href="mial.html">
-      <div class="shot" style="background-image:url(data:image/jpeg;base64,__MIAL_IMG__)" role="img" aria-label="The MIAL CLEAN200 tubular chain conveyor"></div>
+      <div class="shot" style="background-image:url(data:image/jpeg;base64,__MIAL_IMG__)" role="img" aria-label="The MIAL CLEAN200 tubular chain conveyor simulator"></div>
       <div class="body">
         <img class="logo" alt="MIAL" src="data:image/png;base64,__MIAL_LOGO__">
         <h2>Tubular chain conveyor</h2>
@@ -65,7 +90,7 @@
       </div>
     </a>
   </div>
-  <footer><a href="https://www.massiniindustries.com/" target="_blank" rel="noopener" style="color:inherit">massiniindustries.com</a> · Independent illustrations built for presentation. MIAL and MF TECNO names, logos and brochure images belong to Massini Industries srl.</footer>
 </main>
+<footer>Independent illustrations built for presentation. MIAL and MF TECNO names, logos and brochure images belong to Massini Industries srl. <a href="https://www.massiniindustries.com/" target="_blank" rel="noopener">massiniindustries.com</a></footer>
 </body>
 </html>
