@@ -43,13 +43,14 @@ const YC = 1.75                                                           // tra
 const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.15                             // gantry posts
 const BAG_KG = { 5: { t: 0.065, layers: 12, cap: PZ_BPM }, 10: { t: 0.13, layers: 6, cap: PZ_BPM }, 20: { t: 0.26, layers: 3, cap: PZ_BPM } }
 let kg = 10
+let LY = null                                                             // pallet height in layers, null = the default for the bag weight
 const PH = innerWidth <= 760                                              // phone layout: the whole line has to fit the narrow screen
 
 const lab = new Lab({
   prompt: 'a vertical bagging machine, a palletizer and a pallet wrapper as one packaging line',
   no: 8, title: 'MF Trio Line', sub: '20 bags/min',
   size: 9.6,
-  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0], fov: 30, frameX: -0.165 },
+  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0], fov: 30, frameX: -0.07 },
   cut: { a: [0, 0, 1], b: [0, 0, 1], center: [0, 0, 0], reach: 0.3 },
 })
 
@@ -87,6 +88,8 @@ const lab = new Lab({
   .kpis b { display:block; margin-top:0.2em; font:600 clamp(15px,1.4vw,27px)/1.1 'JetBrains Mono',monospace; letter-spacing:-0.02em; color:#1d1b18; white-space:nowrap }
   .kpis b i { font:500 0.55em 'Inter',sans-serif; color:#8a857a; margin-left:0.25em; letter-spacing:0 }
   .kpis.bad b { color:#c4511a }
+  @media (min-width:761px) { .lab-side { background:rgba(238,234,225,0.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-radius:16px; padding:1.1em 1.3em 1.2em; box-shadow:0 10px 30px rgba(0,0,0,0.08) } }
+  @media (min-width:761px) { .lab-modes { right:30vw; left:4.2vw } .lab-scale { bottom:17vh } }
   @media (max-height:920px) { .gate-hint { display:none } .lab-big { font-size:clamp(48px,5.6vw,100px) !important } .lab-title { font-size:clamp(34px,3.6vw,64px) !important } .lab-metric { margin-top:1.6vh !important } .lab-ctl { margin-top:1.8vh !important } .kpis { margin-top:1.4vh; padding-top:1vh } }
   @media (max-height:760px) { .mial-spec p { display:none } .lab-title i { display:none } }
   .mial-all { margin-top:1.1em; padding:0.5em 0.95em; border-radius:999px; border:1px solid rgba(31,78,156,0.55); background:transparent; color:#1f4e9c; font:600 clamp(11px,0.82vw,14px) 'Inter',sans-serif; cursor:pointer; pointer-events:auto }
@@ -371,6 +374,13 @@ const bagM = MAT.plastic({ color: [1, 1, 1], map: bagTex, roughness: 0.3, clearc
 const NB = 250
 const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setUsage(THREE.DynamicDrawUsage); bagI.frustumCulled = false
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
+// the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
+const DUST_N = 220
+const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.011, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
+dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
+lab.add(dust, { name: 'Powder', explode: [0, 0, 0], count: 2 })
+const dustP = Array.from({ length: DUST_N }, () => ({ live: false, x: 0, y: 0, z: 0 }))
+let dustAcc = 0
 const palGeo = (() => {
   const p = []
   for (const x of [-0.55, 0, 0.55]) { p.push(box(0.145, 0.022, 0.8, x, 0.011, 0, 0.003)); for (const z of [-0.35, 0, 0.35]) p.push(box(0.1, 0.1, 0.1, x, 0.072, z, 0.004)) }
@@ -403,7 +413,9 @@ const sim = {
   out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], pickN: 0, cyc: 0, wrapBusy: 0,
 }
 window.__sim = sim                                                       // read-only handle for tests and screenshots
-const cfg = () => BAG_KG[kg]
+const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
+const maxLayers = () => Math.floor((PAL_MAX_H - PAL.H) / BAG_KG[kg].t)
+const cfg = () => ({ ...BAG_KG[kg], layers: Math.min(LY ?? BAG_KG[kg].layers, maxLayers()) })
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
 function resetLine() {
@@ -511,13 +523,23 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
 {
   const sel = document.createElement('div'); sel.className = 'lab-ctl on mat-sel'
   sel.innerHTML = `<div class="row"><span>Bag weight</span><b>5 to 20 kg</b></div><div class="chips" data-k="kg">${[5, 10, 20].map((w) => `<button data-v="${w}">${w} kg</button>`).join('')}</div>
+    <div class="row" style="margin-top:0.9em"><span>Pallet height</span><b class="ly-val">6 layers</b></div><div class="chips" data-k="ly">${[3, 6, 9, 12].map((w) => `<button data-v="${w}">${w}</button>`).join('')}</div>
     <div class="row" style="margin-top:0.9em"><span>Simulation speed</span><b>x real time</b></div><div class="chips" data-k="ts">${[1, 3, 6, 12].map((w) => `<button data-v="${w}">${w}×</button>`).join('')}</div>`
   lab.$('.lab-ctls').appendChild(sel)
-  const sync = () => sel.querySelectorAll('button').forEach((b) => b.classList.toggle('on', Number(b.dataset.v) === (b.parentNode.dataset.k === 'kg' ? kg : TS)))
+  const sync = () => {
+    sel.querySelectorAll('button').forEach((b) => {
+      const k = b.parentNode.dataset.k, v = Number(b.dataset.v)
+      b.classList.toggle('on', k === 'kg' ? v === kg : k === 'ly' ? v === cfg().layers : v === TS)
+      if (k === 'ly') b.disabled = v > maxLayers()
+    })
+    sel.querySelector('.ly-val').textContent = `${cfg().layers} layers · ${cfg().layers * PER_LAYER} bags`
+  }
   sel.addEventListener('click', (e) => {
-    const b = e.target.closest('button'); if (!b) return
-    const v = Number(b.dataset.v)
-    if (b.parentNode.dataset.k === 'kg') { if (v !== kg) { kg = v; resetLine() } } else TS = v
+    const b = e.target.closest('button'); if (!b || b.disabled) return
+    const v = Number(b.dataset.v), k = b.parentNode.dataset.k
+    if (k === 'kg') { if (v !== kg) { kg = v; LY = null; resetLine() } }
+    else if (k === 'ly') { if (v !== cfg().layers) { LY = v; resetLine() } }
+    else TS = v
     sync()
   })
   sync()
@@ -577,6 +599,23 @@ lab.onTick((dt0, lab) => {
   const gap = lerp(0.06, 0.0, sim.pz.grip)
   lab.place(clA, P.x - 0.2 - 0.01 - gap, P.y + 0.03, P.z); lab.place(clB, P.x + 0.2 + 0.01 + gap, P.y + 0.03, P.z)
   clA.scale.y = clB.scale.y = Math.min(0.12, t * 0.85) + 0.03
+  // powder: grains spawn at the hopper outlet while the bag at the fill station is filling, and fall down the spout into the bag
+  {
+    const flowing = sim.form.bag && sim.car.phase === 'fill' && sim.rate > 0.3
+    dustAcc += flowing ? dtr * sim.rate * 60 / 12 : 0
+    for (; dustAcc >= 1; dustAcc -= 1) {
+      const g = dustP.find((d) => !d.live); if (!g) break
+      const sp = [-0.09, 0.09][Math.floor(Math.random() * 2)], sq = [-0.09, 0.09][Math.floor(Math.random() * 2)]
+      Object.assign(g, { live: true, x: XJ + sp + (Math.random() - 0.5) * 0.02, y: 2.0, z: sq + (Math.random() - 0.5) * 0.02 })
+    }
+    dummy.quaternion.copy(Q_ID)
+    dustP.forEach((g, i) => {
+      if (g.live) { g.y -= dtr * 1.6; if (g.y < 1.0) g.live = false }
+      if (g.live) { dummy.position.set(g.x, g.y, g.z); dummy.scale.set(1, 1, 1) } else { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0) }
+      dummy.updateMatrix(); dust.setMatrixAt(i, dummy.matrix)
+    })
+    dust.instanceMatrix.needsUpdate = true
+  }
   // bag instances
   const hold = P.y
   let n = 0
