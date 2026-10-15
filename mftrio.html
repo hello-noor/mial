@@ -1566,7 +1566,7 @@ const PI = Math.PI
 // ------------------------------------------------------------------ constants
 const BELT_Y = 0.75, X_DROP = 2.0, X_STOP = 3.7, X_PICK = 3.5             // belt top, bag drop, belt end, pick position (one bag)
 const ROLL_Y = 0.2                                                       // top of the rollers and of the turntable
-const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2
+const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2, X_QUEUE = 6.5          // X_QUEUE: the waiting place on the lane, before the turntable
 const BAG = { L: 0.40, T0: 0.13 }                                         // square pillow bag, 0.40 x 0.40, 0.13 thick at 10 kg
 const PAL = { L: 1.2, W: 0.8, H: 0.144 }
 const PER_ROW = 1, ROWS_PER_LAYER = 6, PER_LAYER = PER_ROW * ROWS_PER_LAYER   // one bag per cycle; 3 x 2 bags per layer
@@ -1813,7 +1813,7 @@ const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
   // funnel under the dosing chamber, through the platform, ending at the spout over the fill station
   lab.mesh(GEO.shell([[0, 1.72], [0.07, 1.72], [0.2, 2.0], [0, 2.0]], 0.012, 48).translate(XJ, 0, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
   // the powder: one solid column from the spout up to the top of the hopper, sitting inside the shells. Shown in cut away and X-ray
-  const powM = MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.9, cap: [0.92, 0.92, 0.9] })
+  const powM = MAT.plastic({ color: [0.94, 0.94, 0.92], roughness: 0.9, transparent: true, opacity: 0.32, noCap: true })   // the stock: see-through, so the falling grains show
   const powCol = (y0, y1, rs) => GEO.lathe([[0, y0], ...rs.map(([r, y]) => [r, y]), [0, y1]], 48).translate(XJ, 0, 0)
   powFun = lab.mesh(powCol(1.04, 2.0, [[0.05, 1.04], [0.07, 1.72], [0.19, 2.0]]), powM, { name: 'Powder in funnel', explode: [0, 0.6, 0], count: 1 })
   powHop = lab.mesh(powCol(2.0, 3.3, [[0.26, 2.0], [0.26, 3.0], [0.4, 3.3]]), powM, { name: 'Powder in dosing chamber and hopper', explode: [0, 1.0, 0], count: 1 })
@@ -1858,7 +1858,14 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
   lab.mesh(GEO.merge(fr), frameM, { name: 'Roller conveyor frame', explode: [0, -0.3, -1.4], count: 10 })
 }
 // the pallet station: a plinth beside the roller lane, in front of it. The pallet is built here, then slides onto the rollers
-lab.mesh(box(1.5, 0.2, 1.0, X_PAL, 0.1, Z_STN, 0.02), frameM, { name: 'Pallet station', explode: [0, -0.3, 1.2], count: 1 })
+{
+  const rs = []
+  for (let z = Z_STN - 0.5; z < Z_STN + 0.5; z += 0.12) rs.push(cylX(0.03, 1.3, X_PAL, 0.17, z, 14))
+  lab.mesh(GEO.merge(rs), steelBrushed, { name: 'Station rollers (across the lane)', explode: [0, 0.5, 0.8], count: rs.length })
+  const fr = [box(1.4, 0.13, 0.04, X_PAL, 0.12, Z_STN + 0.52, 0.008), box(1.4, 0.13, 0.04, X_PAL, 0.12, Z_STN - 0.52, 0.008)]
+  for (const x of [X_PAL - 0.6, X_PAL, X_PAL + 0.6]) for (const sz of [-1, 1]) fr.push(box(0.05, 0.07, 0.05, x, 0.035, Z_STN + sz * 0.52, 0.008))
+  lab.mesh(GEO.merge(fr), frameM, { name: 'Pallet station frame', explode: [0, -0.3, 1.2], count: 8 })
+}
 
 // ------------------------------------------------------------------ palletizer: portal gantry, cross member, slider, mast, gripper
 {
@@ -1878,10 +1885,10 @@ const column = lab.mesh(box(0.26, 3.1, 0.26, 0, 0, Z_COL, 0.012), blue, { name: 
 const colBelt = lab.mesh(box(0.05, 2.9, 0.03, 0, 0, Z_COL + 0.14, 0.008), dark, { name: 'Drive belt in the column', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.9] })
 const pulleys = lab.mesh(GEO.merge([cylZ(0.07, 0.05, 0, 3.6, Z_COL + 0.14, 24), cylZ(0.07, 0.05, 0, 0.62, Z_COL + 0.14, 24)]), dark, { name: 'Belt pulleys (top and bottom)', pos: [X_PICK, 0, 0], explode: [0, 0.8, 0.9] })
 const yCar = lab.mesh(box(0.34, 0.24, 0.34, 0, 0, 0, 0.02), blue, { name: 'Column block (Y, up and down)', pos: [X_PICK, YC + 0.3, Z_COL], explode: [0, 1.0, 0.8] })
-const zBeam = lab.mesh(GEO.rbox(0.2, 0.16, Z_END - Z_COL, 0.03, 2), steelBrushed, { name: 'Z beam (fixed length)', pos: [X_PICK, YC + 0.3, (Z_COL + Z_END) / 2], explode: [0, 1.2, 0.5] })
+const zBeam = lab.mesh(GEO.rbox(0.2, 0.16, Z_END - Z_COL, 0.03, 2), blue, { name: 'Z beam (fixed length)', pos: [X_PICK, YC + 0.3, (Z_COL + Z_END) / 2], explode: [0, 1.2, 0.5] })
 const gcar = lab.mesh(GEO.rbox(0.46, 0.2, 0.4, 0.04, 2), steelBrushed, { name: 'Gripper carriage (Z, slides on the beam)', pos: [X_PICK, YC + 0.3, 0], explode: [0, 1.2, 1.2] })
-const hookG = (sx) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.17, 0.2], [0.2, 0.1], [0.2, 0.0], [0.15, -0.05], [0.07, -0.04]].map(([x, y]) => new THREE.Vector3(sx * x, y, 0))), 24, 0.014, 8, false)
-const hooks = lab.mesh(GEO.merge([hookG(-1), hookG(1)]), steelBrushed, { name: 'Curved hooks (take the bag)', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 2 })
+const hookG = (sx, sz) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.17, 0.2], [0.2, 0.1], [0.2, 0.0], [0.15, -0.05], [0.07, -0.04]].map(([x, y]) => new THREE.Vector3(sx * x, y, sz * 0.12))), 24, 0.014, 8, false)
+const hooks = lab.mesh(GEO.merge([hookG(-1, -1), hookG(-1, 1), hookG(1, -1), hookG(1, 1)]), steelBrushed, { name: 'Two pairs of curved hooks (one pair per side)', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 4 })
 
 // ------------------------------------------------------------------ wrapper: turntable, mast, film carriage
 const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, Z_LANE)
@@ -1930,7 +1937,7 @@ const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setU
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
 // the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
 const DUST_N = 220
-const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.022, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
+const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.022, 6, 4), MAT.plastic({ color: [0.9, 0.78, 0.5], roughness: 0.85, cap: [0.88, 0.8, 0.6] }), DUST_N)
 dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
 lab.add(dust, { name: 'Powder', explode: [0, 0, 0], count: 2 })
 const dustP = Array.from({ length: DUST_N }, () => ({ live: false, x: 0, y: 0, z: 0 }))
@@ -1981,7 +1988,7 @@ function resetLine() {
   sim.drops = []; sim.picks = []; sim.stalledS = 0
 }
 const stationPallet = () => sim.pallets.find((p) => ['loading', 'ready'].includes(p.st))
-const wrapperBusy = () => sim.pallets.some((p) => ['toWrap', 'wrapping', 'out'].includes(p.st))
+const laneBusy = () => sim.pallets.some((p) => ['xfer', 'toWrap'].includes(p.st))   // one place in the queue on the lane
 const loadH = () => PAL.H + cfg().layers * cfg().t
 
 function stepSim(dt) {
@@ -1991,9 +1998,12 @@ function stepSim(dt) {
   if (!stationPallet() && sim.pallets.length < NP) sim.pallets.push({ id: sim.palId++, st: 'loading', x: X_PAL, z: Z_STN, yaw: 0, row: 0, wrap: 0, tt: 0, shellH: 0 })
   for (const p of sim.pallets) {
     if (p.st === 'loading' && p.row >= rowsTotal() && sim.pz.st === 'idle') p.st = 'ready'
-    else if (p.st === 'ready' && !wrapperBusy() && !sim.pallets.some((q) => q.st === 'xfer')) { p.st = 'xfer' }
+    else if (p.st === 'ready' && !laneBusy()) { p.st = 'xfer' }
     else if (p.st === 'xfer') { p.z = Math.max(Z_LANE, p.z - dt * 0.5); if (p.z <= Z_LANE) p.st = 'toWrap' }
-    else if (p.st === 'toWrap') { p.x = Math.min(X_WRAP, p.x + dt * (X_WRAP - X_PAL) / IN_S); if (p.x >= X_WRAP) { p.st = 'wrapping'; p.wrap = 0; sim.wr.ang = 0 } }
+    else if (p.st === 'toWrap') {
+      const busy = sim.pallets.some((q) => q !== p && ['wrapping', 'out'].includes(q.st))   // the turntable is taken: wait in the queue
+      p.x = Math.min(busy ? X_QUEUE : X_WRAP, p.x + dt * (X_WRAP - X_PAL) / IN_S); if (p.x >= X_WRAP) { p.st = 'wrapping'; p.wrap = 0; sim.wr.ang = 0 }
+    }
     else if (p.st === 'wrapping') {
       if (!sim.wr.stopped) { p.wrap = Math.min(1, p.wrap + dt / WRAP_S); sim.wr.ang += dt * TT_RPM * 2 * PI / 60; if (p.wrap >= 1) { p.st = 'out'; p.tt = 0 } }
       p.yaw = sim.wr.ang
@@ -2156,26 +2166,30 @@ lab.onTick((dt0, lab) => {
   lab.place(xcar, P.x, 2.8, 0); lab.place(column, P.x, 2.125, 0); lab.place(colBelt, P.x, 2.125, 0); lab.place(pulleys, P.x, 0, 0)
   lab.place(yCar, P.x, P.y + 0.3, Z_COL); lab.place(zBeam, P.x, P.y + 0.3, (Z_COL + Z_END) / 2)
   lab.place(gcar, P.x, P.y + 0.3, P.z); lab.place(hooks, P.x, P.y, P.z)
-  // powder: grains spawn at the hopper outlet while the bag at the fill station is filling, and fall down the spout into the bag
+  // powder: grains pour from the hopper, converge through the dosing chamber and the funnel, and fall down the spout into the bag being filled
   {
     const flowing = sim.form.bag && sim.car.phase === 'fill' && sim.rate > 0.3
-    dustAcc += flowing ? dtr * sim.rate * 60 / 12 : 0
+    dustAcc += flowing ? dtr * sim.rate * 60 / 4 : 0
     for (; dustAcc >= 1; dustAcc -= 1) {
       const g = dustP.find((d) => !d.live); if (!g) break
-      const sp = [-0.09, 0.09][Math.floor(Math.random() * 2)], sq = [-0.09, 0.09][Math.floor(Math.random() * 2)]
-      Object.assign(g, { live: true, x: XJ + sp + (Math.random() - 0.5) * 0.02, y: 2.0, z: sq + (Math.random() - 0.5) * 0.02 })
+      const a = Math.random() * 2 * PI, r = 0.13 * Math.sqrt(Math.random())
+      Object.assign(g, { live: true, dx: Math.cos(a) * r, dz: Math.sin(a) * r, y: 3.2, v: 0.6 })
     }
+    const floor = sim.form.bag ? 1.32 - 0.36 * sim.form.f + 0.02 : 1.3                    // a grain stops on the bag's powder
     dummy.quaternion.copy(Q_ID)
     dustP.forEach((g, i) => {
-      if (g.live) { g.y -= dtr * 1.6; if (g.y < 1.0) g.live = false }
-      if (g.live) { dummy.position.set(g.x, g.y, g.z); dummy.scale.set(1, 1, 1) } else { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0) }
+      if (g.live) { g.v += 2.45 * dtr; g.y -= g.v * dtr; if (g.y < floor) g.live = false }
+      if (g.live) {
+        const k = clamp((g.y - 1.72) / 1.28)                                              // 1 at the hopper outlet, 0 at the funnel
+        dummy.position.set(XJ + g.dx * (0.12 + 0.88 * k), g.y, g.dz * (0.12 + 0.88 * k)); dummy.scale.set(1, 1, 1)
+      } else { dummy.position.set(0, -9, 0); dummy.scale.set(0, 0, 0) }
       dummy.updateMatrix(); dust.setMatrixAt(i, dummy.matrix)
     })
     dust.instanceMatrix.needsUpdate = true
   }
   const powShow = lab.target.cut > 0.5 || lab.target.xray > 0.5                 // powder only in the cut away and X-ray views
   dust.visible = powShow; powHop.visible = powFun.visible = powShow; powBag.visible = powShow && !!sim.form.bag
-  if (sim.form.bag) { const f = sim.form.f, h = Math.max(0.02, 0.34 * f); powBag.scale.set(0.28, h, 0.3); lab.place(powBag, XJ, 1.32 - 0.36 * f / 2 + 0.36 * f / 2 - h, 0) }
+  if (sim.form.bag) { const h = Math.max(0.02, 0.36 * sim.form.f); powBag.scale.set(0.24, h, 0.26); lab.place(powBag, XJ, 1.32 - h, 0) }   // the bag's powder grows from the bottom of the bag
   // bag instances
   const hold = P.y
   let n = 0
