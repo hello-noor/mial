@@ -46,7 +46,7 @@ const lab = new Lab({
   prompt: 'a vertical bagging machine, a palletizer and a pallet wrapper as one packaging line',
   no: 8, title: 'MF Trio Line', sub: '20 bags/min',
   size: 9.6,
-  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.0, 0], fov: 30, frameX: -0.165 },
+  view: PH ? { az: 14, el: 10, dist: 4.5, target: [4.75, 1.5, 0], fov: 30, frameX: 0 } : { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0], fov: 30, frameX: -0.165 },
   cut: { a: [0, 0, 1], b: [0, 0, 1], center: [0, 0, 0], reach: 0.3 },
 })
 
@@ -293,18 +293,19 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
 // ------------------------------------------------------------------ palletizer: portal gantry, cross member, slider, mast, gripper
 {
   const f = []
-  for (const x of [HEAD_X, HEAD_X1]) for (const sz of [-1, 1]) { f.push(box(0.16, 2.9, 0.16, x, 1.45, sz * GZ, 0.012)); f.push(box(0.34, 0.03, 0.34, x, 0.015, sz * GZ, 0.006)) }
-  for (const sz of [-1, 1]) f.push(box(HEAD_X1 - HEAD_X + 0.16, 0.2, 0.18, (HEAD_X + HEAD_X1) / 2, 2.8, sz * GZ, 0.012))
-  for (const x of [HEAD_X, HEAD_X1]) f.push(box(0.12, 0.12, 2 * GZ, x, 2.2, 0, 0.008))
+  // as on the MF flyer: one deep beam along the line on two heavy posts; the blue arm hangs from it and reaches out across the line
+  for (const x of [HEAD_X, HEAD_X1]) { f.push(box(0.3, 2.97, 0.3, x, 1.485, GZ, 0.014)); f.push(box(0.5, 0.03, 0.5, x, 0.015, GZ, 0.006)); f.push(box(0.4, 0.04, 0.4, x, 2.95, GZ, 0.008)) }
+  f.push(box(HEAD_X1 - HEAD_X + 0.5, 0.34, 0.26, (HEAD_X + HEAD_X1) / 2, 2.8, GZ, 0.014))
+  for (const x of [HEAD_X, HEAD_X1]) f.push(box(0.1, 0.1, 2 * GZ, x, 0.12, 0, 0.008))
   lab.mesh(GEO.merge(f), steelBrushed, { name: 'Palletizer portal', explode: [0, 0, -1.2], count: 12, xray: 'shell' })
-  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.092, 0, 'Palletizer plate')
+  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.132, 0, 'Palletizer plate')
   lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.45, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.27, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
 }
-const xcar = lab.mesh(GEO.merge([box(0.22, 0.18, 2 * GZ + 0.06, 0, 0, 0, 0.012), box(0.3, 0.3, 0.06, 0, 0, GZ + 0.02, 0.01), box(0.3, 0.3, 0.06, 0, 0, -GZ - 0.02, 0.01)]), blue, { name: 'Cross member', pos: [X_PICK, 2.6, 0], explode: [0, 0.9, 0], count: 3 })
+const xcar = lab.mesh(GEO.merge([box(0.24, 0.2, 1.8, 0, 0, 0.4, 0.014), box(0.62, 0.66, 0.42, 0, 0.2, GZ, 0.014), box(0.3, 0.1, 0.3, 0, -0.05, -0.5, 0.01)]), blue, { name: 'Blue arm (crosses the line)', pos: [X_PICK, 2.55, 0], explode: [0, 0.9, 0], count: 3 })
 const zsl = lab.mesh(box(0.34, 0.26, 0.32, 0, 0, 0, 0.02), blue, { name: 'Slider', pos: [X_PICK, 2.4, 0], explode: [0, 1.3, 0.6] })
 const mastG = new THREE.BoxGeometry(0.14, 1, 0.14).translate(0, 0.5, 0)
 const mast = lab.mesh(mastG, blue, { name: 'Telescopic mast', pos: [X_PICK, 1.8, 0], explode: [0, 1.8, 0.9] })
-const gripG = GEO.merge([box(1.3, 0.05, 0.5, 0, 0.025, 0, 0.008), box(0.22, 0.1, 0.22, 0, 0.1, 0, 0.012)])
+const gripG = GEO.merge([box(1.3, 0.05, 0.5, 0, 0.025, 0, 0.008), box(0.22, 0.1, 0.22, 0, 0.1, 0, 0.012), box(0.2, 0.2, 0.5, -0.56, 0.15, 0, 0.012), box(0.2, 0.2, 0.5, 0.56, 0.15, 0, 0.012), box(0.9, 0.06, 0.5, 0, 0.16, 0, 0.01)])
 const grip = lab.mesh(gripG, steelBrushed, { name: 'Gripper head', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 2 })
 const clG = new THREE.BoxGeometry(0.02, 1, 0.46).translate(0, -0.5, 0)
 const clA = lab.mesh(clG, chrome, { name: 'Clamp plates', pos: [X_PICK - 0.66, YC, 0], explode: [-0.7, 0.2, 1.4], count: 2 })
@@ -543,7 +544,7 @@ lab.onTick((dt0, lab) => {
   lab.place(jawA, XJ, 1.28, 0.065 + sim.jaw); lab.place(jawB, XJ, 1.28, -(0.065 + sim.jaw))
   // gantry
   const P = sim.pz.pose
-  lab.place(xcar, P.x, 2.6, 0); lab.place(zsl, P.x, 2.4, P.z)
+  lab.place(xcar, P.x, 2.55, 0); lab.place(zsl, P.x, 2.4, P.z)
   lab.place(mast, P.x, P.y + 0.06, P.z); mast.scale.y = 2.58 - (P.y + 0.06)
   lab.place(grip, P.x, P.y, P.z)
   const gap = lerp(0.06, 0.0, sim.pz.grip)
@@ -661,7 +662,7 @@ lab.target.models = 0; lab.target.faq = 0
 
 // ------------------------------------------------------------------ camera shortcuts: the whole line, or one machine
 const VIEWS = {
-  line: { az: 14, el: 10, dist: 1.98, target: [4.75, 2.0, 0] },
+  line: { az: 14, el: 10, dist: 1.98, target: [4.75, 2.45, 0] },
   bagger: { az: 24, el: 8, dist: 0.95, target: [1.5, 1.7, 0] },
   palletizer: { az: 14, el: 10, dist: 1.0, target: [4.5, 1.3, 0] },
   wrapper: { az: 24, el: 10, dist: 0.9, target: [8.2, 1.1, 0] },
