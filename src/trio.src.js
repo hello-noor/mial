@@ -155,7 +155,7 @@ const lab = new Lab({
     .mial-btns { margin-top:10px; gap:6px }
     .mial-all { margin-top:0; padding:0.42em 0.8em; font-size:11px }
     .mial-all kbd { display:none }
-    .lab-side { top:auto; bottom:96px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:72vh; overflow:auto }
+    .lab-side { top:auto; bottom:150px; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:60vh; overflow:auto }
     .lab-title { font-size:24px !important }
     .lab-title i { display:none }
     .lab-metric { margin-top:8px !important }
@@ -418,6 +418,7 @@ const sim = {
 window.__sim = sim                                                       // read-only handle for tests and screenshots
 const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
 const maxLayers = () => Math.floor((PAL_MAX_H - PAL.H) / BAG_KG[kg].t)
+const outRate = () => (sim.beltN > 0 ? cfg().cap : Math.min(sim.rate, cfg().cap))   // line output, bags/min
 const cfg = () => ({ ...BAG_KG[kg], layers: Math.min(LY ?? BAG_KG[kg].layers, maxLayers()) })
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
@@ -453,6 +454,7 @@ function stepSim(dt) {
 
   // ---- belt: bags ride to the stop plate and queue
   const belt = sim.bags.filter((b) => b.st === 'belt').sort((a, b) => b.x - a.x)
+  sim.beltN = belt.length
   belt.forEach((b, i) => { const lim = i === 0 ? X_STOP - 0.2 : belt[i - 1].x - BAG.L; b.x = Math.min(b.x + BELT_V * dt, lim); b.y = BELT_Y + t / 2 })
   const falling = sim.bags.filter((b) => b.st === 'fall')
   for (const b of falling) { b.t += dt; const k = clamp(b.t / 0.3); b.y = lerp(1.14, BELT_Y + t / 2, k * k); b.q = 1 - k; if (k >= 1) { b.st = 'belt'; b.x = X_DROP; b.y = BELT_Y + t / 2; b.q = 0 } }
@@ -460,7 +462,7 @@ function stepSim(dt) {
 
   // ---- MF 54: the carousel arms index by 90 degrees. The bag on the arm under the funnel fills; the bag on the arm above the belt drops
   const bg = sim.bagger, F = sim.form, car = sim.car
-  const rateSet = Math.min(bg.set, c.cap)
+  const rateSet = Math.min(bg.set, BPM_MAX)                                        // the bagger runs at its own speed; the belt queues what the palletizer cannot take
   const RT = 1.2                                                                   // seconds for one 90 degree step
   const iF = car.s % 4, iD = (car.s + 2) % 4                                       // arm at the fill station, arm at the drop station
   const atD = () => sim.bags.find((b) => b.st === 'arm' && b.arm === iD && b.f >= 1)
@@ -564,10 +566,10 @@ lab.how(`Three machines in sequence. The <b>MF 54</b> carries an empty bag on ea
 const LB = (t, at, value, side = 'right') => lab.label(lab.machine, t, { at, value, side })
 LB('MF 54', [XJ + 0.3, 2.1, 0], () => `${fmt(sim.rate, 1)} bags/min`)
 LB('Infeed belt', [2.2, 0.8, 0.3], () => `${sim.bags.filter((b) => b.st === 'belt').length} bags waiting`)
-LB('Smart Palletizer', [4.1, 2.9, -GZ], () => `${fmt(sim.rate * 60 / PER_ROW)} cycles/h`)
+LB('Smart Palletizer', [4.1, 2.9, -GZ], () => `${fmt(outRate() * 60 / PER_ROW)} cycles/h`)
 LB('Pallet', [X_PAL, 1.25, 0.5], () => { const p = stationPallet(); return p ? `layer ${Math.min(cfg().layers, Math.floor(p.row / ROWS_PER_LAYER) + 1)} / ${cfg().layers}` : '--' })
 LB('Turntable', [X_WRAP, 0.25, 0.9], () => { const p = sim.pallets.find((q) => q.st === 'wrapping'); return p ? `wrapping ${fmt(p.wrap * 100)} %` : 'free' })
-LB('MF Wrap 35', [X_MAST, 2.4, 0], () => sim.wr.stopped ? 'film out' : `${fmt(Math.min(35, sim.rate * 60 / (cfg().layers * PER_LAYER)))} pallets/h`)
+LB('MF Wrap 35', [X_MAST, 2.4, 0], () => sim.wr.stopped ? 'film out' : `${fmt(Math.min(35, outRate() * 60 / (cfg().layers * PER_LAYER)))} pallets/h`)
 
 // ------------------------------------------------------------------ the display on the MF 54 and run
 const dispT = new THREE.CanvasTexture(bagDisp); dispT.colorSpace = THREE.SRGBColorSpace
@@ -619,6 +621,7 @@ lab.onTick((dt0, lab) => {
     })
     dust.instanceMatrix.needsUpdate = true
   }
+  dust.visible = lab.target.cut > 0.5 || lab.target.xray > 0.5                 // powder only in the cut away and X-ray views
   // bag instances
   const hold = P.y
   let n = 0
@@ -668,7 +671,7 @@ lab.onTick((dt0, lab) => {
   const stop = sim.wr.stopped
   lampG.emissiveIntensity = stop ? 0.1 : 3; lampR.emissiveIntensity = stop ? 5 + Math.sin(lab.time * 14) * 2 : 0.1
   // hero and kpis
-  const bph = sim.rate * 60, tph = bph * kg / 1000, pph = Math.min(35, bph / (c.layers * PER_LAYER))
+  const bph = outRate() * 60, tph = bph * kg / 1000, pph = Math.min(35, bph / (c.layers * PER_LAYER))
   const sp = stationPallet()
   const backed = sim.stalledS > 1.5 || (sim.form.stalled && sim.rate < 0.3)
   const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at palletizer limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : 'steady'
