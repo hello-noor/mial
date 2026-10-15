@@ -103,8 +103,8 @@
   .feat p { margin:0; color:var(--dim); font-size:16px }
 
   /* reveal on scroll */
-  .rv { opacity:0; transform:translateY(40px); transition:opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1) }
-  .rv.in { opacity:1; transform:none }
+  .js .rv { opacity:0; transform:translateY(40px); transition:opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1) }
+  .js .rv.in { opacity:1; transform:none }
   .shot.rv.in { transform:perspective(1400px) rotateX(3deg) }
   .shot.rv.in:hover { transform:perspective(1400px) rotateX(0) }
 
@@ -181,9 +181,14 @@
 </footer>
 
 <script>
+  // the reveal is only used when the browser can watch scrolling; otherwise, or if it is slow, everything shows at once
+  document.documentElement.classList.add('js')
+  setTimeout(() => document.querySelectorAll('.rv').forEach((el) => el.classList.add('in')), 2500)
   // reveal each block as it scrolls into view
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.01, rootMargin: '0px 0px -8% 0px' })
-  document.querySelectorAll('.rv').forEach((el) => io.observe(el))
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: 0.01, rootMargin: '0px 0px -8% 0px' })
+    document.querySelectorAll('.rv').forEach((el) => io.observe(el))
+  } else document.querySelectorAll('.rv').forEach((el) => el.classList.add('in'))
 </script>
 </body>
 </html>
