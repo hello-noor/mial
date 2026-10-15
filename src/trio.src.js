@@ -402,6 +402,7 @@ const sim = {
   wr: { stopped: false, ang: 0, carY: 0.7, wrap: 0 },
   out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], pickN: 0, cyc: 0, wrapBusy: 0,
 }
+window.__sim = sim                                                       // read-only handle for tests and screenshots
 const cfg = () => BAG_KG[kg]
 const rowsTotal = () => cfg().layers * ROWS_PER_LAYER
 const freeBag = () => sim.bags.find((b) => b.st === 'free')
