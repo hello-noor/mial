@@ -1783,8 +1783,8 @@ const hopM = MAT.stainless({ roughness: 0.24, side: THREE.DoubleSide })
   // dosing unit on the platform: two stainless boxes, a blue gear motor and logos
   lab.mesh(GEO.merge([box(0.62, 0.5, 0.52, XJ, 2.25, 0, 0.02), box(0.62, 0.55, 0.52, XJ, 2.78, 0, 0.02)]), steelBrushed, { name: 'Dosing unit', explode: [0, 1.0, 0], xray: 'shell', count: 2 })
   lab.mesh(GEO.merge([cylX(0.085, 0.22, XJ + 0.37, 2.8, 0.12, 24), cylZ(0.1, 0.012, XJ - 0.14, 2.82, 0.266, 28), cylZ(0.07, 0.012, XJ - 0.14, 2.25, 0.266, 28)]), blue, { name: 'Gear motor and logos', explode: [0.4, 1.0, 0.6], count: 3 })
-  // open hopper on top, tilted outward: a wide rectangular mouth sloping down into the dosing unit
-  lab.mesh(new THREE.CylinderGeometry(0.42, 0.2, 0.6, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.8).rotateZ(-0.35).translate(XJ + 0.16, 3.38, 0), hopM, { name: 'Open hopper', explode: [0.3, 1.4, 0], count: 2 })
+  // open hopper on top: a wide rectangular mouth that leans away from the carousel, toward the ladder side (-x), its neck standing on the dosing unit
+  lab.mesh(new THREE.CylinderGeometry(0.5, 0.2, 0.6, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.8).rotateZ(0.45).translate(XJ - 0.13, 3.34, 0), hopM, { name: 'Open hopper', explode: [-0.3, 1.4, 0], count: 2 })
   // funnel under the dosing unit, through the platform, ending just above the spout at the fill station
   lab.mesh(new THREE.CylinderGeometry(0.2, 0.06, 0.26, 36, 1, true).translate(XJ, 1.88, 0), hopM, { name: 'Funnel', explode: [0, 0.6, 0], count: 1 })
   lab.mesh(cylY(0.05, 0.2, HUB_X, 1.86, 0, 16), steelM, { name: 'Carousel post', explode: [0, 0.4, 0], count: 1 })
