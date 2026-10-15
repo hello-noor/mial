@@ -9,36 +9,39 @@ const PI = Math.PI
  20 bags/min (1200 bags/h, bags 5 to 20 kg, 230 x 300 to 470 x 680 mm), palletizer up to 500 cycles/h in the line (the MF PCA
  Smart Pro product page says up to 800 cycles/h, load up to 50 kg, pallet up to 1800 mm incl. pallet, 800 x 1200 and 1000 x 1200,
  4 brushless axes), wrapper up to 35 pallets/h, capacity 2000 kg.
- ASSUMED and marked as such in the page: the exact bag size, 3 bags per palletizer cycle, 6 bags per layer on a 1200 x 800
- pallet, belt speed, turntable speed, bag rate limit of the 20 kg bag, all the geometry.
+ Photo of the line (flyer): the palletizer portal stands BEHIND the line; a blue arm hangs from its beam and reaches out over
+ the line, ending in a large gripper that takes the bags one at a time and moves forward/back and along the beam.
+ ASSUMED and marked as such in the page: the exact bag size, 1 bag per palletizer cycle (as in the photo), 6 bags per layer on a
+ 1200 x 800 pallet, belt speed, turntable speed, all the geometry.
 
  Layout of the model (m): MF 54 on a platform at the left, bags drop on the infeed belt, a portal palletizer picks a row of
- three bags and stacks them on a pallet on the roller conveyor, the full pallet rolls to the turntable of the wrapper at the
+ bag after bag and stacks them on a pallet on the roller conveyor, the full pallet rolls to the turntable of the wrapper at the
  right, is wrapped in stretch film and leaves toward the front.
 
  Model (computed in the tick below, not typed in):
    bags/h = 60 x rate       rate = min(bagger setting, bag limit), and 0 while the line is backed up
    t/h    = bags/h x kg
-   cycles/h = bags/h / 3    (palletizer cycle fixed at 3600/500 = 7.2 s, 3 bags per pick)
+   cycles/h = bags/h      (palletizer cycle fixed at 3600/500 = 7.2 s, one bag per pick, so at most 500/60 = 8.3 bags/min)
    pallets/h = bags/h / (6 x layers)     wrapper cycle 3600/35 = 102.9 s
  Hero: bags per minute. Input: bagger speed. Break: the film runs out on the wrapper, the line backs up.
 */
 
 // ------------------------------------------------------------------ constants
-const BELT_Y = 0.75, X_DROP = 1.25, X_STOP = 3.7, X_PICK = 3.1             // belt top, bag drop, belt end, centre of the picked row
+const BELT_Y = 0.75, X_DROP = 1.25, X_STOP = 3.7, X_PICK = 3.5             // belt top, bag drop, belt end, pick position (one bag)
 const ROLL_Y = 0.2                                                       // top of the rollers and of the turntable
 const X_PAL = 4.65, X_WRAP = 7.7, X_MAST = 9.2
 const BAG = { L: 0.40, T0: 0.13 }                                         // square pillow bag, 0.40 x 0.40, 0.13 thick at 10 kg
 const PAL = { L: 1.2, W: 0.8, H: 0.144 }
-const PER_ROW = 3, ROWS_PER_LAYER = 2, PER_LAYER = PER_ROW * ROWS_PER_LAYER
+const PER_ROW = 1, ROWS_PER_LAYER = 6, PER_LAYER = PER_ROW * ROWS_PER_LAYER   // one bag per cycle; 3 x 2 bags per layer
 const CYCLE_S = 3600 / 500                                                // palletizer cycle, s (500 cycles/h)
 const WRAP_TOTAL_S = 3600 / 35                                            // wrapper cycle, s (35 pallets/h)
 const IN_S = 8, OUT_S = 4, WRAP_S = WRAP_TOTAL_S - IN_S - OUT_S
 const BELT_V = 0.5, TT_RPM = 8
 const BPM_MAX = 20
+const PZ_BPM = 3600 / CYCLE_S / 60                                        // the palletizer takes one bag per cycle: 500 cycles/h = 8.3 bags/min
 const YC = 1.75                                                           // travel height of the gripper (underside of the plate)
 const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.15                             // gantry posts
-const BAG_KG = { 5: { t: 0.065, layers: 12, cap: 20 }, 10: { t: 0.13, layers: 6, cap: 20 }, 20: { t: 0.26, layers: 3, cap: 8 } }
+const BAG_KG = { 5: { t: 0.065, layers: 12, cap: PZ_BPM }, 10: { t: 0.13, layers: 6, cap: PZ_BPM }, 20: { t: 0.26, layers: 3, cap: PZ_BPM } }
 let kg = 10
 const PH = innerWidth <= 760                                              // phone layout: the whole line has to fit the narrow screen
 
@@ -294,22 +297,21 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
 {
   const f = []
   // as on the MF flyer: one deep beam along the line on two heavy posts; the blue arm hangs from it and reaches out across the line
-  for (const x of [HEAD_X, HEAD_X1]) { f.push(box(0.3, 2.97, 0.3, x, 1.485, GZ, 0.014)); f.push(box(0.5, 0.03, 0.5, x, 0.015, GZ, 0.006)); f.push(box(0.4, 0.04, 0.4, x, 2.95, GZ, 0.008)) }
-  f.push(box(HEAD_X1 - HEAD_X + 0.5, 0.34, 0.26, (HEAD_X + HEAD_X1) / 2, 2.8, GZ, 0.014))
-  for (const x of [HEAD_X, HEAD_X1]) f.push(box(0.1, 0.1, 2 * GZ, x, 0.12, 0, 0.008))
+  for (const x of [HEAD_X, HEAD_X1]) { f.push(box(0.3, 2.97, 0.3, x, 1.485, -GZ, 0.014)); f.push(box(0.5, 0.03, 0.5, x, 0.015, -GZ, 0.006)); f.push(box(0.4, 0.04, 0.4, x, 2.95, -GZ, 0.008)) }
+  f.push(box(HEAD_X1 - HEAD_X + 0.5, 0.34, 0.26, (HEAD_X + HEAD_X1) / 2, 2.8, -GZ, 0.014))
   lab.mesh(GEO.merge(f), steelBrushed, { name: 'Palletizer portal', explode: [0, 0, -1.2], count: 12, xray: 'shell' })
-  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, GZ + 0.132, 0, 'Palletizer plate')
+  plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, -GZ + 0.132, 0, 'Palletizer plate')
   lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.45, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.27, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
 }
-const xcar = lab.mesh(GEO.merge([box(0.24, 0.2, 1.8, 0, 0, 0.4, 0.014), box(0.62, 0.66, 0.42, 0, 0.2, GZ, 0.014), box(0.3, 0.1, 0.3, 0, -0.05, -0.5, 0.01)]), blue, { name: 'Blue arm (crosses the line)', pos: [X_PICK, 2.55, 0], explode: [0, 0.9, 0], count: 3 })
+const xcar = lab.mesh(GEO.merge([box(0.24, 0.2, 1.95, 0, 0, -0.275, 0.014), box(0.62, 0.66, 0.42, 0, 0.2, -GZ, 0.014), box(0.3, 0.1, 0.3, 0, -0.05, 0.65, 0.01)]), blue, { name: 'Blue arm (cantilever over the line)', pos: [X_PICK, 2.55, 0], explode: [0, 0.9, 0], count: 3 })
 const zsl = lab.mesh(box(0.34, 0.26, 0.32, 0, 0, 0, 0.02), blue, { name: 'Slider', pos: [X_PICK, 2.4, 0], explode: [0, 1.3, 0.6] })
 const mastG = new THREE.BoxGeometry(0.14, 1, 0.14).translate(0, 0.5, 0)
 const mast = lab.mesh(mastG, blue, { name: 'Telescopic mast', pos: [X_PICK, 1.8, 0], explode: [0, 1.8, 0.9] })
-const gripG = GEO.merge([box(1.3, 0.05, 0.5, 0, 0.025, 0, 0.008), box(0.22, 0.1, 0.22, 0, 0.1, 0, 0.012), box(0.2, 0.2, 0.5, -0.56, 0.15, 0, 0.012), box(0.2, 0.2, 0.5, 0.56, 0.15, 0, 0.012), box(0.9, 0.06, 0.5, 0, 0.16, 0, 0.01)])
+const gripG = GEO.merge([box(0.84, 0.05, 0.56, 0, 0.025, 0, 0.008), box(0.22, 0.1, 0.22, 0, 0.1, 0, 0.012), box(0.14, 0.22, 0.56, -0.35, 0.15, 0, 0.012), box(0.14, 0.22, 0.56, 0.35, 0.15, 0, 0.012), box(0.56, 0.06, 0.56, 0, 0.16, 0, 0.01)])
 const grip = lab.mesh(gripG, steelBrushed, { name: 'Gripper head', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 2 })
-const clG = new THREE.BoxGeometry(0.02, 1, 0.46).translate(0, -0.5, 0)
-const clA = lab.mesh(clG, chrome, { name: 'Clamp plates', pos: [X_PICK - 0.66, YC, 0], explode: [-0.7, 0.2, 1.4], count: 2 })
-const clB = lab.mesh(clG.clone(), chrome, { name: 'Clamp plate (far)', pos: [X_PICK + 0.66, YC, 0], explode: [0.7, 0.2, 1.4] })
+const clG = new THREE.BoxGeometry(0.02, 1, 0.5).translate(0, -0.5, 0)
+const clA = lab.mesh(clG, chrome, { name: 'Clamp plates', pos: [X_PICK - 0.21, YC, 0], explode: [-0.7, 0.2, 1.4], count: 2 })
+const clB = lab.mesh(clG.clone(), chrome, { name: 'Clamp plate (far)', pos: [X_PICK + 0.21, YC, 0], explode: [0.7, 0.2, 1.4] })
 
 // ------------------------------------------------------------------ wrapper: turntable, mast, film carriage
 const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, 0)
@@ -438,18 +440,20 @@ function stepSim(dt) {
   }
   sim.jawClose = F.f > 0.93 || F.f < 0.05 ? 1 : 0
 
-  // ---- palletizer: picks a row of three, stacks it
+  // ---- palletizer: picks one bag, stacks it in the layer pattern (3 x 2, turned every other layer)
   const pz = sim.pz, sp = stationPallet()
   const pickReady = belt.length >= PER_ROW && belt.slice(0, PER_ROW).every((b, i) => Math.abs(b.x - (X_STOP - 0.2 - i * BAG.L)) < 0.015)
   if (pz.st === 'idle' && pickReady && sp && sp.st === 'loading' && sp.row < rowsTotal()) {
     pz.st = 'cycle'; pz.ph = 0; pz.row = sp.row; pz.pal = sp; pz.layer = Math.floor(sp.row / ROWS_PER_LAYER)
-    pz.zrow = (((pz.row % 2) ^ (pz.layer % 2)) ? 0.2 : -0.2); pz.grab = []
+    { const i = pz.row % PER_LAYER, ix = i % 3, iz = Math.floor(i / 3), fl = pz.layer % 2
+      pz.xrow = ((fl ? 2 - ix : ix) - 1) * BAG.L; pz.zrow = ((iz ^ fl) ? 0.2 : -0.2) }
+    pz.grab = []
   }
   if (pz.st === 'cycle') {
     const prev = pz.ph; pz.ph = Math.min(1, pz.ph + dt / CYCLE_S)
     const B = [0.18, 0.30, 0.36, 0.48, 0.68, 0.80, 0.86, 1.0]                      // phase ends
     const yPick = BELT_Y + t, yPlace = ROLL_Y + PAL.H + (pz.layer + 1) * t
-    const P = [pz.rest, { x: X_PICK, z: 0, y: YC }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: YC }, { x: X_PAL, z: pz.zrow, y: YC }, { x: X_PAL, z: pz.zrow, y: yPlace }, { x: X_PAL, z: pz.zrow, y: yPlace }, { x: X_PAL, z: pz.zrow, y: YC }]
+    const P = [pz.rest, { x: X_PICK, z: 0, y: YC }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: YC }, { x: X_PAL + pz.xrow, z: pz.zrow, y: YC }, { x: X_PAL + pz.xrow, z: pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: pz.zrow, y: YC }]
     let k = 0; while (k < 7 && pz.ph > B[k]) k++
     const a = P[k], b = P[k + 1], u = clamp((pz.ph - (k ? B[k - 1] : 0)) / (B[k] - (k ? B[k - 1] : 0)))
     const e = easeIO(u)
@@ -457,7 +461,7 @@ function stepSim(dt) {
     pz.grip = k === 2 ? u : k >= 3 && k <= 5 ? 1 : k === 6 ? 1 - u : 0
     if (prev <= B[2] && pz.ph > B[2]) { pz.grab = belt.slice(0, PER_ROW); for (const g of pz.grab) { g.st = 'grip'; g.dx = g.x - X_PICK; g.z = 0 } }
     if (prev <= B[6] && pz.ph > B[6]) {
-      for (const g of pz.grab) { g.st = 'stack'; g.pal = pz.pal; g.lx = g.dx; g.lz = pz.zrow; g.ly = PAL.H + pz.layer * t + t / 2 }
+      for (const g of pz.grab) { g.st = 'stack'; g.pal = pz.pal; g.lx = pz.xrow; g.lz = pz.zrow; g.ly = PAL.H + pz.layer * t + t / 2 }
       pz.pal.row++; pz.grab = []; sim.cyc++
     }
     if (pz.ph >= 1) { pz.st = 'idle'; pz.rest = { ...pz.pose } }
@@ -474,7 +478,7 @@ function stepSim(dt) {
 
 // ------------------------------------------------------------------ controls and readouts
 lab.hero({ label: 'Bagging rate', unit: 'bags/min', max: BPM_MAX, digits: 1 })
-const spd = lab.slider({ id: 'speed', label: 'MF 54 speed', min: 0, max: BPM_MAX, value: 12, step: 0.5, ends: ['Stopped', `Up to ${BPM_MAX} bags/min`], fmt: (v) => `${fmt(v, 1)} bags/min` })
+const spd = lab.slider({ id: 'speed', label: 'MF 54 speed', min: 0, max: BPM_MAX, value: 8, step: 0.5, ends: ['Stopped', `Up to ${BPM_MAX} bags/min`], fmt: (v) => `${fmt(v, 1)} bags/min` })
 spd.wrap.insertAdjacentHTML('beforeend', '<div class="gate-hint">Drag to set the speed of the vertical packaging machine (keys [ and ]). Palletizer and wrapper follow.</div>')
 addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.key === '[') spd.set(spd.value - 1); if (e.key === ']') spd.set(spd.value + 1) })
 const kpiEl = document.createElement('div'); kpiEl.className = 'kpis'
@@ -503,7 +507,7 @@ const kpiV = [...kpiEl.querySelectorAll('b span')]
   const fit = () => { if (!how.open) { how.style.maxHeight = ''; return } const top = innerHeight * 0.03, lim = lab.$('.mat-sel').getBoundingClientRect().top - top - 14; how.style.maxHeight = (lim > 260 ? lim : innerHeight * 0.9) + 'px' }
   how.addEventListener('toggle', fit); addEventListener('resize', fit)
 }
-lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a bag at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> picks a row of three bags in one cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800) and stacks them, two rows per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm, and a lower bag rate for the 20 kg bags (8 per minute). The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
+lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a bag at the speed you set (up to 20 bags/min, bags of 5 to 20 kg, from the website). It drops each bag on the infeed belt, where the bags queue against a stop plate. The <b>palletizer</b> stands behind the line: its blue arm hangs from the beam and reaches out over the belt, and the large gripper takes the bags one at a time (as in the flyer photo) in a cycle of 7.2 s (500 cycles/h in the line, from the film; its product page says up to 800), so the line cannot go faster than 8.3 bags/min. It stacks them, 3 x 2 per layer, on a pallet on the roller conveyor. When the pallet is full it rolls to the turntable of the <b>MF Wrap 35</b>, which spins it and wraps it in stretch film, 35 pallets/h at most, up to 2000 kg (from the website). Everything between those three quoted capacities is assumed: bags of 5, 10 or 20 kg (the range is from the website; 0.40 x 0.40 m, the thickness follows the weight, is assumed), one bag per cycle, 6 bags per layer on a 1200 x 800 pallet so every pallet carries 360 kg, belt at 0.5 m/s, turntable 8 rpm. The line is a queue network: if the wrapper stops, the full pallet waits, the palletizer has nowhere to stack, the belt fills, and the MF 54 holds its bag until there is room. That is what <b>Film runs out</b> shows. The simulation runs faster than real time (the chips under the slider); every number on screen is the real-time value.`, [
   'bags/h = 60 x rate      t/h = bags/h x kg',
   'cycles/h = bags/h / 3      cycle = 3600 / 500 = 7.2 s',
   'pallets/h = bags/h / (6 x layers)      wrapper cycle = 3600 / 35 = 102.9 s',
@@ -512,7 +516,7 @@ lab.how(`Three machines in sequence. The <b>MF 54</b> forms, fills and seals a b
 const LB = (t, at, value, side = 'right') => lab.label(lab.machine, t, { at, value, side })
 LB('MF 54', [XJ + 0.3, 2.1, 0], () => `${fmt(sim.rate, 1)} bags/min`)
 LB('Infeed belt', [2.2, 0.8, 0.3], () => `${sim.bags.filter((b) => b.st === 'belt').length} bags waiting`)
-LB('Smart Palletizer', [4.1, 2.9, GZ], () => `${fmt(sim.rate * 60 / PER_ROW)} cycles/h`)
+LB('Smart Palletizer', [4.1, 2.9, -GZ], () => `${fmt(sim.rate * 60 / PER_ROW)} cycles/h`)
 LB('Pallet', [X_PAL, 1.25, 0.5], () => { const p = stationPallet(); return p ? `layer ${Math.min(cfg().layers, Math.floor(p.row / ROWS_PER_LAYER) + 1)} / ${cfg().layers}` : '--' })
 LB('Turntable', [X_WRAP, 0.25, 0.9], () => { const p = sim.pallets.find((q) => q.st === 'wrapping'); return p ? `wrapping ${fmt(p.wrap * 100)} %` : 'free' })
 LB('MF Wrap 35', [X_MAST, 2.4, 0], () => sim.wr.stopped ? 'film out' : `${fmt(Math.min(35, sim.rate * 60 / (cfg().layers * PER_LAYER)))} pallets/h`)
@@ -548,7 +552,7 @@ lab.onTick((dt0, lab) => {
   lab.place(mast, P.x, P.y + 0.06, P.z); mast.scale.y = 2.58 - (P.y + 0.06)
   lab.place(grip, P.x, P.y, P.z)
   const gap = lerp(0.06, 0.0, sim.pz.grip)
-  lab.place(clA, P.x - 0.6 - 0.01 - gap, P.y + 0.03, P.z); lab.place(clB, P.x + 0.6 + 0.01 + gap, P.y + 0.03, P.z)
+  lab.place(clA, P.x - 0.2 - 0.01 - gap, P.y + 0.03, P.z); lab.place(clB, P.x + 0.2 + 0.01 + gap, P.y + 0.03, P.z)
   clA.scale.y = clB.scale.y = Math.min(0.12, t * 0.85) + 0.03
   // bag instances
   const hold = P.y
@@ -602,7 +606,7 @@ lab.onTick((dt0, lab) => {
   const bph = sim.rate * 60, tph = bph * kg / 1000, pph = Math.min(35, bph / (c.layers * PER_LAYER))
   const sp = stationPallet()
   const backed = sim.stalledS > 1.5 || (sim.form.stalled && sim.rate < 0.3)
-  const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at bag limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : 'steady'
+  const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at palletizer limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : 'steady'
   const sub = stop
     ? `<span class="bad">film out · wrapper stopped · pallet waits, palletizer idle${backed ? ', MF 54 holding its bag' : ''}</span>`
     : `${kg} kg bags · ${c.layers} layers · ${c.layers * PER_LAYER} bags and ${c.layers * PER_LAYER * kg} kg per pallet`
@@ -647,8 +651,8 @@ const FAQ_SIM = [
   ['How do I change the output?', 'With the MF 54 speed slider (or the [ and ] keys). The palletizer and the wrapper follow: every bag is picked and stacked, and every full pallet is wrapped.'],
   ['Why does the simulation run faster than real time?', 'One pallet takes about two minutes to build at full speed. The chips under the slider speed the animation up (1× to 12×); every figure on screen stays a real-time value.'],
   ['What does Film runs out show?', 'The wrapper stops mid-pallet. The next full pallet waits, the palletizer has nowhere to stack, the belt fills up and the MF 54 holds its bag. Press the button again to change the film roll and let the line empty out.'],
-  ['Why is the 20 kg bag slower?', 'It is an assumption of the simulator: a bigger bag needs more time to fill and seal, so the rate is capped at 8 bags per minute. The 5 and 10 kg bags run up to the 20 bags/min of the film.'],
-  ['What comes from MF TECNO and what is assumed?', 'The three machines, their sequence and the three speeds come from the MF TECNO flyer, film and website, as do the 5 to 20 kg bag range and the pallet limits. The exact bag size, three bags per palletizer cycle, six per layer, the belt speed, the turntable speed and the 8-per-minute limit are assumptions. Open How it is computed for the model.'],
+  ['Why does the line stop at 8.3 bags per minute?', 'The palletizer takes one bag per cycle and the line quotes up to 500 cycles per hour, which is 8.3 bags per minute. The MF 54 can bag faster (up to 20 bags per minute), but the bags would only queue on the belt. The model uses the 500 cycles/h of the line; the palletizer product page (MF PCA Smart Pro) quotes up to 800.'],
+  ['What comes from MF TECNO and what is assumed?', 'The three machines, their sequence and the three speeds come from the MF TECNO flyer, film and website, as do the 5 to 20 kg bag range and the pallet limits. The exact bag size, one bag per palletizer cycle (as in the flyer photo), six per layer, the belt speed and the turntable speed are assumptions. Open How it is computed for the model.'],
 ]
 const faq = document.createElement('div'); faq.className = 'faq'
 const faqCol = (title, sub, items, open) => `<div class="faq-col"><h3>${title}<small>${sub}</small></h3>${items.map(([q, a], i) => `<details${open && i === 0 ? ' open' : ''}><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`
