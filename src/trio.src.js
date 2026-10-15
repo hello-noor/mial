@@ -91,7 +91,7 @@ const lab = new Lab({
   .kpis.bad b { color:#c4511a }
   @media (min-width:761px) { .lab-side { background:rgba(238,234,225,0.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-radius:16px; padding:1.1em 1.3em 1.2em; box-shadow:0 10px 30px rgba(0,0,0,0.08) } }
   .lab-title i { font:400 0.3em/1.35 'Inter',sans-serif; font-style:normal; letter-spacing:0.02em; color:#6d6b66; margin-top:0.55em }
-  @media (max-height:960px) { .lab-side { zoom:0.86 } }
+  @media (min-width:761px) and (max-height:960px) { .lab-side { zoom:0.86 } }
   @media (min-width:761px) { .lab-modes { right:30vw; left:4.2vw } .lab-scale { bottom:17vh } }
   @media (max-height:920px) { .gate-hint { display:none } .lab-big { font-size:clamp(48px,5.6vw,100px) !important } .lab-title { font-size:clamp(34px,3.6vw,64px) !important } .lab-metric { margin-top:1.6vh !important } .lab-ctl { margin-top:1.8vh !important } .kpis { margin-top:1.4vh; padding-top:1vh } }
   @media (max-height:760px) { .mial-spec p { display:none } .lab-title i { display:none } }
@@ -155,7 +155,7 @@ const lab = new Lab({
     .mial-btns { margin-top:10px; gap:6px }
     .mial-all { margin-top:0; padding:0.42em 0.8em; font-size:11px }
     .mial-all kbd { display:none }
-    .lab-side { top:auto; bottom:150px; touch-action:pan-y; overscroll-behavior:contain; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:60vh; overflow:auto }
+    .lab-side { top:auto; bottom:150px; pointer-events:auto; touch-action:pan-y; overscroll-behavior:contain; left:10px; right:10px; width:auto; transform:none; padding:12px 14px 14px; background:rgba(249,246,240,0.96); border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.14); max-height:60vh; overflow:auto } .lab-side * { pointer-events:auto }
     .lab-title { font-size:24px !important }
     .lab-title i { display:none }
     .lab-metric { margin-top:8px !important }
@@ -385,7 +385,7 @@ const bagI = new THREE.InstancedMesh(bagGeo, bagM, NB); bagI.instanceMatrix.setU
 lab.add(bagI, { name: 'Bags', count: NB, explode: [0, 1.6, 1.8] })
 // the powder: grains fall from the hopper, down the filling spout into the bag being filled (visible in cut away)
 const DUST_N = 220
-const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.016, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
+const dust = new THREE.InstancedMesh(new THREE.SphereGeometry(0.022, 6, 4), MAT.plastic({ color: [0.96, 0.96, 0.94], roughness: 0.85, cap: [0.9, 0.9, 0.9] }), DUST_N)
 dust.instanceMatrix.setUsage(THREE.DynamicDrawUsage); dust.frustumCulled = false
 lab.add(dust, { name: 'Powder', explode: [0, 0, 0], count: 2 })
 const dustP = Array.from({ length: DUST_N }, () => ({ live: false, x: 0, y: 0, z: 0 }))
@@ -519,7 +519,8 @@ function stepSim(dt) {
   // ---- measured rate: smoothed, and zero while the line is backed up
   const running = !F.stalled && rateSet > 0.05 && F.bag
   sim.rate = approach(sim.rate, running ? rateSet : 0, 2.5, dt)
-  sim.shown = (sim.shown ?? 0) + (sim.rate - (sim.shown ?? 0)) * (1 - Math.exp(-dt / 2.5))   // averaged, so the readout does not jump
+  sim.drops = sim.drops.filter((t) => sim.clock - t < 60)
+  sim.shown = sim.drops.filter((t) => sim.clock - t < 30).length * 2                              // bags dropped on the belt in the last 30 s, per minute
   sim.stalledS = F.stalled ? sim.stalledS + dt : 0
 }
 
