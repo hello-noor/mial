@@ -375,7 +375,11 @@ const pulleys = lab.mesh(cylZ(0.07, 0.05, 0, PULLEY_Y, Z_COL + 0.14, 24), dark, 
 const zBeam = lab.mesh(GEO.rbox(0.2, 0.16, Z_END - Z_COL, 0.03, 2), blue, { name: 'Z beam (fixed length)', pos: [X_PICK, YC + 0.3, (Z_COL + Z_END) / 2], explode: [0, 1.2, 0.5] })
 const gcar = lab.mesh(GEO.rbox(0.46, 0.2, 0.4, 0.04, 2), steelBrushed, { name: 'Gripper carriage (Z, slides on the beam)', pos: [X_PICK, YC + 0.3, 0], explode: [0, 1.2, 1.2] })
 const hookG = (sx, sz) => new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[0.17, 0.2], [0.2, 0.1], [0.2, 0.0], [0.15, -0.05], [0.07, -0.04]].map(([x, y]) => new THREE.Vector3(sx * x, y, sz * 0.12))), 24, 0.014, 8, false)
-const hooks = lab.mesh(GEO.merge([hookG(-1, -1), hookG(-1, 1), hookG(1, -1), hookG(1, 1)]), steelBrushed, { name: 'Two pairs of curved hooks (one pair per side)', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 4 })
+// six curved hooks on each side of the gripper, spread along its depth
+const HOOKS_PER_SIDE = 6, hookZ = (i) => -0.19 + i * 0.38 / (HOOKS_PER_SIDE - 1)
+const hookList = []
+for (let i = 0; i < HOOKS_PER_SIDE; i++) { hookList.push(hookG(-1, hookZ(i) / 0.12)); hookList.push(hookG(1, hookZ(i) / 0.12)) }
+const hooks = lab.mesh(GEO.merge(hookList), steelBrushed, { name: 'Curved hooks, six per side', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: HOOKS_PER_SIDE * 2 })
 
 // ------------------------------------------------------------------ wrapper: turntable, mast, film carriage
 const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, Z_LANE)
