@@ -419,7 +419,7 @@ const sim = {
   form: { f: 0, bag: null, stalled: false }, car: { s: 0, rot: 0, phase: 'fill' }, bagger: { rate: 0, set: 12 },
   pz: { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0, did: 0 },
   wr: { stopped: false, ang: 0, carY: 0.7, wrap: 0 },
-  out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], pickN: 0, cyc: 0, wrapBusy: 0,
+  out: 0, bagsDone: 0, rate: 0, stalledS: 0, clock: 0, drops: [], picks: [], pickN: 0, cyc: 0, wrapBusy: 0,
 }
 window.__sim = sim                                                       // read-only handle for tests and screenshots
 const PAL_MAX_H = 1.8                                                  // palletizer limit, pallet included
@@ -433,7 +433,7 @@ function resetLine() {
   sim.pallets = []; sim.form = { f: 0, bag: null, stalled: false }; sim.car = { s: 0, rot: 0, phase: 'fill' }
   Object.assign(sim.pz, { st: 'idle', ph: 0, rest: { x: X_PICK, z: 0, y: YC }, row: 0, grab: [], pose: { x: X_PICK, z: 0, y: YC }, grip: 0 })
   Object.assign(sim.wr, { ang: 0, carY: 0.7, wrap: 0 })
-  sim.drops = []; sim.stalledS = 0
+  sim.drops = []; sim.picks = []; sim.stalledS = 0
 }
 const stationPallet = () => sim.pallets.find((p) => ['in', 'loading', 'ready'].includes(p.st))
 const wrapperBusy = () => sim.pallets.some((p) => ['toWrap', 'wrapping', 'out'].includes(p.st))
@@ -508,7 +508,7 @@ function stepSim(dt) {
     if (prev <= B[2] && pz.ph > B[2]) { pz.grab = belt.slice(0, PER_ROW); for (const g of pz.grab) { g.st = 'grip'; g.dx = g.x - X_PICK; g.z = 0 } }
     if (prev <= B[6] && pz.ph > B[6]) {
       for (const g of pz.grab) { g.st = 'stack'; g.pal = pz.pal; g.lx = pz.xrow; g.lz = pz.zrow; g.ly = PAL.H + pz.layer * t + t / 2 }
-      pz.pal.row++; pz.grab = []; sim.cyc++
+      pz.pal.row++; pz.grab = []; sim.cyc++; sim.picks.push(sim.clock)
     }
     if (pz.ph >= 1) { pz.st = 'idle'; pz.rest = { ...pz.pose } }
   } else if (pz.st === 'idle') {
@@ -520,6 +520,8 @@ function stepSim(dt) {
   const running = !F.stalled && rateSet > 0.05 && F.bag
   sim.rate = approach(sim.rate, running ? rateSet : 0, 2.5, dt)
   sim.drops = sim.drops.filter((t) => sim.clock - t < 60)
+  sim.picks = sim.picks.filter((t) => sim.clock - t < 60)
+  sim.outShown = sim.picks.filter((t) => sim.clock - t < 30).length * 2                            // palletizer picks in the last 30 s, per minute
   sim.shown = sim.drops.filter((t) => sim.clock - t < 30).length * 2                              // bags dropped on the belt in the last 30 s, per minute
   sim.stalledS = F.stalled ? sim.stalledS + dt : 0
 }
@@ -687,7 +689,7 @@ lab.onTick((dt0, lab) => {
   const st = stop ? (sim.rate < 0.3 ? 'backed up' : 'wrapper stopped') : spd.value < 0.1 ? 'stopped' : sim.form.stalled ? 'belt full, waiting' : spd.value > c.cap ? 'at palletizer limit' : sim.rate < Math.min(spd.value, c.cap) - 0.4 ? 'starting up' : 'steady'
   const sub = stop
     ? `<span class="bad">film out · wrapper stopped · pallet waits, palletizer idle${backed ? ', MF 54 holding its bag' : ''}</span>`
-    : `${kg} kg bags · ${c.layers} layers · ${c.layers * PER_LAYER} bags and ${c.layers * PER_LAYER * kg} kg per pallet`
+    : `Palletized ${fmt(sim.outShown ?? 0, 1)} bags/min · ${kg} kg bags · ${c.layers} layers · ${c.layers * PER_LAYER} bags per pallet`
   kpiV[0].textContent = fmt(bph); kpiV[1].textContent = fmt(tph, 2); kpiV[2].textContent = fmt(pph, 1)
   kpiV[3].textContent = fmt(bph / PER_ROW); kpiV[4].textContent = fmt(pph / 35 * 100); kpiV[5].textContent = sp ? `${Math.min(c.layers, Math.floor(sp.row / ROWS_PER_LAYER) + 1)}/${c.layers}` : '--'
   kpiEl.classList.toggle('bad', stop)
