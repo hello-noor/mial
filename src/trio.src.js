@@ -256,9 +256,8 @@ const XJ = X_DROP                                                           // t
   for (let y = 0.2; y < 1.95; y += 0.25) ld.push(box(0.03, 0.03, 0.4, -0.05, y, 0, 0.006))
   lab.mesh(GEO.merge(ld), steelM, { name: 'Ladder', explode: [-0.8, 0, 0.5], count: 9 })
   // hopper, product inlet
-  // open funnel hopper: wide open mouth at the top, narrowing into the head (no inlet pipe)
-  lab.mesh(new THREE.CylinderGeometry(0.12, 0.42, 0.7, 48, 1, true).translate(XJ, 2.65, 0), steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], count: 2 })
-  lab.mesh(new THREE.TorusGeometry(0.42, 0.016, 10, 56).rotateX(PI / 2).translate(XJ, 3.0, 0), steelBrushed, { name: 'Hopper rim', explode: [0, 1.2, 0] })
+  // open rectangular hopper: a wide open mouth at the top, sloping walls down into the head (no inlet pipe, as in the flyer)
+  lab.mesh(new THREE.CylinderGeometry(0.21, 0.495, 0.7, 4, 1, true).rotateY(PI / 4).scale(1, 1, 0.7).translate(XJ, 2.65, 0), steelBrushed, { name: 'Product hopper', explode: [0, 1.0, 0], count: 2 })
   // forming collar and tube
   lab.mesh(GEO.lathe([[0, 2.3], [0.28, 2.3], [0.28, 2.18], [0.105, 1.99], [0.105, 1.38], [0, 1.38]], 48).translate(XJ, 0, 0), chrome, { name: 'Forming tube', explode: [0, 0.4, 0.9], xray: 'shell' })
   // four filling spouts hang out of the collar and end at the seal; the empty bag hangs from there
