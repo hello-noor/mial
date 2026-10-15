@@ -40,7 +40,9 @@ const BELT_V = 0.5, TT_RPM = 8
 const BPM_MAX = 20
 const PZ_BPM = 3600 / CYCLE_S / 60                                        // the palletizer takes one bag per cycle: 500 cycles/h = 8.3 bags/min
 const YC = 1.75                                                           // travel height of the gripper (underside of the plate)
-const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.15                             // gantry posts
+const HEAD_X = 2.2, HEAD_X1 = 5.95, GZ = 1.6                              // gantry posts: beam behind the line
+const Z_PAL = -0.6                                                        // pallet lane (rollers, pallet, wrapper): offset back from the belt axis z = 0
+const Z_COL = -GZ + 0.28                                                  // the vertical column stands in front of the beam
 const BAG_KG = { 5: { t: 0.065, layers: 12, cap: PZ_BPM }, 10: { t: 0.13, layers: 6, cap: PZ_BPM }, 20: { t: 0.26, layers: 3, cap: PZ_BPM } }
 let kg = 10
 let LY = null                                                             // pallet height in layers, null = the default for the bag weight
@@ -310,10 +312,10 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
 // ------------------------------------------------------------------ roller conveyor
 {
   const x0 = 3.88, x1 = 6.78, rl = []
-  for (let x = x0 + 0.06; x < x1; x += 0.12) rl.push(cylZ(0.03, 0.86, x, 0.17, 0, 14))
+  for (let x = x0 + 0.06; x < x1; x += 0.12) rl.push(cylZ(0.03, 0.86, x, 0.17, Z_PAL, 14))
   lab.mesh(GEO.merge(rl), steelBrushed, { name: 'Rollers', explode: [0, 0.5, 0.8], count: rl.length })
-  const fr = [box(x1 - x0, 0.13, 0.04, (x0 + x1) / 2, 0.12, 0.47, 0.008), box(x1 - x0, 0.13, 0.04, (x0 + x1) / 2, 0.12, -0.47, 0.008)]
-  for (const x of [4.1, 5.2, 6.3]) for (const sz of [-1, 1]) fr.push(box(0.05, 0.07, 0.05, x, 0.035, sz * 0.47, 0.008)), fr.push(box(0.05, 0.04, 1.0, x, 0.02, 0, 0.006))
+  const fr = [box(x1 - x0, 0.13, 0.04, (x0 + x1) / 2, 0.12, Z_PAL + 0.47, 0.008), box(x1 - x0, 0.13, 0.04, (x0 + x1) / 2, 0.12, Z_PAL - 0.47, 0.008)]
+  for (const x of [4.1, 5.2, 6.3]) for (const sz of [-1, 1]) fr.push(box(0.05, 0.07, 0.05, x, 0.035, Z_PAL + sz * 0.47, 0.008)), fr.push(box(0.05, 0.04, 1.0, x, 0.02, Z_PAL, 0.006))
   lab.mesh(GEO.merge(fr), frameM, { name: 'Roller conveyor frame', explode: [0, -0.3, -1.4], count: 10 })
 }
 
@@ -325,14 +327,17 @@ const beltT = (() => { const c = document.createElement('canvas'); c.width = 64;
   f.push(box(HEAD_X1 - HEAD_X + 0.5, 0.34, 0.26, (HEAD_X + HEAD_X1) / 2, 2.8, -GZ, 0.014))
   lab.mesh(GEO.merge(f), steelBrushed, { name: 'Palletizer portal', explode: [0, 0, -1.2], count: 12, xray: 'shell' })
   plate('MF SMART PALLETIZER', null, 3.0, 0.15, (HEAD_X + HEAD_X1) / 2, 2.8, -GZ + 0.132, 0, 'Palletizer plate')
-  lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.45, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.27, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
+  lab.mesh(GEO.merge([box(0.6, 1.4, 0.35, 6.45, 0.7, -1.2, 0.02), box(0.16, 0.1, 0.014, 6.45, 1.15, -1.02, 0.004)]), white, { name: 'Palletizer cabinet', explode: [0.5, 0, -1.2], count: 2 })
 }
-// the blue cantilever: a carriage on the beam, a vertical column rising from it with a motor cap, the arm reaching out over the belt
-const xcar = lab.mesh(GEO.merge([box(0.24, 0.2, 1.95, 0, 0, -0.275, 0.014), box(0.62, 0.66, 0.42, 0, 0.2, -GZ, 0.014), box(0.3, 0.1, 0.3, 0, -0.05, 0.65, 0.01), box(0.26, 0.7, 0.26, 0, 0.88, -GZ, 0.012), box(0.36, 0.14, 0.36, 0, 1.3, -GZ, 0.01)]), blue, { name: 'Blue arm (cantilever over the line)', pos: [X_PICK, 2.55, 0], explode: [0, 0.9, 0], count: 3 })
-const chain = lab.mesh(box(0.12, 0.72, 0.12, 0, 0, 0, 0.02), steelBrushed, { name: 'Cable chain (column)', pos: [X_PICK + 0.19, 3.43, -GZ], explode: [0.5, 0.9, 0], count: 2 })
-const zsl = lab.mesh(box(0.34, 0.26, 0.32, 0, 0, 0, 0.02), blue, { name: 'Slider', pos: [X_PICK, 2.4, 0], explode: [0, 1.3, 0.6] })
-const mastG = new THREE.BoxGeometry(0.14, 1, 0.14).translate(0, 0.5, 0)
-const mast = lab.mesh(mastG, blue, { name: 'Telescopic mast', pos: [X_PICK, 1.8, 0], explode: [0, 1.8, 0.9] })
+// the blue gantry unit, as on the flyer: a carriage rides the beam (X), a vertical column hangs in front of it, a block slides up and down the column (Y)
+// and an arm slides toward and away from the line (Z). The gripper hangs under the arm's end. The belt drive shows as a dark strip on the column.
+const xcar = lab.mesh(GEO.merge([box(0.62, 0.5, 0.44, 0, 0, -GZ, 0.014), box(0.22, 0.2, 0.22, 0, 0, Z_COL - 0.04, 0.01)]), blue, { name: 'Gantry carriage (X, along the line)', pos: [X_PICK, 2.8, 0], explode: [0, 0.9, 0], count: 2 })
+const column = lab.mesh(box(0.26, 3.1, 0.26, 0, 0, Z_COL, 0.012), blue, { name: 'Vertical column (Y)', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.6] })
+const colBelt = lab.mesh(box(0.05, 2.9, 0.03, 0, 0, Z_COL + 0.14, 0.008), dark, { name: 'Drive belt in the column', pos: [X_PICK, 2.125, 0], explode: [0, 0.6, 0.9] })
+const yCar = lab.mesh(box(0.34, 0.24, 0.34, 0, 0, 0, 0.02), blue, { name: 'Column block (Y, up and down)', pos: [X_PICK, YC + 0.22, Z_COL], explode: [0, 1.0, 0.8] })
+const zArm = lab.mesh(GEO.rbox(0.2, 0.16, 1, 0.03, 2), blue, { name: 'Arm (Z, toward and away from the line)', pos: [X_PICK, YC + 0.3, 0], explode: [0, 1.2, 0.5] })
+const mastG = new THREE.BoxGeometry(0.1, 1, 0.1).translate(0, 0.5, 0)
+const mast = lab.mesh(mastG, blue, { name: 'Gripper rod', pos: [X_PICK, 1.8, 0], explode: [0, 1.8, 0.9] })
 const gripG = GEO.merge([box(0.84, 0.05, 0.56, 0, 0.025, 0, 0.008), box(0.22, 0.1, 0.22, 0, 0.1, 0, 0.012), box(0.14, 0.22, 0.56, -0.35, 0.15, 0, 0.012), box(0.14, 0.22, 0.56, 0.35, 0.15, 0, 0.012), box(0.56, 0.06, 0.56, 0, 0.16, 0, 0.01)])
 const grip = lab.mesh(gripG, steelBrushed, { name: 'Gripper head', pos: [X_PICK, YC, 0], explode: [0, 0.5, 1.4], count: 2 })
 const clG = new THREE.BoxGeometry(0.02, 1, 0.5).translate(0, -0.5, 0)
@@ -340,7 +345,7 @@ const clA = lab.mesh(clG, chrome, { name: 'Clamp plates', pos: [X_PICK - 0.21, Y
 const clB = lab.mesh(clG.clone(), chrome, { name: 'Clamp plate (far)', pos: [X_PICK + 0.21, YC, 0], explode: [0.7, 0.2, 1.4] })
 
 // ------------------------------------------------------------------ wrapper: turntable, mast, film carriage
-const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, 0)
+const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, Z_PAL)
 {
   const pads = []
   for (let i = 0; i < 12; i++) { const a = i / 12 * 2 * PI; pads.push(box(0.5, 0.012, 0.09, Math.cos(a) * 0.62, 0.2, Math.sin(a) * 0.62, 0.004).rotateY(-a)) }
@@ -348,10 +353,10 @@ const ttSpin = new THREE.Group(); ttSpin.position.set(X_WRAP, 0, 0)
   ttSpin.add(new THREE.Mesh(plateG, steelBrushed))
 }
 lab.add(ttSpin, { name: 'Turntable', explode: [0, 0.6, 0.9], count: 14, xray: 'shell' })
-lab.mesh(GEO.merge([GEO.lathe([[0, 0], [0.9, 0], [0.9, 0.09], [0, 0.09]], 64).translate(X_WRAP, 0, 0), box(1.5, 0.04, 0.2, X_WRAP, 0.02, 0, 0.005)]), frameM, { name: 'Turntable base', explode: [0, -0.2, -1.3], count: 2 })
-lab.mesh(GEO.merge([box(0.55, 0.06, 0.55, X_MAST, 0.03, 0, 0.01), box(0.2, 2.55, 0.2, X_MAST, 1.33, 0, 0.012)]), blue, { name: 'Wrapper mast', explode: [0.6, 0.3, -0.9], count: 2, xray: 'shell' })
-lab.mesh(GEO.merge([box(0.5, 1.4, 0.3, X_MAST, 0.7, -0.62, 0.02), box(0.18, 0.1, 0.014, X_MAST, 1.1, -0.465, 0.004)]), white, { name: 'Wrapper cabinet', explode: [0.5, 0, -1.2], count: 2 })
-plate('MF WRAP 35', null, 0.42, 0.105, X_MAST, 1.36, -0.463, 0, 'MF Wrap 35 plate')
+lab.mesh(GEO.merge([GEO.lathe([[0, 0], [0.9, 0], [0.9, 0.09], [0, 0.09]], 64).translate(X_WRAP, 0, Z_PAL), box(1.5, 0.04, 0.2, X_WRAP, 0.02, Z_PAL, 0.005)]), frameM, { name: 'Turntable base', explode: [0, -0.2, -1.3], count: 2 })
+lab.mesh(GEO.merge([box(0.55, 0.06, 0.55, X_MAST, 0.03, Z_PAL, 0.01), box(0.2, 2.55, 0.2, X_MAST, 1.33, Z_PAL, 0.012)]), blue, { name: 'Wrapper mast', explode: [0.6, 0.3, -0.9], count: 2, xray: 'shell' })
+lab.mesh(GEO.merge([box(0.5, 1.4, 0.3, X_MAST, 0.7, Z_PAL - 0.62, 0.02), box(0.18, 0.1, 0.014, X_MAST, 1.1, Z_PAL - 0.465, 0.004)]), white, { name: 'Wrapper cabinet', explode: [0.5, 0, -1.2], count: 2 })
+plate('MF WRAP 35', null, 0.42, 0.105, X_MAST, 1.36, Z_PAL - 0.463, 0, 'MF Wrap 35 plate')
 const carr = new THREE.Group()
 {
   const film = MAT.plastic({ color: [0.93, 0.95, 0.97], roughness: 0.2, clearcoat: 0.8, cap: [0.9, 0.92, 0.95] })
@@ -365,8 +370,8 @@ lab.add(carr, { name: 'Film carriage', explode: [-0.4, 0.5, 1.0], count: 5 })
 const webMesh = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 0.004), MAT.plastic({ color: [0.96, 0.97, 0.99], roughness: 0.15, transparent: true, opacity: 0.55, noCap: true }))
 lab.add(webMesh, { name: 'Stretch film', explode: [-0.4, 0.5, 1.0] })
 const lampG = MAT.glow({ emissive: [0.2, 1, 0.35], emissiveIntensity: 3, noCap: true }), lampR = MAT.glow({ emissive: [1, 0.12, 0.08], emissiveIntensity: 0.1, noCap: true })
-lab.mesh(cylY(0.05, 0.07, X_MAST, 2.64, 0, 18), lampG, { name: 'Green lamp', explode: [0, 1, 0], count: 0 })
-lab.mesh(cylY(0.05, 0.07, X_MAST, 2.72, 0, 18), lampR, { name: 'Red lamp', explode: [0, 1, 0], count: 0 })
+lab.mesh(cylY(0.05, 0.07, X_MAST, 2.64, Z_PAL, 18), lampG, { name: 'Green lamp', explode: [0, 1, 0], count: 0 })
+lab.mesh(cylY(0.05, 0.07, X_MAST, 2.72, Z_PAL, 18), lampR, { name: 'Red lamp', explode: [0, 1, 0], count: 0 })
 
 // ------------------------------------------------------------------ bags, pallets and film shells (instanced, moved by the simulation)
 const bagTex = (() => {
@@ -446,7 +451,7 @@ function stepSim(dt) {
   // ---- pallets: spawn, slide in, hand over to the wrapper, wrap, leave
   if (!stationPallet() && sim.pallets.length < NP) sim.pallets.push({ id: sim.palId++, st: 'in', x: X_PAL, z: 2.3, yaw: 0, row: 0, wrap: 0, tt: 0, shellH: 0 })
   for (const p of sim.pallets) {
-    if (p.st === 'in') { p.z = Math.max(0, p.z - dt * 1.6); if (p.z <= 0) p.st = 'loading' }
+    if (p.st === 'in') { p.z = Math.max(Z_PAL, p.z - dt * 1.6); if (p.z <= Z_PAL) p.st = 'loading' }
     else if (p.st === 'loading' && p.row >= rowsTotal() && sim.pz.st === 'idle') p.st = 'ready'
     else if (p.st === 'ready' && !wrapperBusy()) { p.st = 'toWrap' }
     else if (p.st === 'toWrap') { p.x = Math.min(X_WRAP, p.x + dt * (X_WRAP - X_PAL) / IN_S); if (p.x >= X_WRAP) { p.st = 'wrapping'; p.wrap = 0; sim.wr.ang = 0 } }
@@ -500,7 +505,7 @@ function stepSim(dt) {
     const prev = pz.ph; pz.ph = Math.min(1, pz.ph + dt / CYCLE_S)
     const B = [0.18, 0.30, 0.36, 0.48, 0.68, 0.80, 0.86, 1.0]                      // phase ends
     const yPick = BELT_Y + t, yPlace = ROLL_Y + PAL.H + (pz.layer + 1) * t
-    const P = [pz.rest, { x: X_PICK, z: 0, y: YC }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: YC }, { x: X_PAL + pz.xrow, z: pz.zrow, y: YC }, { x: X_PAL + pz.xrow, z: pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: pz.zrow, y: YC }]
+    const P = [pz.rest, { x: X_PICK, z: 0, y: YC }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: yPick }, { x: X_PICK, z: 0, y: YC }, { x: X_PAL + pz.xrow, z: Z_PAL + pz.zrow, y: YC }, { x: X_PAL + pz.xrow, z: Z_PAL + pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: Z_PAL + pz.zrow, y: yPlace }, { x: X_PAL + pz.xrow, z: Z_PAL + pz.zrow, y: YC }]
     let k = 0; while (k < 7 && pz.ph > B[k]) k++
     const a = P[k], b = P[k + 1], u = clamp((pz.ph - (k ? B[k - 1] : 0)) / (B[k] - (k ? B[k - 1] : 0)))
     const e = easeIO(u)
@@ -609,8 +614,10 @@ lab.onTick((dt0, lab) => {
   lab.place(carousel, HUB_X, 1.78, 0); carousel.rotation.y = sf * PI / 2 - PI
   // gantry
   const P = sim.pz.pose
-  lab.place(xcar, P.x, 2.55, 0); lab.place(chain, P.x + 0.19, 3.43, -GZ); lab.place(zsl, P.x, 2.4, P.z)
-  lab.place(mast, P.x, P.y + 0.06, P.z); mast.scale.y = 2.58 - (P.y + 0.06)
+  lab.place(xcar, P.x, 2.8, 0); lab.place(column, P.x, 2.125, 0); lab.place(colBelt, P.x, 2.125, 0)
+  lab.place(yCar, P.x, P.y + 0.22, Z_COL)
+  const armL = Math.max(0.05, P.z - Z_COL); lab.place(zArm, P.x, P.y + 0.3, Z_COL + armL / 2); zArm.scale.z = armL
+  lab.place(mast, P.x, P.y + 0.12, P.z); mast.scale.y = Math.max(0.05, P.y + 0.3 - (P.y + 0.12))
   lab.place(grip, P.x, P.y, P.z)
   const gap = lerp(0.06, 0.0, sim.pz.grip)
   lab.place(clA, P.x - 0.2 - 0.01 - gap, P.y + 0.03, P.z); lab.place(clB, P.x + 0.2 + 0.01 + gap, P.y + 0.03, P.z)
@@ -675,12 +682,12 @@ lab.onTick((dt0, lab) => {
   const tri = (u) => 1 - Math.abs(2 * (u - Math.floor(u)) - 1)
   const cy = wp ? 0.5 + (H - 0.1) * smoothstep(0, 1, tri(prog * 1.5 + 0.0001)) : 0.7
   sim.wr.carY = approach(sim.wr.carY, cy, 0.15, dt0)
-  lab.place(carr, 0, sim.wr.carY, 0)
+  lab.place(carr, 0, sim.wr.carY, Z_PAL)
   const rect = (a) => Math.min(0.6 / Math.max(1e-3, Math.abs(Math.cos(a))), 0.4 / Math.max(1e-3, Math.abs(Math.sin(a))))
   const xe = X_WRAP + rect(sim.wr.ang), xs = X_MAST - 0.57 - 0.145
   const showWeb = !!wp && !sim.wr.stopped
   const wl = Math.max(0.05, xs - xe)
-  webMesh.scale.set(wl, 0.5, 1); lab.place(webMesh, xe + wl / 2, showWeb ? sim.wr.carY : -9, 0)
+  webMesh.scale.set(wl, 0.5, 1); lab.place(webMesh, xe + wl / 2, showWeb ? sim.wr.carY : -9, Z_PAL)
   const stop = sim.wr.stopped
   lampG.emissiveIntensity = stop ? 0.1 : 3; lampR.emissiveIntensity = stop ? 5 + Math.sin(lab.time * 14) * 2 : 0.1
   // hero and kpis
