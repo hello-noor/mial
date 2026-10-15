@@ -87,6 +87,8 @@
   .tile b i { font:600 0.36em 'Inter',sans-serif; font-style:normal; letter-spacing:-0.01em; color:var(--dim); margin-left:0.25em }
   .tile p { margin:12px 0 0; font:400 15px/1.4 'Inter',sans-serif; color:var(--dim) }
   .tile.mial b { color:var(--orange) } .tile.mf b { color:var(--blue) }
+  br.m { display:none }
+  @media (max-width:760px) { br.m { display:inline } .hero h1.claim { font-size:clamp(44px,13vw,80px) } }
   @media (max-width:820px) { .bento { grid-template-columns:1fr 1fr } .tile.big, .tile.wide { grid-column:span 2 } .tile.big { grid-row:auto } }
 
   /* feature trio, like a spec page */
@@ -125,7 +127,7 @@
 <header class="hero">
   <div class="eyebrow">Massini Industries · 3D simulators</div>
   <h1 class="claim" aria-label="Massini: built to flow, made to grow.">
-    <span class="w" style="--i:0">Massini:</span> <span class="w" style="--i:1">built</span> <span class="w" style="--i:2">to</span> <span class="w" style="--i:3">flow,</span><br>
+    <span class="w" style="--i:0">Massini:</span><br class="m"> <span class="w" style="--i:1">built</span> <span class="w" style="--i:2">to</span> <span class="w" style="--i:3">flow,</span><br>
     <span class="w" style="--i:4">made to grow.</span>
   </h1>
   <p>Massini Industries designs and builds conveying and packaging systems in Assisi, Italy. Two flagship lines, explained in 3D.</p>
