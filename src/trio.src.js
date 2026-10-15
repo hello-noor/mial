@@ -89,6 +89,8 @@ const lab = new Lab({
   .kpis b i { font:500 0.55em 'Inter',sans-serif; color:#8a857a; margin-left:0.25em; letter-spacing:0 }
   .kpis.bad b { color:#c4511a }
   @media (min-width:761px) { .lab-side { background:rgba(238,234,225,0.8); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-radius:16px; padding:1.1em 1.3em 1.2em; box-shadow:0 10px 30px rgba(0,0,0,0.08) } }
+  .lab-title i { font:400 0.3em/1.35 'Inter',sans-serif; font-style:normal; letter-spacing:0.02em; color:#6d6b66; margin-top:0.55em }
+  @media (max-height:960px) { .lab-side { zoom:0.86 } }
   @media (min-width:761px) { .lab-modes { right:30vw; left:4.2vw } .lab-scale { bottom:17vh } }
   @media (max-height:920px) { .gate-hint { display:none } .lab-big { font-size:clamp(48px,5.6vw,100px) !important } .lab-title { font-size:clamp(34px,3.6vw,64px) !important } .lab-metric { margin-top:1.6vh !important } .lab-ctl { margin-top:1.8vh !important } .kpis { margin-top:1.4vh; padding-top:1vh } }
   @media (max-height:760px) { .mial-spec p { display:none } .lab-title i { display:none } }
