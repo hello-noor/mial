@@ -1,6 +1,6 @@
 # Massini Industries 3D simulators: MIAL conveyor and MF TECNO Trio Line
 
-`index.html` is a simple chooser with two cards: **MIAL** (`mial.html`, the CLEAN200 tubular chain conveyor, described below) and **MF TECNO** (`mftrio.html`, the MF Trio Line: MF 54 vertical packaging machine, MF Smart Palletizer and MF Wrap 35 stretch wrapper). Both simulators have the same controls and a small switcher at the top.
+`index.html` is the Massini landing page (assets in `landing/`, scenes in `landing/scene.js`; it links to the simulators). `simulazioni.html` is a simple chooser with two cards: **MIAL** (`mial.html`, the CLEAN200 tubular chain conveyor, described below) and **MF TECNO** (`mftrio.html`, the MF Trio Line: MF 54 vertical packaging machine, MF Smart Palletizer and MF Wrap 35 stretch wrapper). Both simulators have the same controls and a small switcher at the top.
 
 ## MIAL tubular chain conveyor: interactive 3D simulator (CLEAN200)
 

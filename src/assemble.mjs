@@ -1,5 +1,6 @@
 // Builds the three pages of the site:
-//   ../index.html   the chooser (MIAL or MF TECNO), from chooser.html with its images embedded
+//   ../simulazioni.html   the simulators chooser (MIAL or MF TECNO), from chooser.html with its images embedded
+//   (../index.html is the Massini landing page, hand-written, assets in ../landing/)
 //   ../mial.html    the MIAL tubular chain conveyor simulator (machine.src.js)
 //   ../mftrio.html  the MF TECNO MF Trio Line simulator (trio.src.js)
 // Both simulators share head.html (page shell + the inlined lab kit); only title and description differ.
@@ -41,12 +42,12 @@ page('mftrio.html', 'trio.src.js', {
   const html = read('chooser.html')
     .replace('__MIAL_LOGO__', b64('logo')).replace('__MF_LOGO__', b64('mflogo')).replace('__MASSINI_LOGO__', b64('massini'))
     .replace('__MIAL_IMG__', b64('mialcard')).replace('__MF_IMG__', b64('mfline'))
-  writeFileSync(resolve(here, '../index.html'), html)
-  console.log('built index.html')
+  writeFileSync(resolve(here, '../simulazioni.html'), html)
+  console.log('built simulazioni.html')
 }
 
 // the small switcher shown at the top of both simulator pages
 function navHtml(cur) {
   const a = (id, href, label) => `<a href="${href}"${id === cur ? ' class="on" aria-current="page"' : ''}>${label}</a>`
-  return `<a class="home" href="index.html" aria-label="Home" title="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h5v-6h4v6h5V9.5"/></svg></a>${a('mial', 'mial.html', 'MIAL')}${a('mftrio', 'mftrio.html', 'MF TECNO')}`
+  return `<a class="home" href="index.html" aria-label="Home" title="Home"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20h5v-6h4v6h5V9.5"/></svg></a>${a('sim', 'simulazioni.html', 'Simulazioni')}${a('mial', 'mial.html', 'MIAL')}${a('mftrio', 'mftrio.html', 'MF TECNO')}`
 }
