@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Massini Industries · Dal prodotto sfuso al pallet pronto">
+<meta property="og:title" content="Massini Industries · Dal silo al camion. Un solo fornitore.">
 <meta property="og:description" content="Impianti chiavi in mano e linee di confezionamento. Provali in 3D.">
 <meta property="og:url" content="https://hello-noor.github.io/mial/">
 <meta property="og:image" content="https://hello-noor.github.io/mial/og-image.png">
@@ -151,14 +151,16 @@ footer{background:var(--parch);color:var(--ink80);padding:64px max(20px,6vw);fon
 footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;align-items:flex-start}footer img{height:44px;margin-bottom:16px}footer p{max-width:640px;margin:0 0 .7em}footer a{color:var(--primary)}
 .rv{opacity:0;transform:translateY(22px);transition:opacity .9s,transform .9s cubic-bezier(.2,.8,.2,1)}.rv.in{opacity:1;transform:none}
 @media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none}}
-.stgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0 14px}
-.stgrid button{font:400 13px/1.2 var(--font);letter-spacing:-.2px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#ddd;padding:9px 4px;border-radius:var(--pill);cursor:pointer;transition:background .2s,color .2s}
+.stgrid{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 14px}
+.stgrid button{font:400 12.5px/1.2 var(--font);letter-spacing:-.2px;border:1px solid rgba(255,255,255,.18);background:transparent;color:#ddd;padding:7px 11px;border-radius:var(--pill);cursor:pointer;transition:background .2s,color .2s}
+.stgrid button:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;background:#777}
+.stgrid button[data-b=mial]:before{background:#ff9a4d}.stgrid button[data-b=mf]:before{background:#2997ff}
 .stgrid button.on{background:#fff;color:var(--ink);border-color:#fff;font-weight:600}
 .stt{font-size:21px;margin:0 0 .3em}.card .stt+.lead{font-size:16px;line-height:1.4;letter-spacing:-.2px;min-height:4.2em}
-.tag.sel{background:var(--primary);}
+.tag.mial:before{background:#ff9a4d}.tag.mf:before{background:#2997ff}
 .people figure .ph{max-width:700px;margin-left:auto}
 .people .ph img{height:auto}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.dm{background:#2997ff}.df{background:#ff9a4d}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.dm{background:#ff9a4d}.df{background:#2997ff}
 .stgrid+.stt{margin-top:2px}</style>
 </head>
 <body id="top" class="t-black">
@@ -170,9 +172,9 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 
 <section class="s3d hero t-black" data-beat="0">
   <div class="in">
-    <p class="eyebrow">Assisi · Umbria · dal 1976</p>
-    <h1>Dal prodotto sfuso<br>al pallet pronto.</h1>
-    <p class="lead">Impianti chiavi in mano e linee di confezionamento. <strong>Un solo interlocutore</strong>, dal progetto all’assistenza, in oltre 70 paesi.</p>
+    <p class="eyebrow">Massini Industries · MIAL + MF TECNO</p>
+    <h1>Dal silo al camion.<br>Un solo fornitore.</h1>
+    <p class="lead">Ricezione, stoccaggio, produzione, insacco, pallet e assistenza: <strong>progettiamo, costruiamo e installiamo tutto</strong> quello che serve alla tua azienda.</p>
     <div class="cta"><a class="btn" href="#impianti">Esplora in 3D</a><a class="btn ghost" href="#contatti">Parla con noi</a></div>
   </div>
   <div class="scrollhint">Scorri</div>
@@ -180,21 +182,20 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 
 <section class="s3d step t-black" id="impianti" data-beat="1">
   <div class="card">
-    <p class="eyebrow">Impianti completi</p>
-    <h2>Segui il prodotto, dal camion al pallet.</h2>
-    <div class="stgrid" id="plSt"><button class="on" data-s="0">Ricezione</button><button data-s="1">Stoccaggio</button><button data-s="2">Dosaggio</button><button data-s="3">Produzione</button><button data-s="4">Confezionamento</button><button data-s="5">Spedizione</button></div>
+    <p class="eyebrow">L’azienda, funzione per funzione</p>
+    <h2>Scegli cosa vuoi vedere.</h2>
+    <div class="stgrid" id="plSt"></div>
     <h3 id="plT" class="stt"></h3><p id="plD" class="lead"></p>
-    <div class="seg" id="plV"><button class="on" data-c="0">Capannone chiuso</button><button data-c="1">Spaccato</button></div>
-    <div class="seg" id="plH"><button class="on" data-h="both">Impianti Massini</button><button data-h="mial">MIAL</button><button data-h="mf">MF TECNO</button><button data-h="off">Nessuno</button></div>
-    <p class="fine legend"><i class="dm"></i>MIAL: ricezione, elevatore, silos, torre, trasporto <i class="df"></i>MF TECNO: insacco, pallettizzatore, fasciatrice</p>
+    <div class="seg" id="plV"><button class="on" data-c="0">Esterno</button><button data-c="1">Sezione</button></div>
+    <p class="fine legend"><i class="dm"></i>MIAL: ricezione, stoccaggio, trasporto, produzione, allevamento <i class="df"></i>MF TECNO: insacco, pallet, cartoni, spedizione</p>
     <div class="ctl">
       <label class="row">Capacità<input id="plQ" type="range" min="1" max="60" step="1" value="20"><output id="plQo">20 t/h</output></label>
-      <div class="read"><div><span class="l">Prodotto al giorno</span><strong id="plTd">—</strong> <small>t</small></div><div><span class="l">Camion in ingresso</span><strong id="plTr">—</strong> <small>al giorno</small></div><div><span class="l">Sacchi da 25 kg</span><strong id="plBg">—</strong> <small>all’ora</small></div><div><span class="l">Livello medio silos</span><strong id="plLo">—</strong></div></div>
-      <div class="meter"><i id="plL"></i></div>
+      <div class="read"><div><span class="l">Prodotto al giorno</span><strong id="plTd">—</strong> <small>t</small></div><div><span class="l">Camion in ingresso</span><strong id="plTr">—</strong> <small>al giorno</small></div><div><span class="l">Sacchi da 25 kg</span><strong id="plBg">—</strong> <small>all’ora</small></div></div>
     </div>
-    <p class="fine">Stime indicative su 16 ore al giorno e camion da 25 t. I camion nel modello arrivano a tempo accelerato. Modello 3D stilizzato.</p>
+    <p class="fine">Stime indicative su 16 ore al giorno e camion da 25 t. Camion e tempi nel modello sono accelerati. Modello 3D stilizzato.</p>
   </div>
 </section>
+
 
 <section class="s3d tall t-black" id="trasporto" data-beat="2">
   <div class="stick"><div class="card">
