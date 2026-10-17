@@ -158,7 +158,8 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 .tag.sel{background:var(--primary);}
 .people figure .ph{max-width:700px;margin-left:auto}
 .people .ph img{height:auto}
-</style>
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.dm{background:#2997ff}.df{background:#ff9a4d}
+.stgrid+.stt{margin-top:2px}</style>
 </head>
 <body id="top" class="t-black">
 <canvas id="gl"></canvas><div id="labels"></div>
@@ -183,6 +184,9 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <h2>Segui il prodotto, dal camion al pallet.</h2>
     <div class="stgrid" id="plSt"><button class="on" data-s="0">Ricezione</button><button data-s="1">Stoccaggio</button><button data-s="2">Dosaggio</button><button data-s="3">Produzione</button><button data-s="4">Confezionamento</button><button data-s="5">Spedizione</button></div>
     <h3 id="plT" class="stt"></h3><p id="plD" class="lead"></p>
+    <div class="seg" id="plV"><button class="on" data-c="0">Capannone chiuso</button><button data-c="1">Spaccato</button></div>
+    <div class="seg" id="plH"><button class="on" data-h="both">Impianti Massini</button><button data-h="mial">MIAL</button><button data-h="mf">MF TECNO</button><button data-h="off">Nessuno</button></div>
+    <p class="fine legend"><i class="dm"></i>MIAL: ricezione, elevatore, silos, torre, trasporto <i class="df"></i>MF TECNO: insacco, pallettizzatore, fasciatrice</p>
     <div class="ctl">
       <label class="row">Capacità<input id="plQ" type="range" min="1" max="60" step="1" value="20"><output id="plQo">20 t/h</output></label>
       <div class="read"><div><span class="l">Prodotto al giorno</span><strong id="plTd">—</strong> <small>t</small></div><div><span class="l">Camion in ingresso</span><strong id="plTr">—</strong> <small>al giorno</small></div><div><span class="l">Sacchi da 25 kg</span><strong id="plBg">—</strong> <small>all’ora</small></div><div><span class="l">Livello medio silos</span><strong id="plLo">—</strong></div></div>
