@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Massini Industries · Dal silo al camion. Un solo fornitore.">
+<meta property="og:title" content="Massini Industries · Una linea. Un fornitore. Una sola responsabilità.">
 <meta property="og:description" content="Impianti chiavi in mano e linee di confezionamento. Provali in 3D.">
 <meta property="og:url" content="https://hello-noor.github.io/mial/">
 <meta property="og:image" content="https://hello-noor.github.io/mial/og-image.png">
@@ -39,7 +39,16 @@ a{color:inherit;text-decoration:none}img{display:block;max-width:100%}figure{mar
 #labels{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 .tag{position:absolute;left:0;top:0;white-space:nowrap;font:400 12px/1 var(--font);letter-spacing:-.12px;color:#fff;padding:7px 11px 7px 22px;border-radius:var(--pill);background:rgba(29,29,31,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);opacity:0;transition:opacity .5s;will-change:transform}
 .tag:before{content:"";position:absolute;left:9px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--primary-dark)}
-.tag.on{opacity:1}
+.tag.on{opacity:1;pointer-events:auto;cursor:pointer;transition:opacity .5s,background .2s}
+.tag.on:hover,.tag.on:focus-visible{background:var(--primary)}
+.tag:after{content:"›";margin-left:7px;opacity:.7}
+#impianti,.hero{touch-action:pan-y;user-select:none;-webkit-user-select:none}#impianti .card{user-select:text;-webkit-user-select:text}
+#impianti.drag{cursor:grabbing}
+#info{position:fixed;z-index:35;right:max(16px,3vw);bottom:max(16px,5vh);width:min(340px,calc(100vw - 32px));background:rgba(29,29,31,.86);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:22px 22px 20px;color:#fff}
+#info[hidden]{display:none}
+#info h3{font-size:19px;margin:0 28px .4em 0}#info p{font-size:14px;line-height:1.43;letter-spacing:-.224px;color:var(--muted-dark);margin:0 0 14px}#info .eyebrow{font-size:12px;margin:0 0 .4em}
+#info .x{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:18px;line-height:1;cursor:pointer}
+@media(max-width:900px){#info{top:56px;bottom:auto;right:16px}}
 /* global nav */
 .bar{position:fixed;inset:0 0 auto 0;z-index:30;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 max(16px,calc((100vw - 1024px)/2));background:#000;font-size:12px;letter-spacing:-.12px}
 .bar img{height:24px;width:auto}.bar nav{display:flex;gap:22px;align-items:center;color:#e8e8ed}.bar nav a{opacity:.8}.bar nav a:hover{opacity:1}
@@ -195,6 +204,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 </head>
 <body id="top" class="t-black">
 <canvas id="gl"></canvas><div id="labels"></div>
+<aside id="info" hidden role="dialog" aria-labelledby="infoT"><button class="x" type="button" aria-label="Chiudi">×</button><p class="eyebrow" id="infoB"></p><h3 id="infoT"></h3><p id="infoD"></p><a class="btn sm" id="infoA" target="_blank" rel="noopener">Vai alla pagina sul sito ›</a></aside>
 <div id="nogl"><p style="padding:100px 24px;color:#ccc">Il tuo browser non supporta WebGL: le scene 3D non sono disponibili.</p></div>
 <header class="bar"><a href="#top" aria-label="Massini Industries"><img src="landing/logo.png" alt="Massini Industries" width="103" height="24"></a>
 <nav><a href="#gruppo">Il gruppo</a><a href="#impianti">Impianti</a><a href="#trasporto">Trasporto</a><a href="#linea">Confezionamento</a><a href="#servizio">Servizio</a><a href="#storia">Storia</a><a href="simulazioni.html">Simulazioni</a><a class="go" href="#contatti">Parliamone</a><a class="ico" href="qualifica.html" aria-label="Area riservata" title="Area riservata"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></a></nav></header>
@@ -203,8 +213,8 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 <section class="s3d hero t-black" data-beat="0">
   <div class="in">
     <p class="eyebrow">Massini Industries · MIAL + MF TECNO</p>
-    <h1>Dal silo al camion.<br>Un solo fornitore.</h1>
-    <p class="lead">Ricezione, stoccaggio, produzione, insacco, pallet e assistenza: <strong>progettiamo, costruiamo e installiamo tutto</strong> quello che serve alla tua azienda.</p>
+    <h1>Una linea. Un fornitore.<br>Una sola responsabilità.</h1>
+    <p class="lead">Massini Industries unisce MIAL e MF TECNO: <strong>dal prodotto grezzo al pallet fasciato</strong>, tutto progettato e costruito in casa.</p>
     <div class="cta"><a class="btn" href="#impianti">Esplora in 3D</a><a class="btn ghost" href="#contatti">Richiedi un’offerta</a></div>
   </div>
   <div class="scrollhint">Scorri</div>
@@ -219,6 +229,8 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <div class="seg" id="plV"><button class="on" data-c="0">Esterno</button><button data-c="1">Sezione</button></div>
     <p class="fine legend"><i class="dm"></i>MIAL: ricezione, stoccaggio, trasporto, produzione, allevamento <i class="df"></i>MF TECNO: insacco, pallet, cartoni, spedizione</p>
     <div class="ctl">
+      <label class="row">Percorri l’impianto<input id="plX" type="range" min="-20" max="60" step=".5" value="16" aria-label="Sposta la vista lungo l’impianto"></label>
+      <p class="fine" style="margin:-6px 0 0">Trascina la scena a destra e sinistra, oppure usa il cursore. Tocca un’etichetta per i dettagli.</p>
       <label class="row">Capacità<input id="plQ" type="range" min="1" max="60" step="1" value="20"><output id="plQo">20 t/h</output></label>
       <div class="read"><div><span class="l">Prodotto al giorno</span><strong id="plTd">—</strong> <small>t</small></div><div><span class="l">Camion in ingresso</span><strong id="plTr">—</strong> <small>al giorno</small></div><div><span class="l">Sacchi da 25 kg</span><strong id="plBg">—</strong> <small>all’ora</small></div></div>
     </div>
