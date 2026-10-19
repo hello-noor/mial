@@ -184,6 +184,12 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 .wz-again{background:none;border:0;color:var(--primary-dark);font:inherit;font-size:14px;cursor:pointer;padding:6px}
 @media(max-width:640px){.wz{padding:16px 16px 24px}.wz h3{font-size:24px}.wz-opts{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){.wz-step{animation:none}}
+
+.wz{border:2px solid var(--primary-dark);padding:24px 28px 32px;min-height:500px}
+.wz-badge{display:inline-block;font-size:12px;font-weight:600;color:#001;background:var(--primary-dark);border-radius:99px;padding:3px 12px;margin-bottom:14px}
+.wz-form textarea{font:inherit;font-size:17px;padding:12px 14px;border-radius:var(--r-md);border:1.5px solid var(--ln);background:var(--tile2);color:#fff;resize:vertical;width:100%}.wz-form textarea:focus{border-color:var(--primary-dark);outline:0}
+.wz-send{font-size:19px;padding:15px 28px;width:100%}
+@media(max-width:640px){.wz{padding:18px 16px 26px}}
 </style>
 </head>
 <body id="top" class="t-black">
@@ -198,7 +204,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <p class="eyebrow">Massini Industries · MIAL + MF TECNO</p>
     <h1>Dal silo al camion.<br>Un solo fornitore.</h1>
     <p class="lead">Ricezione, stoccaggio, produzione, insacco, pallet e assistenza: <strong>progettiamo, costruiamo e installiamo tutto</strong> quello che serve alla tua azienda.</p>
-    <div class="cta"><a class="btn" href="#impianti">Esplora in 3D</a><a class="btn ghost" href="#contatti">Parla con noi</a></div>
+    <div class="cta"><a class="btn" href="#impianti">Esplora in 3D</a><a class="btn ghost" href="#contatti">Richiedi un’offerta</a></div>
   </div>
   <div class="scrollhint">Scorri</div>
 </section>
@@ -396,7 +402,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
       <p class="rv"><a href="mailto:info@massiniindustries.com">info@massiniindustries.com</a><br><a href="tel:+390758042312">+39 075 8042312</a></p>
       <figure class="rv" style="margin-top:28px"><div class="ph" style="height:220px"><img src="landing/img/mial-panoramica.jpg" alt="Veduta aerea dello stabilimento" loading="lazy"></div></figure>
     </div>
-    <div id="wz" class="wz rv" aria-live="polite"></div>
+    <div class="rv"><span class="wz-badge">Richiedi un’offerta · circa 1 minuto</span><div id="wz" class="wz" aria-live="polite"></div></div>
   </div>
 </section>
 </main>
