@@ -42,8 +42,8 @@ a{color:inherit;text-decoration:none}img{display:block;max-width:100%}figure{mar
 .tag.on{opacity:1;transition:opacity .5s,background .2s}.tag.on[role=button]{pointer-events:auto;cursor:pointer}
 .tag.on[role=button]:hover,.tag.on[role=button]:focus-visible{background:var(--primary)}
 .tag[role=button]:after{content:"›";margin-left:7px;opacity:.7}
-#impianti,.hero{touch-action:pan-y;user-select:none;-webkit-user-select:none}#impianti .card{user-select:text;-webkit-user-select:text}
-#impianti.drag{cursor:grabbing}
+.s3d{touch-action:pan-y;user-select:none;-webkit-user-select:none}.s3d .card{user-select:text;-webkit-user-select:text}
+body.drag .s3d{cursor:grabbing}
 #info{position:fixed;z-index:35;right:max(16px,3vw);bottom:max(16px,5vh);width:min(340px,calc(100vw - 32px));background:rgba(29,29,31,.86);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:22px 22px 20px;color:#fff}
 #info[hidden]{display:none}
 #info h3{font-size:19px;margin:0 28px .4em 0}#info p{font-size:14px;line-height:1.43;letter-spacing:-.224px;color:var(--muted-dark);margin:0 0 14px}#info .eyebrow{font-size:12px;margin:0 0 .4em}
@@ -103,7 +103,7 @@ h3{font-size:21px;line-height:1.19;letter-spacing:.231px}
 .mlab{display:flex;justify-content:space-between;font-size:12px;letter-spacing:-.12px;color:#a1a1a6;margin-bottom:6px}
 .status{font-size:14px;line-height:1.43;letter-spacing:-.224px;min-height:2.9em;color:#ccc}.status.warn{color:var(--primary-dark);font-weight:600}
 .fine{font-size:12px;line-height:1.35;letter-spacing:-.12px;color:#a1a1a6;margin:14px 0 0}
-.mini{display:flex;gap:10px;align-items:center}
+.mini{display:flex;gap:10px;align-items:center}#plA.on{background:var(--primary-dark);border-color:var(--primary-dark);color:#001}
 /* tiles */
 .tile{background:var(--bg);color:var(--fg);position:relative;padding:80px max(20px,6vw)}
 .wrap{max-width:1180px;margin:0 auto}.narrow{max-width:980px;margin:0 auto}
@@ -230,7 +230,9 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <p class="fine legend"><i class="dm"></i>MIAL: ricezione, stoccaggio, trasporto, produzione, allevamento <i class="df"></i>MF TECNO: insacco, pallet, cartoni, spedizione</p>
     <div class="ctl">
       <label class="row">Percorri l’impianto<input id="plX" type="range" min="-20" max="60" step=".5" value="16" aria-label="Sposta la vista lungo l’impianto"></label>
-      <p class="fine" style="margin:-6px 0 0">Trascina la scena a destra e sinistra, oppure usa il cursore. Tocca un’etichetta per i dettagli.</p>
+      <div class="seg" id="plM" aria-label="Cosa fa il trascinamento"><button class="on" data-m="pan" type="button">Trascina: sposta</button><button data-m="rot" type="button">Trascina: ruota</button></div>
+      <div class="mini"><button class="btn sm ghost" id="plA" type="button" aria-pressed="false">Rotazione lenta a 360°</button></div>
+      <p class="fine" style="margin:-6px 0 0">Trascina la scena per spostarti o per girarle intorno, come scelto sopra. Tocca un’etichetta o una macchina per i dettagli.</p>
       <label class="row">Capacità<input id="plQ" type="range" min="1" max="60" step="1" value="20"><output id="plQo">20 t/h</output></label>
       <div class="read"><div><span class="l">Prodotto al giorno</span><strong id="plTd">—</strong> <small>t</small></div><div><span class="l">Camion in ingresso</span><strong id="plTr">—</strong> <small>al giorno</small></div><div><span class="l">Sacchi da 25 kg</span><strong id="plBg">—</strong> <small>all’ora</small></div></div>
     </div>
