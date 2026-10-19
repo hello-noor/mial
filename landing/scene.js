@@ -214,11 +214,13 @@ const FUNCS = {
   sto: { b: 'mial', boxes: [[-6.6, 6.4, -1, 13.8, 13.2, 12]] },
   tra: { b: 'mial', boxes: [[-7, 14.2, -1, 21, 1.6, 1.7], [-17, 14.2, 2, 1.7, 1.6, 7.2], [12, 10.4, -1, 15, 1.6, 1.7]] },
   dos: { b: 'mial', boxes: [[3, 4.8, -1, 5.2, 9.8, 5.2]] },
-  pro: { b: 'mial', boxes: [[3, 12.2, -1, 5.2, 5, 5.2], [6, 3.4, 1.9, 1.9, 6.9, 1.9], [3, 3.9, -6.4, 2.4, 7.8, 2.4]] },
+  pro: { b: 'mial', boxes: [[6, 3.4, 1.9, 1.9, 6.9, 1.9], [3, 3.9, -6.4, 2.4, 7.8, 2.4]] },
   alv: { b: 'mial', boxes: [[50, 2.6, -8, 29.5, 5.6, 10.5], [34, 3.7, -8, 3.4, 7.6, 3.4]] },
   ins: { b: 'mf', boxes: [[9.2, 3.4, -1, 3.4, 7, 3.6]] },
   pal: { b: 'mf', boxes: [[20.2, 2.6, -1, 5.8, 5.4, 3.8], [25.4, 1.8, -1, 2.6, 3.8, 2.6]] },
   car: { b: 'mf', boxes: [[19.2, 1.9, -4.8, 20, 3.8, 3.2]] },
+  man: { b: 'mial', boxes: [[2.8, 1.8, 3.6, 3.8, 3.6, 2.6]] },
+  pet: { b: 'mial', boxes: [[4.2, 2.6, -10.5, 3.4, 5.2, 3.4], [11, 1.9, -10.5, 3.8, 3.8, 2.6], [16.5, 3.4, -10.5, 3.4, 6.8, 3.0], [24, 1.9, -10.5, 4.6, 3.8, 2.8]] },
   spe: { b: 'mf', boxes: [[28.8, 2.4, 6.2, 10, 4.9, 11.6]] },
 };
 const VIEWS = [
@@ -226,8 +228,10 @@ const VIEWS = [
   { n: 'Ricezione', b: 'mial', f: 'ric', sec: 'ground', c: [-15, 2, 6.5], dist: 30, az: -22, el: 10, t: 'Sezione: dalla fossa all’elevatore', d: 'Il camion scarica in fossa interrata, un trasportatore porta il prodotto al piede dell’elevatore a tazze che lo solleva in quota.' },
   { n: 'Stoccaggio', b: 'mial', f: 'sto', sec: 'ground', c: [-6.6, 6.2, -4], dist: 40, az: -12, el: 10, t: 'Sezione: silos e livelli', d: 'Silos di stoccaggio tagliati a metà: si vede il prodotto e il suo livello, controllato silo per silo.' },
   { n: 'Trasporto', b: 'mial', f: 'tra', sec: 'tra', c: [-8, 9.5, -1], dist: 42, az: -10, el: 16, t: 'Sezione: il prodotto nel tubo', d: 'Catena con dischi dentro il trasportatore tubolare: il prodotto sale dall’elevatore, corre sopra i silos e un deviatore lo fa scendere nel silo scelto.' },
+  { n: 'Mangime 5 t/h', b: 'mial', f: 'man', sec: 'hall', c: [3.2, 6.5, 1], dist: 34, az: -24, el: 16, t: 'Impianto produzione mangime 5 t/h', d: 'Dentro il capannone: molino a martelli, scala di dosaggio, miscelatore e raffreddatore. Un impianto modulare completo per produzioni fino a 5 t/h.' },
   { n: 'Dosaggio', b: 'mial', f: 'dos', sec: 'dos', c: [1.2, 5.2, 1.6], dist: 22, az: -26, el: 14, t: 'Sezione: dosaggio e miscela', d: 'La bilancia di dosaggio pesa gli ingredienti, il miscelatore orizzontale monoalbero li omogeneizza.' },
-  { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: pellet e raffreddamento', d: 'La pressa forma il pellet; il raffreddatore a controcorrente lo raffredda con aria. Impianti da 1 a 60 t/h, anche modulari.' },
+  { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: raffreddamento', d: 'Il raffreddatore a controcorrente raffredda il pellet con aria; il ciclone separa la polvere. Impianti da 1 a 60 t/h, anche modulari.' },
+  { n: 'Pet food', b: 'mial', f: 'pet', sec: 'hall', c: [16, 2.5, -10.5], dist: 40, az: -22, el: 26, t: 'Sezione: la linea pet food', d: 'Svuotamento big bag, molino a martelli per pet food, dosaggio, miscelazione e vagliatura: il prodotto sale nel trasportatore tubolare e arriva alla pesatrice multitesta.' },
   { n: 'Insacco', b: 'mf', f: 'ins', sec: 'hall', c: [11, 3, -1], dist: 24, az: -26, el: 28, t: 'Sezione: pesatura e insacco', d: 'Pesatrice multitesta e insaccatrice a bocca aperta riempiono i sacchi, che passano dal controllo peso.' },
   { n: 'Pallet', b: 'mf', f: 'pal', sec: 'hall', c: [21, 2.5, -1], dist: 28, az: -24, el: 30, t: 'Sezione: pallettizzazione e fasciatura', d: 'Pallettizzatore cartesiano e avvolgitore pallet completano il pallet, pronto per la spedizione.' },
   { n: 'Cartoni', b: 'mf', f: 'car', sec: 'hall', c: [19, 1.4, -4.5], dist: 30, az: -16, el: 34, t: 'Sezione: incartonamento', d: 'Cartonatrice: i prodotti confezionati entrano nelle scatole, pronte per essere pallettizzate.' },
@@ -285,20 +289,6 @@ function mkScale(g, x, y, z) { // dosing scale hopper with level
   const fill = new THREE.Mesh(new THREE.CylinderGeometry(.68, .68, 1, 24), grainSoft); inner.add(fill);
   return { mats, setGhost(on) { ghostOn(mats, on); inner.visible = on; }, update(dt, ph) { if (!inner.visible) return; const l = (ph * .22) % 1; fill.scale.y = Math.max(.02, l * 2.0); fill.position.y = -1.1 + fill.scale.y / 2; } };
 }
-function mkPress(g, x, y, z) { // pellet press: ring die and rollers, pellets falling out
-  const hop = gm(0xe6ebf0), mats = [hop];
-  g.add(cyl(.95, .95, 1.1, hop, x, y, z, 28)); g.add(cone(.95, 1.0, hop, x, y - 1.0, z, true, 28));
-  const mot = cyl(.5, .5, 1.1, M.blue, x + 2.2, y - .1, z, 24); mot.rotation.z = Math.PI / 2; g.add(mot); g.add(box(1.1, .95, .95, M.steelD, x + 1.3, y - .1, z)); g.add(box(.4, .3, .4, M.dark, x + 2.2, y + .5, z)); // main motor and gearbox
-  const fd = cyl(.16, .16, 1.7, M.steel, x - 1.6, y + .3, z, 14); fd.rotation.z = Math.PI / 2; g.add(fd); g.add(rot(cyl(.2, .2, .4, M.blue, x - 2.55, y + .3, z, 14), 'z', Math.PI / 2)); // conditioner / feeder screw with motor
-  g.add(box(1.5, .3, 1.5, M.steelD, x, y - 1.75, z)); g.add(box(.5, .5, .06, M.dark, x, y - 1.75, z + .78)); g.add(box(.08, .2, .1, M.orange, x + .3, y - 1.75, z + .83)); // cutter box with door
-  g.add(ring(.97, .04, M.steelD, x, y + .55, z)); g.add(box(.5, .35, .4, M.white, x - .4, y + .75, z + .9)); // flange, control box
-  const inner = new THREE.Group(); inner.position.set(x, y, z); inner.visible = false; g.add(inner);
-  const die = new THREE.Mesh(new THREE.TorusGeometry(.62, .12, 10, 32), M.steelD); die.rotation.x = Math.PI / 2; inner.add(die);
-  const rol = new THREE.Group(); inner.add(rol); for (let k = 0; k < 3; k++) { const a = k * 2.094, r = cyl(.13, .13, .36, M.steel, Math.cos(a) * .38, 0, Math.sin(a) * .38, 12); rol.add(r); }
-  const pN = 22, pI = new THREE.InstancedMesh(new THREE.CylinderGeometry(.04, .04, .14, 6), grainSolid, pN), o = new THREE.Object3D(); inner.add(pI);
-  return { mats, setGhost(on) { ghostOn(mats, on); inner.visible = on; },
-    update(dt, ph) { if (!inner.visible) return; rol.rotation.y += dt * 4; die.rotation.z += dt * 1.2; for (let i = 0; i < pN; i++) { const u = (ph * .6 + i / pN) % 1; o.position.set(Math.sin(i * 7) * .14, -.9 - u * 1.5, Math.cos(i * 5) * .14); o.updateMatrix(); pI.setMatrixAt(i, o.matrix); } pI.instanceMatrix.needsUpdate = true; } };
-}
 function mkCooler(g, x, y, z, h) { // counter-flow cooler: pellets go down, air goes up
   const col = gm(0xdfe5ea), mats = [col];
   g.add(box(1.5, h, 1.5, col, x, y, z)); g.add(cyl(.6, .7, .5, M.steelD, x, y + h / 2 + .25, z, 20)); for (const [a, b] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) g.add(box(.12, .5, .12, M.steelD, x + a * .6, y - h / 2 - .25, z + b * .6));
@@ -319,6 +309,33 @@ function mkFlow(g, curve) { // chain discs + product moving inside a tubular con
   discs.visible = plugs.visible = false; g.add(discs, plugs); let s = 0;
   return { set(v) { discs.visible = plugs.visible = v; },
     update(dt) { if (!discs.visible) return; s = (s + .865 * dt) % SP; for (let i = 0; i < N; i++) { const u = (i * SP + s) / L; curve.getPointAt(u, p); curve.getTangentAt(u, t); o.position.copy(p); o.quaternion.setFromUnitVectors(Y, t); o.scale.set(1, 1, 1); o.updateMatrix(); discs.setMatrixAt(i, o.matrix); const u2 = Math.min(.999, u + SP * .5 / L); curve.getPointAt(u2, p); o.position.copy(p); o.scale.set(1, SP * .8, 1); o.updateMatrix(); plugs.setMatrixAt(i, o.matrix); } discs.instanceMatrix.needsUpdate = plugs.instanceMatrix.needsUpdate = true; } };
+}
+
+/* ---------- pet food machines (MIAL production bay) ---------- */
+const hcyl = (r, len, mat, x, y, z, seg = 24) => { const m = cyl(r, r, len, mat, x, y, z, seg); m.rotation.z = Math.PI / 2; return m; };
+function mkCabinet(g, x, z) { g.add(box(.9, 2.0, .6, M.white, x, 1, z)); g.add(box(.5, .35, .04, M.screen, x, 1.4, z + .32)); stackLight(g, x, 2.0, z); }
+function mkBigBag(g, x, z) { // big-bag discharge station: frame with hoist beam, hanging bag, hopper and screw feeder
+  for (const a of [-1.2, 1.2]) for (const b of [-1.2, 1.2]) g.add(box(.14, 4.8, .14, M.steelD, x + a, 2.4, z + b));
+  for (const a of [-1.2, 1.2]) g.add(box(.12, .12, 2.5, M.orange, x + a, 4.8, z));
+  g.add(box(2.5, .12, .12, M.orange, x, 4.8, z)); g.add(box(.5, .3, .5, M.dark, x, 4.6, z));
+  const bagM = std(0xe9e4d6, 0, .9), strap = std(0xf0bf2a, 0, .7);
+  g.add(box(1.5, 1.7, 1.5, bagM, x, 3.3, z));
+  for (const a of [-.7, .7]) for (const b of [-.7, .7]) g.add(beam(V3(x + a, 4.15, z + b), V3(x, 4.55, z), .05, strap));
+  g.add(cone(.35, .5, bagM, x, 2.2, z, true, 16)); g.add(box(1.7, .2, 1.7, M.steelD, x, 2.0, z));
+  g.add(cyl(.8, .8, .5, M.white, x, 1.65, z, 24)); g.add(cone(.8, .9, M.white, x, 1.0, z, true, 24));
+  g.add(hcyl(.17, 1.6, M.steel, x + .8, .55, z)); g.add(hcyl(.2, .5, M.blue, x + 1.8, .55, z, 16)); // screw feeder and motor
+  g.add(box(.8, 1.2, .5, M.dark, x - 1.6, .6, z + 1.2)); g.add(box(.5, .3, .04, M.screen, x - 1.6, .95, z + 1.46)); stackLight(g, x + 1.2, 4.8, z + 1.2);
+  return { update() {} };
+}
+function mkSieve(g, x, z) { // vibrating screen (MIAL "vagli"): sprung frame, covered deck, vibration motors, product in and out
+  for (const a of [-1.2, 1.2]) for (const b of [-.5, .5]) { g.add(box(.12, 1.2, .12, M.steelD, x + a, .6, z + b)); g.add(cyl(.1, .1, .3, M.orange, x + a, 1.3, z + b, 10)); }
+  g.add(box(2.7, .1, 1.3, M.steelD, x, 1.22, z));
+  const body = new THREE.Group(); body.position.set(x, 1.75, z); body.rotation.z = -.06; g.add(body);
+  body.add(box(3.0, .7, 1.2, M.steel, 0, 0, 0)); body.add(box(3.1, .12, 1.3, M.blue, 0, .4, 0));
+  for (let k = 0; k < 5; k++) body.add(box(.08, .2, 1.34, M.steelD, -1.2 + k * .6, .45, 0)); // cover clamps
+  for (const s of [-1, 1]) body.add(rot(cyl(.2, .2, .5, M.blue, 0, -.05, s * .85, 16), 'x', Math.PI / 2)); // vibration motors
+  body.add(cone(.5, .6, M.steel, -1.0, .85, 0, true, 16)); body.add(box(.5, .5, .5, M.steelD, 1.65, -.2, 0)); body.add(cone(.5, .6, M.steelD, 0, -.65, 0, true, 16));
+  return { update(dt, ph) { body.position.y = 1.75 + Math.sin(ph * 40) * .012; body.rotation.z = -.06 + Math.sin(ph * 37) * .004; } };
 }
 function buildPlant(ox) {
   const g = new THREE.Group(); g.position.set(ox, 0, 0);
@@ -377,7 +394,9 @@ function buildPlant(ox) {
     }
     const lm = new THREE.Mesh(new THREE.SphereGeometry(.12, 10, 8), emi(0x2997ff, 1)); lm.position.set(tx + 2.1, y + .2, tz + 2.1); g.add(lm); lights.push(lm);
   });
-  const tMix = mkMixer(g, tx - .4, 5.0, tz), tScale = mkScale(g, tx, 9.6, tz), tPress = mkPress(g, tx, 13.4, tz);
+  const tMill = mkMill(g, 2.8, 0, 3.6); // hammer mill at the foot of the tower, feeding the mixer
+  g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(2.8, 3.5, 3.6), V3(2.8, 6.1, 3.6), V3(2.6, 6.1, -1)], .9, false), 40, .14, 10, false), M.steel)));
+  const tMix = mkMixer(g, tx - .4, 5.0, tz), tScale = mkScale(g, tx, 9.6, tz);
   g.add(box(.9, 1.1, .6, M.dark, tx + 1.2, 4.9, tz + 1.55)); g.add(box(.5, .35, .04, M.screen, tx + 1.2, 5.05, tz + 1.87));
   const beacon = new THREE.Mesh(new THREE.SphereGeometry(.22, 12, 10), emi(0xee7319, 2)); beacon.position.set(tx, 14.6, tz); g.add(beacon);
   // cyclone with steam
@@ -390,20 +409,37 @@ function buildPlant(ox) {
   const hx = 19, hz = -1;
   const ghost = c => std(c, .1, .55, { transparent: true, opacity: 1 });
   const wallM = ghost(0xe6ebf0), roofM = ghost(0x6c7783), bandM = ghost(0x0c447f), orgM = ghost(0xee7319);
-  const shell = [wallM, roofM, bandM, orgM];
-  g.add(box(24, 7.4, 12, wallM, hx, 3.7, hz)); const roof = box(24.5, .3, 12.5, roofM, hx, 7.55, hz); g.add(roof);
-  g.add(box(24.1, 1.1, 12.1, bandM, hx, 6.55, hz)); g.add(box(24.1, .12, 12.1, orgM, hx, 5.95, hz));
-  g.add(box(24, .06, 12, std(0x23262b, .1, .8), hx, .03, hz));
+  M.win.transparent = true; // windows fade with the walls in section views
+  const shell = [wallM, roofM, bandM, orgM, M.win];
+  // two bays: packaging (7.4 m) and the tall process bay with the tower; the deep back of both is the pet food production zone
+  const hzB = -4.5, hd = 19, ax = 3.25, aw = 7.46;
+  g.add(box(24, 7.4, hd, wallM, hx, 3.7, hzB)); g.add(box(aw, 16, hd, wallM, ax, 8, hzB));
+  const roof = new THREE.Group(); roof.add(box(24.5, .3, hd + .5, roofM, hx, 7.55, hzB), box(aw + .5, .3, hd + .5, roofM, ax, 16.15, hzB)); g.add(roof);
+  for (const [w, cxx] of [[24.1, hx], [aw + .1, ax]]) { g.add(box(w, 1.1, hd + .1, bandM, cxx, 6.55, hzB)); g.add(box(w, .12, hd + .1, orgM, cxx, 5.95, hzB)); }
+  g.add(box(31.5, .06, hd, std(0x23262b, .1, .8), 15.25, .03, hzB));
   const win = new THREE.Mesh(new THREE.BoxGeometry(17, .9, .06), M.win); win.position.set(hx - 2.5, 4.1, hz + 6.03); g.add(win);
   const win2 = win.clone(); win2.position.set(hx + 12.03, 4.1, hz); win2.rotation.y = Math.PI / 2; win2.scale.x = .55; g.add(win2);
+  [4.1, 9.2, 13.4].forEach(y => { const wa = win.clone(); wa.position.set(ax, y, hz + 6.03); wa.scale.x = 6 / 17; g.add(wa); });
   g.add(box(5.4, .22, .12, M.orange, hx + 8.2, 4.3, hz + 6.05)); g.add(box(.22, 4.3, .12, M.orange, hx + 5.6, 2.15, hz + 6.05)); g.add(box(.22, 4.3, .12, M.orange, hx + 10.8, 2.15, hz + 6.05));
   const door = box(5, 4.1, .08, M.steel, hx + 8.2, 2.05, hz + 6.04); g.add(door);
   const roofBits = new THREE.Group(); g.add(roofBits);
   [-8, -3, 2, 7].forEach(x => roofBits.add(box(2.2, .22, 3, M.glass, hx + x, 7.8, hz + 2)));
+  [-9, -3, 3, 9].forEach(x => roofBits.add(box(2.2, .22, 3, M.glass, hx + x, 7.8, -10.5)));
   g.add(box(3, 2.2, 3, M.white, hx, 8.5, hz));
   const fans = [];
   [[-8, -3], [-2, -3], [4, -3], [10, -3]].forEach(([x, z]) => { const f = new THREE.Group(); f.position.set(hx + x, 7.7, hz + z); f.add(cyl(.7, .75, .35, M.steelD, 0, 0, 0, 20)); const bl = new THREE.Group(); bl.position.y = .22; for (let k = 0; k < 4; k++) { const b = box(.55, .03, .18, M.steel, .3, 0, 0); const h = new THREE.Group(); h.rotation.y = k * Math.PI / 2; h.add(b); bl.add(h); } f.add(bl); roofBits.add(f); fans.push(bl); });
   const pack = buildPack(0, true); pack.g.position.set(8.4, 0, -1); g.add(pack.g); pack.st.layers = 3; pack.reset();
+  // pet food line at the back of the hall (MIAL machines): big bag, PET-THOR hammer mill, dosing scale over a horizontal mixer, vibrating screen, then a tubular conveyor to the weigher
+  const pz = -10.5, pMill = mkMill(g, 11.5, 0, pz), pScale = mkScale(g, 16.5, 4.8, pz), pMix = mkMixer(g, 16.5, 1.75, pz);
+  const petM = [mkBigBag(g, 4.2, pz), pMill, pScale, pMix, mkSieve(g, 24, pz)];
+  for (const a of [-1.1, 1.1]) for (const b of [-1.1, 1.1]) g.add(box(.14, 3.75, .14, M.steelD, 16.5 + a, 1.88, pz + b));
+  for (const a of [-1.1, 1.1]) g.add(box(.1, .1, 2.3, M.orange, 16.5 + a, 3.75, pz)); for (const b of [-1.1, 1.1]) g.add(box(2.3, .1, .1, M.orange, 16.5, 3.75, pz + b));
+  for (const b of [-.3, .3]) g.add(beam(V3(17.0, .8, pz + b), V3(22.4, 2.0, pz + b), .1, M.steelD)); // belt from the mixer to the screen
+  mkCabinet(g, 19.6, pz + 1.9);
+  const bagPts = [V3(4.2, 1.0, pz), V3(4.2, 3.9, pz), V3(11.5, 3.9, pz), V3(11.5, 3.4, pz)], millPts = [V3(11.5, 3.6, pz), V3(11.5, 5.9, pz), V3(16.5, 5.9, pz)], outPts = [V3(26, 1.3, pz), V3(26, 6.9, pz), V3(8.6, 6.9, pz), V3(8.6, 6.9, -1)];
+  const petElb = std(0x16181c, .15, .55, { transparent: true });
+  [[bagPts, .17], [millPts, .14], [outPts, .3]].forEach(([P, tr]) => { g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve(P, 1.0, false), 80, tr, 12, false), M.steel))); elbows(g, P, 1.0, tr, petElb); });
+  const petFlow = mkPulses(g, tubeCurve(outPts, 1.2, false), 12), petBelt = mkPulses(g, new THREE.LineCurve3(V3(17.0, .9, pz), V3(22.4, 2.1, pz)), 8);
   // MIAL feed mill on the farm: modular plant in a barn (hammer mill, dosing scale, horizontal mixer) + feed lines and animals
   const bx0 = 50, bz0 = -8;
   const barnW = ghost(0xd9dee4), barnR = ghost(0x8a949f);
@@ -453,9 +489,9 @@ function buildPlant(ox) {
     g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(c, 30, .22, 12, false), tubeMat))); g.add(cyl(.38, .3, .4, M.orange, x, 14.0, -1, 14));
     return mkPulses(g, c, 6);
   });
-  // pellet cooler next to the tower, fed from the press
+  // pellet cooler next to the tower, fed from the mixer discharge
   const tCool = mkCooler(g, 6, 3.2, 1.9, 6.4);
-  g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(3, 11.7, -1), V3(3, 11.0, 1.9), V3(6, 11.0, 1.9), V3(6, 6.7, 1.9)], .6, false), 40, .2, 10, false), tubeMat)));
+  g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(3.5, 4.0, -1), V3(3.5, 4.0, 1.9), V3(6, 4.0, 1.9), V3(6, 6.7, 1.9)], .6, false), 40, .2, 10, false), tubeMat)));
   stairs(g, V3(5.7, 0, -4.7), V3(5.7, 4.2, -1.9), .9); stairs(g, V3(5.7, 4.2, -1.9), V3(5.7, 8.4, -4.7), .9); // tower stairs
   g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(6, 6.95, 1.9), V3(6, 7.5, 1.9), V3(6.35, 7.5, 1.9), V3(6.35, 5.6, -6.4), V3(3.95, 5.6, -6.4)], .5, false), 60, .15, 10, false), M.steel))); // cooler air to the cyclone
   g.add(cyl(.3, .3, .6, M.blue, 3, .5, -6.4, 18)); g.add(box(.6, .2, .6, M.steelD, 3, .15, -6.4)); // cyclone airlock
@@ -471,10 +507,11 @@ function buildPlant(ox) {
   const st = { cap: 20, view: 0, lev: [.55, .4, .7, .3], dumpIdx: 0, sec: 'none', heroOff: false, doorK: 0, focus: '*' };
   const tr = { s: 'wait', t: 0, next: 3 }, tr2 = { s: 'wait', t: 6, k: 0, p: 'idle', pt: 0, cur: null, loaded: [] };
   const ghostSet = (mats, on) => mats.forEach(mt => { mt.opacity = on ? .07 : 1; mt.depthWrite = !on; });
-  const machines = { dos: [tMix, tScale], pro: [tPress, tCool], alv: [bMill, bMix, bScale] };
+  const machines = { dos: [tMill, tMix, tScale], pro: [tCool], alv: [bMill, bMix, bScale] };
   const applySection = () => {
     const mode = st.heroOff ? 'none' : st.sec;
-    ghostSet(shell, mode === 'hall'); roof.visible = roofBits.visible = mode !== 'hall';
+    const inHall = mode === 'hall' || mode === 'dos' || mode === 'pro'; // the process tower is inside the hall too
+    ghostSet(shell, inHall); roof.visible = roofBits.visible = !inHall;
     ghostSet(barnShell, mode === 'barn'); barnRoof.visible = mode !== 'barn';
     machines.alv.forEach(x => x.setGhost(mode === 'barn')); machines.dos.forEach(x => x.setGhost(mode === 'dos')); machines.pro.forEach(x => x.setGhost(mode === 'pro'));
     const ground = mode === 'ground', clip = ground || mode === 'tra';
@@ -552,7 +589,7 @@ function buildPlant(ox) {
       const pos = steamGeo.attributes.position;
       for (let i = 0; i < steamN; i++) { sph[i] = (sph[i] + dt * .12) % 1; const a = sph[i]; pos.setXYZ(i, 3 + a * 3 + Math.sin(i * 5 + ph) * .3, 7.6 + a * 5, -6.4 + Math.cos(i * 3) * .4); }
       pos.needsUpdate = true;
-      [tMix, tScale, tPress, tCool, bMill, bMix, bScale].forEach(x => x.update(dt, ph)); flowA.update(dt); flowB.update(dt); lineFlow.update(dt, .03, 9);
+      [tMill, tMix, tScale, tCool, bMill, bMix, bScale, ...petM].forEach(x => x.update(dt, ph)); petFlow.update(dt, .03 * (.35 + cap / 60 * 1.4), 12); petBelt.update(dt, .03, 8); flowA.update(dt); flowB.update(dt); lineFlow.update(dt, .03, 9);
       if (bkI.visible) for (let i = 0; i < bkN; i++) { const u = (i / bkN + ph * .04) % 1, up = u < .5; bo.position.set(-17 + (up ? -.2 : .2), up ? lerp(-1.2, 14.6, u * 2) : lerp(14.6, -1.2, (u - .5) * 2), 5); bo.updateMatrix(); bkI.setMatrixAt(i, bo.matrix); } if (bkI.visible) bkI.instanceMatrix.needsUpdate = true;
       // product inside the silos (section view)
       fills.forEach((f, i) => { const h = Math.max(.05, st.lev[i] * 8); f.scale.y = h; f.position.set(silos[i][0], 3 + h / 2, silos[i][1]); const c = caps[i]; c.scale.y = h; c.position.y = 3 + h / 2; });
@@ -828,7 +865,8 @@ const labelHost = $('#labels');
 const MIAL = 'https://www.mialtecno.com/', MF = 'https://www.mftecno.com/it/';
 const INFO = { // label text -> [brand, page, description]; pages and wording follow the official MIAL / MF TECNO sites
   'Elevatore a Tazze Basculanti': ['MIAL', MIAL + 'elevatore-a-tazze-basculanti/', 'Solleva in quota prodotti granulari fragili e delicati con un trasporto sicuro e affidabile.'],
-  'Fossa di scarico · Trasportatore a Coclea a Cassa Aperta': ['MIAL', MIAL + 'trasportatore-a-coclea-a-cassa-aperta/', 'Riceve il prodotto dal camion e lo porta al piede dell’elevatore: adatto a prodotti polverosi e granulari.'],
+  'Fossa di scarico': ['MIAL', MIAL + 'trasportatore-a-coclea-a-cassa-aperta/', 'Qui il camion scarica il prodotto, sotto il livello del suolo.'],
+  'Trasportatore a Coclea a Cassa Aperta': ['MIAL', MIAL + 'trasportatore-a-coclea-a-cassa-aperta/', 'Porta il prodotto dalla fossa al piede dell’elevatore: adatto a prodotti polverosi e granulari.'],
   'Silos MIAL · Sistemi di Stoccaggio': ['MIAL', MIAL + 'silos-sistemi/', 'Silos per ogni esigenza di stoccaggio, in vari modelli e con accessori per il carico e lo scarico.'],
   'Prodotto e livello': ['MIAL', MIAL + 'silos-sistemi/', 'Il livello del prodotto è controllato silo per silo.'],
   'Trasportatore Tubolare a Catena': ['MIAL', MIAL + 'trasporto-tubolare-a-catena/', 'Una catena con dischi trascina il prodotto chiuso nel tubo, anche in curva e in salita. Quattro modelli diversi.'],
@@ -836,10 +874,14 @@ const INFO = { // label text -> [brand, page, description]; pages and wording fo
   'Molino a Martelli FARMY': ['MIAL', MIAL + 'molini/', 'Macina le materie prime: la gamma dei molini a martelli MIAL punta su efficienza e affidabilità.'],
   'Miscelatore Orizzontale Monoalbero': ['MIAL', MIAL + 'miscelatori/', 'Omogeneizza gli ingredienti in un unico lotto, con un albero a pale dentro la vasca orizzontale.'],
   'Bilancia di Dosaggio': ['MIAL', MIAL + 'bilance-di-dosaggio/', 'Controllo preciso delle materie prime nei mangimifici, anche nella versione a vasca rotante.'],
-  'Pressa per pellet': ['MIAL', MIAL + 'impianti-produzione-per-pet-food/', 'Forma il pellet. Fa parte degli impianti completi MIAL per pet food e mangimi.'],
   'Raffreddatore EOLO a controcorrente': ['MIAL', MIAL + 'raffreddatori/', 'Raffredda il pellet con aria in controcorrente. Modelli in acciaio inox.'],
   'Ciclone': ['MIAL', MIAL + 'impianti-produzione-mangimi/', 'Separa la polvere dall’aria di raffreddamento.'],
   'Valvola stellare': ['MIAL', MIAL + 'impianti-produzione-mangimi/', 'Scarica il pellet raffreddato dosando il flusso.'],
+  'Impianto Produzione Mangime 5 Ton/h': ['MIAL', MIAL + 'impianto-produzione-mangime-5-ton-h/', 'Impianto di produzione mangime modulare da 5 t/h: installazione rapida e facile da usare. Qui nel capannone: molino, dosaggio, miscelatore e raffreddatore.'],
+  'Svuotamento Big Bag': ['MIAL', MIAL + 'svuotamento-big-bag/', 'Stazione per svuotare i big bag e alimentare la linea in modo controllato.'],
+  'Molino a Martelli PET-THOR': ['MIAL', MIAL + 'molino-a-martelli-per-pet-food/', 'Molino a martelli progettato per la macinazione delle materie prime dei settori pet food e fish food.'],
+  'Vaglio vibrante': ['MIAL', MIAL + 'vagli/', 'Elimina la parte polverosa da quella granulare. I vagli MIAL sono disponibili vibranti e rotanti.'],
+  'Trasportatore Tubolare a Catena · al confezionamento': ['MIAL', MIAL + 'trasporto-tubolare-a-catena/', 'Porta il prodotto finito dalla produzione alla pesatrice multitesta, chiuso nel tubo.'],
   'Impianto Produzione Mangime 1 Ton/h': ['MIAL', MIAL + 'mangimifici-modulari-vantaggi-e-soluzioni-mial/', 'Mangimificio modulare per l’allevamento: soluzioni per produzioni fino a 5 t/h, senza opere murarie dedicate.'],
   'Bilancia di Dosaggio e Miscelatore': ['MIAL', MIAL + 'bilance-di-dosaggio/', 'Pesa gli ingredienti e li miscela nel mangimificio dell’azienda agricola.'],
   'Silos MIAL': ['MIAL', MIAL + 'silos-sistemi/', 'Stoccaggio delle materie prime a fianco dell’impianto.'],
@@ -880,11 +922,13 @@ const V0 = VIEWS[0];
 const beats = [
   Bt(mPlant, V3(...V0.c), V0.dist, V0.az, V0.el),
   Bt(mPlant, V3(...V0.c), V0.dist, V0.az, V0.el, [
-    [[-17, 16.6, 5], 'Elevatore a Tazze Basculanti', 'ric', 1, 'mial'], [[-17, -.6, 8.5], 'Fossa di scarico · Trasportatore a Coclea a Cassa Aperta', 'ric', 0, 'mial'],
+    [[-17, 9, 5.6], 'Elevatore a Tazze Basculanti', 'ric', 1, 'mial'], [[-17, -1.2, 9.2], 'Fossa di scarico', 'ric', 0, 'mial'], [[-17, -1.9, 6.6], 'Trasportatore a Coclea a Cassa Aperta', 'ric', 0, 'mial'],
     [[-6.6, 13.4, -1], 'Silos MIAL · Sistemi di Stoccaggio', 'sto', 1, 'mial'], [[-9, 6, -4.6], 'Prodotto e livello', 'sto', 0, 'mial'],
     [[-7, 15, -1], 'Trasportatore Tubolare a Catena', 'tra', 1, 'mial'], [[-9, 13.6, -1], 'Deviatore sui silos', 'tra', 0, 'mial'], [[-17, 16.6, 5], 'Elevatore a Tazze Basculanti', 'tra', 0, 'mial'],
         [[2.6, 6.3, -1], 'Miscelatore Orizzontale Monoalbero', 'dos', 1, 'mial'], [[3, 10.9, -1], 'Bilancia di Dosaggio', 'dos', 0, 'mial'],
-    [[3, 15, -1], 'Pressa per pellet', 'pro', 1, 'mial'], [[6, 7.4, 1.9], 'Raffreddatore EOLO a controcorrente', 'pro', 0, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
+    [[6, 7.4, 1.9], 'Raffreddatore EOLO a controcorrente', 'pro', 1, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
+    [[3, 15.2, -1], 'Impianto Produzione Mangime 5 Ton/h', 'man', 1, 'mial'], [[2.8, 3.6, 3.6], 'Molino a Martelli FARMY', 'man', 0, 'mial'],
+    [[4.2, 5.6, -10.5], 'Svuotamento Big Bag', 'pet', 1, 'mial'], [[11.5, 3.6, -10.5], 'Molino a Martelli PET-THOR', 'pet', 0, 'mial'], [[16.5, 6.3, -10.5], 'Bilancia di Dosaggio', 'pet', 0, 'mial'], [[16.5, 2.6, -10.5], 'Miscelatore Orizzontale Monoalbero', 'pet', 0, 'mial'], [[24, 3.0, -10.5], 'Vaglio vibrante', 'pet', 0, 'mial'], [[19, 7.0, -10.5], 'Trasportatore Tubolare a Catena · al confezionamento', 'pet', 0, 'mial'],
     [[50, 6, -8], 'Impianto Produzione Mangime 1 Ton/h', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Molino a Martelli FARMY', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Bilancia di Dosaggio e Miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silos MIAL', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
     [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a Bocca Aperta MF TECNO', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
     [[20.6, 5.5, -1], 'Pallettizzatore MF PCA SMART PRO', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore Pallet MF WRAP 35', 'pal', 0, 'mf'], [[17.2, 1.7, 0], 'Magazzino pallet vuoti', 'pal', 0, 'mf'],
