@@ -77,6 +77,22 @@ function beam(a, b, t, mat) {
   const d = b.clone().sub(a), m = shadow(new THREE.Mesh(new THREE.BoxGeometry(t, d.length(), t), mat));
   m.position.copy(a).addScaledVector(d, .5); m.quaternion.setFromUnitVectors(V3(0, 1, 0), d.normalize()); return m;
 }
+const rot = (m, a, v) => { m.rotation[a] = v; return m; };
+const RUNG = new THREE.BoxGeometry(.5, .04, .04);
+function ladder(g, x, z, y0, y1, ry = 0) { // rails, rungs and safety hoops
+  const L = new THREE.Group(); L.position.set(x, 0, z); L.rotation.y = ry; g.add(L);
+  for (const sx of [-.25, .25]) L.add(box(.05, y1 - y0, .05, M.steelD, sx, (y0 + y1) / 2, 0));
+  const n = Math.floor((y1 - y0) / .35), im = new THREE.InstancedMesh(RUNG, M.steel, n), o = new THREE.Object3D();
+  for (let i = 0; i < n; i++) { o.position.set(0, y0 + .2 + i * .35, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix); } L.add(im);
+  for (let y = y0 + 2.2; y < y1; y += 1.1) { const h = ring(.4, .015, M.steelD, 0, y, .22); L.add(h); }
+}
+function stairs(g, a, b, w = .9) { // flight from a (low) to b (high): stringers, treads, handrails
+  const d = b.clone().sub(a), n = Math.round(d.length() / .28), side = V3(-d.z, 0, d.x).normalize().multiplyScalar(w / 2), yaw = Math.atan2(d.x, d.z);
+  for (const k of [-1, 1]) { g.add(beam(a.clone().addScaledVector(side, k), b.clone().addScaledVector(side, k), .07, M.steelD)); g.add(beam(a.clone().addScaledVector(side, k).add(V3(0, .95, 0)), b.clone().addScaledVector(side, k).add(V3(0, .95, 0)), .045, M.orange)); }
+  const im = new THREE.InstancedMesh(new THREE.BoxGeometry(w, .035, .26), M.steel, n), o = new THREE.Object3D();
+  for (let i = 0; i < n; i++) { o.position.copy(a).addScaledVector(d, (i + .5) / n); o.rotation.set(0, yaw, 0); o.updateMatrix(); im.setMatrixAt(i, o.matrix); } g.add(im);
+}
+function stackLight(g, x, y, z) { g.add(cyl(.03, .03, .35, M.steelD, x, y + .17, z, 8)); [[0x30d158, 0], [0xffd60a, .14], [0xff453a, .28]].forEach(([c, dy]) => g.add(cyl(.07, .07, .12, emi(c, .9), x, y + .4 + dy, z, 12))); }
 const emi = (c, i) => new THREE.MeshStandardMaterial({ color: c, emissive: c, emissiveIntensity: i, roughness: .4 });
 
 function padTex() {
@@ -181,11 +197,11 @@ const VIEWS = [
   { n: 'Trasporto', b: 'mial', f: 'tra', sec: 'tra', c: [-8, 9.5, -1], dist: 42, az: -10, el: 16, t: 'Sezione: il prodotto nel tubo', d: 'Catena con dischi dentro il trasportatore tubolare: il prodotto sale dall’elevatore, corre sopra i silos e un deviatore lo fa scendere nel silo scelto.' },
   { n: 'Dosaggio', b: 'mial', f: 'dos', sec: 'dos', c: [1.2, 5.2, 1.6], dist: 22, az: -26, el: 14, t: 'Sezione: macinazione, dosaggio, miscela', d: 'Il mulino a martelli macina, la scala di dosaggio pesa gli ingredienti, il miscelatore orizzontale monoalbero li omogeneizza.' },
   { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: pellet e raffreddamento', d: 'La pressa forma il pellet; il raffreddatore a controcorrente lo raffredda con aria. Impianti da 1 a 60 t/h, anche modulari.' },
-  { n: 'Allevamento', b: 'mial', f: 'alv', sec: 'barn', c: [47, 1.4, -8], dist: 40, az: -24, el: 30, t: 'Sezione: mangimificio in allevamento', d: 'Impianto modulare MIAL in azienda agricola: mulino a martelli, scala di dosaggio e miscelatore orizzontale preparano il mangime, poi una linea lo porta alle mangiatoie.' },
   { n: 'Insacco', b: 'mf', f: 'ins', sec: 'hall', c: [11, 3, -1], dist: 24, az: -26, el: 28, t: 'Sezione: pesatura e insacco', d: 'Pesatrice multitesta e insaccatrice a bocca aperta riempiono i sacchi, che passano dal controllo peso.' },
   { n: 'Pallet', b: 'mf', f: 'pal', sec: 'hall', c: [21, 2.5, -1], dist: 28, az: -24, el: 30, t: 'Sezione: pallettizzazione e fasciatura', d: 'Pallettizzatore cartesiano e avvolgitore pallet completano il pallet, pronto per la spedizione.' },
   { n: 'Cartoni', b: 'mf', f: 'car', sec: 'hall', c: [19, 1.4, -4.5], dist: 30, az: -16, el: 34, t: 'Sezione: incartonamento', d: 'Cartonatrice: i prodotti confezionati entrano nelle scatole, pronte per essere pallettizzate.' },
   { n: 'Spedizione', b: 'mf', f: 'spe', sec: 'hall', c: [28, 2, 3], dist: 32, az: -30, el: 22, t: 'Dal pallet al camion', d: 'Il carrello elevatore preleva il pallet a fine linea, esce dal portone e carica il camion.' },
+  { n: 'Allevamento', b: 'mial', f: 'alv', sec: 'barn', c: [47, 1.4, -8], dist: 40, az: -24, el: 30, t: 'Sezione: mangimificio in allevamento', d: 'Impianto modulare MIAL in azienda agricola: mulino a martelli, scala di dosaggio e miscelatore orizzontale preparano il mangime, poi una linea lo porta alle mangiatoie.' },
 ];
 /* ---------- MIAL machines with a "section" (ghost casing + moving internals) ---------- */
 const gm = c => std(c, .3, .5, { transparent: true, opacity: 1 });
@@ -195,6 +211,12 @@ function mkMill(g, x, y, z) { // hammer mill: rotor with hammers behind a screen
   const body = gm(0x0c447f), hop = gm(0xe6ebf0), mats = [body, hop];
   g.add(box(1.8, 1.2, 1.3, body, x, y + .8, z)); g.add(cone(.7, .9, hop, x, y + 2.0, z, true, 20)); g.add(cyl(.7, .7, .5, hop, x, y + 2.7, z, 20));
   const mot = cyl(.4, .4, 1.6, M.steel, x - 1.7, y + .8, z, 20); mot.rotation.z = Math.PI / 2; g.add(mot); g.add(box(1.0, .12, .9, M.dark, x - 1.7, y + .05, z));
+  g.add(box(2.6, .16, 1.6, M.dark, x - .2, y + .08, z)); for (const dz of [-.6, .6]) g.add(box(2.6, .1, .12, M.steelD, x - .2, y + .2, z + dz));
+  g.add(box(.9, .6, .3, M.steelD, x - 1.3, y + .8, z + .72)); g.add(box(.3, .25, .3, M.dark, x - 1.7, y + 1.28, z)); // belt guard, motor terminal box
+  for (let i = 0; i < 7; i++) { const f = cyl(.43, .43, .035, M.steelD, x - 2.2 + i * .15, y + .8, z, 20); f.rotation.z = Math.PI / 2; g.add(f); } // cooling fins
+  g.add(box(.82, .72, .06, M.steelD, x, y + .8, z + .68)); g.add(box(.09, .34, .1, M.orange, x + .26, y + .8, z + .76)); for (const dy of [-.25, .25]) g.add(box(.1, .1, .1, M.dark, x - .36, y + .8 + dy, z + .7)); // access door, handle, hinges
+  g.add(ring(.74, .035, M.steelD, x, y + 1.9, z)); g.add(ring(.74, .035, M.steelD, x, y + 2.45, z)); g.add(box(.5, .3, .6, M.orange, x + .95, y + 2.0, z)); // flanges, magnet
+  g.add(cyl(.2, .2, .45, M.blue, x, y + 3.15, z, 18)); g.add(cone(.6, .55, M.steel, x, y + .02, z, true, 20)); g.add(box(.8, .08, .8, M.steelD, x, y - .3, z)); // feeder motor, outlet hopper
   const inner = new THREE.Group(); inner.position.set(x, y + .8, z); inner.visible = false; g.add(inner);
   const rotor = new THREE.Group(); inner.add(rotor);
   const shaft = cyl(.07, .07, 1.2, M.steel, 0, 0, 0, 10); shaft.rotation.x = Math.PI / 2; rotor.add(shaft);
@@ -209,6 +231,11 @@ function mkMixer(g, x, y, z) { // horizontal single-shaft mixer
   const trough = new THREE.Mesh(new THREE.CylinderGeometry(.65, .65, 2.4, 28, 1, true), tr); trough.rotation.z = Math.PI / 2; trough.position.set(x, y, z); trough.castShadow = true; g.add(trough);
   for (const dx of [-1.2, 1.2]) { const c = cyl(.65, .65, .06, tr, x + dx, y, z, 28); c.rotation.z = Math.PI / 2; g.add(c); }
   g.add(cyl(.28, .28, .35, tr, x, y + .8, z, 20)); g.add(box(.5, .3, .5, M.dark, x + .8, y - .72, z)); g.add(box(.6, .12, .8, M.steelD, x - 1.0, y - .9, z)); g.add(box(.6, .12, .8, M.steelD, x + 1.0, y - .95, z));
+  for (const dx of [-1.28, 1.28]) g.add(box(.26, .5, .5, M.dark, x + dx, y, z)); // bearing blocks
+  g.add(box(.5, .6, .6, M.steelD, x + 1.55, y, z)); const gm1 = cyl(.26, .26, .8, M.blue, x + 2.05, y, z, 20); gm1.rotation.z = Math.PI / 2; g.add(gm1); g.add(box(.2, .22, .24, M.dark, x + 2.05, y + .3, z)); // gearbox and motor
+  for (const dx of [-.5, .5]) { g.add(box(.5, .08, .5, M.steelD, x + dx, y - .62, z)); g.add(cyl(.04, .04, .45, M.steel, x + dx, y - .85, z + .35, 8)); } // discharge doors with cylinders
+  g.add(ring(.3, .03, M.steelD, x, y + .98, z)); g.add(box(.55, .05, .38, M.steelD, x - .5, y + .66, z)); g.add(box(.08, .06, .22, M.orange, x - .5, y + .72, z)); // inlet flange, hatch
+  const spray = cyl(.03, .03, 1.9, M.orange, x, y + .72, z + .3, 8); spray.rotation.z = Math.PI / 2; g.add(spray); for (let i = -2; i <= 2; i++) g.add(cyl(.015, .015, .12, M.steel, x + i * .4, y + .66, z + .3, 6)); // liquid spray bar
   const inner = new THREE.Group(); inner.position.set(x, y, z); inner.visible = false; g.add(inner);
   const shaft = new THREE.Group(); inner.add(shaft);
   const sc = cyl(.06, .06, 2.3, M.steel, 0, 0, 0, 10); sc.rotation.z = Math.PI / 2; shaft.add(sc);
@@ -219,6 +246,10 @@ function mkMixer(g, x, y, z) { // horizontal single-shaft mixer
 function mkScale(g, x, y, z) { // dosing scale hopper with level
   const hop = gm(0xe6ebf0), mats = [hop];
   g.add(cyl(.75, .75, 2.2, hop, x, y, z, 24)); g.add(cone(.75, .9, hop, x, y - 1.55, z, true, 24));
+  g.add(ring(.8, .04, M.steelD, x, y + 1.1, z)); g.add(ring(.8, .04, M.steelD, x, y - 1.0, z)); g.add(cyl(.22, .22, .35, M.steel, x, y + 1.3, z, 16)); // flanges, inlet
+  for (let k = 0; k < 3; k++) { const a = k * 2.094 + .5; g.add(cyl(.07, .07, .28, M.orange, x + Math.cos(a) * .8, y + .95, z + Math.sin(a) * .8, 10)); } // load cells
+  g.add(box(.55, .1, .55, M.steelD, x, y - 2.05, z)); g.add(rot(cyl(.05, .05, .5, M.steel, x + .45, y - 2.05, z, 8), 'z', Math.PI / 2)); g.add(rot(cyl(.12, .12, .24, M.blue, x + .8, y - 2.05, z, 12), 'z', Math.PI / 2)); // discharge gate with actuator
+  g.add(cyl(.02, .02, .5, M.steel, x - .4, y + 1.35, z + .3, 6)); // level probe
   const inner = new THREE.Group(); inner.position.set(x, y, z); inner.visible = false; g.add(inner);
   const fill = new THREE.Mesh(new THREE.CylinderGeometry(.68, .68, 1, 24), grainSoft); inner.add(fill);
   return { mats, setGhost(on) { ghostOn(mats, on); inner.visible = on; }, update(dt, ph) { if (!inner.visible) return; const l = (ph * .22) % 1; fill.scale.y = Math.max(.02, l * 2.0); fill.position.y = -1.1 + fill.scale.y / 2; } };
@@ -226,6 +257,10 @@ function mkScale(g, x, y, z) { // dosing scale hopper with level
 function mkPress(g, x, y, z) { // pellet press: ring die and rollers, pellets falling out
   const hop = gm(0xe6ebf0), mats = [hop];
   g.add(cyl(.95, .95, 1.1, hop, x, y, z, 28)); g.add(cone(.95, 1.0, hop, x, y - 1.0, z, true, 28));
+  const mot = cyl(.5, .5, 1.1, M.blue, x + 2.2, y - .1, z, 24); mot.rotation.z = Math.PI / 2; g.add(mot); g.add(box(1.1, .95, .95, M.steelD, x + 1.3, y - .1, z)); g.add(box(.4, .3, .4, M.dark, x + 2.2, y + .5, z)); // main motor and gearbox
+  const fd = cyl(.16, .16, 1.7, M.steel, x - 1.6, y + .3, z, 14); fd.rotation.z = Math.PI / 2; g.add(fd); g.add(rot(cyl(.2, .2, .4, M.blue, x - 2.55, y + .3, z, 14), 'z', Math.PI / 2)); // conditioner / feeder screw with motor
+  g.add(box(1.5, .3, 1.5, M.steelD, x, y - 1.75, z)); g.add(box(.5, .5, .06, M.dark, x, y - 1.75, z + .78)); g.add(box(.08, .2, .1, M.orange, x + .3, y - 1.75, z + .83)); // cutter box with door
+  g.add(ring(.97, .04, M.steelD, x, y + .55, z)); g.add(box(.5, .35, .4, M.white, x - .4, y + .75, z + .9)); // flange, control box
   const inner = new THREE.Group(); inner.position.set(x, y, z); inner.visible = false; g.add(inner);
   const die = new THREE.Mesh(new THREE.TorusGeometry(.62, .12, 10, 32), M.steelD); die.rotation.x = Math.PI / 2; inner.add(die);
   const rol = new THREE.Group(); inner.add(rol); for (let k = 0; k < 3; k++) { const a = k * 2.094, r = cyl(.13, .13, .36, M.steel, Math.cos(a) * .38, 0, Math.sin(a) * .38, 12); rol.add(r); }
@@ -236,6 +271,10 @@ function mkPress(g, x, y, z) { // pellet press: ring die and rollers, pellets fa
 function mkCooler(g, x, y, z, h) { // counter-flow cooler: pellets go down, air goes up
   const col = gm(0xdfe5ea), mats = [col];
   g.add(box(1.5, h, 1.5, col, x, y, z)); g.add(cyl(.6, .7, .5, M.steelD, x, y + h / 2 + .25, z, 20)); for (const [a, b] of [[1, 1], [-1, 1], [1, -1], [-1, -1]]) g.add(box(.12, .5, .12, M.steelD, x + a * .6, y - h / 2 - .25, z + b * .6));
+  ladder(g, x - 1.05, z + .6, y - h / 2, y + h / 2, Math.PI / 2);
+  g.add(box(.55, .75, .05, M.steelD, x, y + h * .12, z + .78)); g.add(box(.09, .3, .08, M.orange, x + .18, y + h * .12, z + .83)); g.add(box(.55, .75, .05, M.steelD, x, y - h * .25, z + .78)); g.add(box(.09, .3, .08, M.orange, x + .18, y - h * .25, z + .83)); // inspection doors
+  const al = cyl(.3, .3, .8, M.blue, x + 1.2, y - h / 2 + .3, z, 20); al.rotation.z = Math.PI / 2; g.add(al); g.add(box(.9, .5, .7, M.steelD, x + .95, y - h / 2 + .3, z)); g.add(rot(cyl(.12, .12, .24, M.dark, x + 1.7, y - h / 2 + .3, z, 12), 'z', Math.PI / 2)); // rotary airlock
+  g.add(rot(cyl(.2, .2, .08, M.glass, x - .76, y + h * .3, z, 16), 'z', Math.PI / 2)); g.add(box(.7, .15, .7, M.steelD, x, y + h / 2 + .03, z)); // sight glass, top frame
   const fan = new THREE.Group(); fan.position.set(x, y + h / 2 + .52, z); g.add(fan); for (let k = 0; k < 4; k++) { const hh = new THREE.Group(); hh.rotation.y = k * Math.PI / 2; hh.add(box(.5, .03, .16, M.steel, .27, 0, 0)); fan.add(hh); }
   const inner = new THREE.Group(); inner.position.set(x, y, z); inner.visible = false; g.add(inner);
   const pN = 60, pI = new THREE.InstancedMesh(new THREE.CylinderGeometry(.04, .04, .1, 6), grainSolid, pN), aN = 16, aI = new THREE.InstancedMesh(new THREE.ConeGeometry(.05, .3, 6), std(0x9fd0ff, 0, .4, { emissive: 0x4da3ff, emissiveIntensity: .8 }), aN), o = new THREE.Object3D(); inner.add(pI, aI);
@@ -267,6 +306,9 @@ function buildPlant(ox) {
     [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(([a, b]) => g.add(box(.2, 3, .2, sM.d, x + a * R * .78, 1.5, z + b * R * .78)));
     g.add(box(.08, 8.6, .34, sM.o, x, 7.3, z + (z > 0 ? -R - .04 : R + .04)));
     g.add(cyl(.28, .28, .5, sM.o, x, 12.35, z, 16));
+    g.add(box(.7, .9, .7, sM.s, x + .85, 11.75, z)); g.add(box(.6, .1, .6, sM.d, x + .85, 12.25, z)); g.add(cyl(.02, .02, .7, sM.k, x - .6, 11.9, z + .3, 6)); // dust filter, level probe
+    g.add(cyl(.3, .3, .7, sM.d, x, .45, z, 18)); g.add(box(.5, .15, .5, sM.k, x, .02, z)); // rotary outlet valve
+    ladder(g, x + R * .93, z + R * .4 * (z > 0 ? -1 : 1), 0, 11.3, Math.PI / 2 + (z > 0 ? -.4 : .4));
     const a = -36 * Math.PI / 180, bx = x + Math.sin(a) * (R + .06), bz = z + Math.cos(a) * (R + .06);
     const holder = new THREE.Group(); holder.position.set(bx, 3.4, bz); holder.rotation.y = a; g.add(holder);
     holder.add(box(.34, 7.2, .08, sM.k, 0, 3.6, 0));
@@ -283,7 +325,10 @@ function buildPlant(ox) {
   g.add(box(.8, .5, 3.6, M.steelD, -17, .35, 6.7));
   const elevM = gm(0xc3ccd6); g.add(box(.8, 15, .8, elevM, -17, 7.5, 5)); g.add(box(1.3, 1.3, 1.3, M.steelD, -17, 14.7, 5));
   const bkN = 22, bkI = new THREE.InstancedMesh(new THREE.BoxGeometry(.26, .2, .24), M.orange, bkN); bkI.visible = false; g.add(bkI); const bo = new THREE.Object3D(); g.add(cyl(.4, .4, .9, M.blue, -17, 15.6, 5, 16));
-  for (let y = 3; y < 14; y += 3.5) g.add(box(.95, .1, .95, M.steelD, -17, y, 5));
+  for (let y = 3; y < 14; y += 3.5) { g.add(box(.95, .1, .95, M.steelD, -17, y, 5)); g.add(box(.5, .6, .06, M.steelD, -17, y + .8, 5.43)); g.add(box(.09, .25, .08, M.orange, -16.82, y + .8, 5.48)); } // flanges and inspection doors
+  g.add(box(1.2, 1.3, 1.2, M.steelD, -17, .65, 5)); g.add(box(.5, .6, .06, M.steelD, -17, .7, 5.63)); g.add(cone(.5, .8, M.steel, -17, 15.2, 5, false, 4)); // boot, head hood
+  { const dm = cyl(.35, .35, 1.0, M.blue, -15.6, 14.7, 5, 20); dm.rotation.z = Math.PI / 2; g.add(dm); g.add(box(.9, .8, .8, M.steelD, -16.2, 14.7, 5)); g.add(box(.3, .25, .3, M.dark, -15.6, 15.1, 5)); } // head drive: gearbox and motor
+  ladder(g, -17.7, 5, 0, 14.6, Math.PI / 2);
   // underground reception (shown in section): pit hopper, conveyor, elevator boot
   const ug = new THREE.Group(); ug.visible = false; g.add(ug);
   ug.add(cone(1.5, 2.2, M.steel, -17, -1.3, 8.5, true, 28)); ug.add(box(.8, .5, 3.9, M.steelD, -17, -1.9, 6.6)); ug.add(box(1.1, 1.4, 1.1, M.steel, -17, -1.4, 5));
@@ -358,6 +403,8 @@ function buildPlant(ox) {
   g.add(box(8, .12, .5, M.steelD, 13.6, .9, cz)); g.add(box(6, .12, .7, M.steelD, 24.4, .9, cz));
   [[10, 17.5], [21.6, 27.2]].forEach(([a, b]) => { for (let x = a; x <= b; x += 1.8) for (const dz of [-.22, .22]) g.add(box(.08, .85, .08, M.steelD, x, .43, cz + dz)); });
   g.add(box(2.4, 2.2, 1.9, M.white, 19.4, 1.1, cz)); g.add(box(2.45, .35, 1.95, M.blue, 19.4, 2.3, cz)); g.add(box(1.6, .5, .06, M.screen, 19.4, 1.5, cz + .96));
+  g.add(box(1.0, 1.2, .8, M.steelD, 17.9, 2.1, cz - .1)); for (let i = 0; i < 4; i++) g.add(box(.8, .04, .6, std(0xb8895a, 0, .85), 17.9, 1.6 + i * .06, cz - .1)); // flat-carton magazine
+  g.add(box(.7, .5, .5, M.orange, 21.0, 2.5, cz + .3)); g.add(box(.4, .12, .4, M.dark, 21.0, 2.1, cz)); stackLight(g, 20.6, 2.45, cz - .7); // tape sealer, light
   const cpArm = box(.5, .12, .5, M.dark, 19.4, 2.7, cz); g.add(cpArm); g.add(box(.12, .9, .12, M.steel, 19.4, 3.2, cz));
   g.add(cpItems, cartons);
   g.add(box(1.2, .15, .8, M.wood, 28.6, .075, cz)); const stack = []; for (let i = 0; i < 6; i++) { const cb = box(.55, .38, .42, std(0xb8895a, 0, .85), 28.6 + (i % 2 ? .1 : -.1), .15 + .19 + i * .38, cz); cb.visible = false; g.add(cb); stack.push(cb); }
@@ -379,6 +426,9 @@ function buildPlant(ox) {
   // pellet cooler next to the tower, fed from the press
   const tCool = mkCooler(g, 6, 3.2, 1.9, 6.4);
   g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(3, 11.7, -1), V3(3, 11.0, 1.9), V3(6, 11.0, 1.9), V3(6, 6.7, 1.9)], .6, false), 40, .2, 10, false), tubeMat)));
+  stairs(g, V3(5.7, 0, -4.7), V3(5.7, 4.2, -1.9), .9); stairs(g, V3(5.7, 4.2, -1.9), V3(5.7, 8.4, -4.7), .9); // tower stairs
+  g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(6, 6.95, 1.9), V3(6, 7.5, 1.9), V3(6.35, 7.5, 1.9), V3(6.35, 5.6, -6.4), V3(3.95, 5.6, -6.4)], .5, false), 60, .15, 10, false), M.steel))); // cooler air to the cyclone
+  g.add(cyl(.3, .3, .6, M.blue, 3, .5, -6.4, 18)); g.add(box(.6, .2, .6, M.steelD, 3, .15, -6.4)); // cyclone airlock
   // coloured volumes: orange MIAL, blue MF TECNO; the focused function is brighter
   const mkVol = (color, b) => { const gr = new THREE.Group(), f = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .08, depthWrite: false })), e = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1)), new THREE.LineBasicMaterial({ color, transparent: true, opacity: .45 })); gr.add(f, e); gr.position.set(b[0], b[1], b[2]); gr.scale.set(b[3], b[4], b[5]); g.add(gr); return { f, e }; };
   const vols = {}; Object.entries(FUNCS).forEach(([k, fn]) => { vols[k] = fn.boxes.map(b => mkVol(fn.b === 'mial' ? MIAL_C : MF_C, b)); });
@@ -602,6 +652,11 @@ function buildPack(ox, embed = false) {
   g.add(ring(.95, .05, M.steel, bx, 5.72, 0));
   g.add(cyl(.28, .28, 1.9, M.steel, bx, 3.3, 0, 20));
   const jaws = box(1.1, .42, .9, M.dark, bx, 2.5, 0); g.add(jaws);
+  for (let k = 0; k < 10; k++) { const a = k / 10 * Math.PI * 2 + .3; g.add(box(.2, .22, .18, M.white, bx + Math.cos(a) * .55, 4.9, Math.sin(a) * .55)); } // pool hoppers
+  g.add(cone(.35, .5, M.steel, bx, 6.35, 0, false, 20)); g.add(cyl(.12, .12, .6, M.steel, bx, 6.6, 0, 12)); // distribution cone and feed
+  const reel = cyl(.55, .55, .34, M.wrap, bx - 1.6, 3.4, 0, 28); reel.rotation.x = Math.PI / 2; g.add(reel); g.add(rot(cyl(.1, .1, .5, M.steelD, bx - 1.6, 3.4, 0, 10), 'x', Math.PI / 2)); g.add(box(.1, 1.1, .1, M.steelD, bx - 1.6, 2.85, .3)); // film reel
+  g.add(cone(.34, .7, M.steel, bx, 3.0, 0, true, 4)); g.add(box(.5, .08, .5, M.steelD, bx, 3.35, 0)); // forming collar
+  g.add(box(.12, 2.4, .12, M.steelD, bx + 1.0, 1.9, -.75)); stackLight(g, bx + 1.0, 3.05, -.75);
   g.add(box(.7, .8, .14, M.dark, bx + 1.2, 1.9, .85)); g.add(box(.5, .4, .04, M.screen, bx + 1.2, 2.0, .93));
   // checkweigher + metal detector tunnel, reject pusher and bin
   for (const s of [-1, 1]) g.add(box(.5, .9, .08, M.white, ARCH, BY + .55, s * .42));
@@ -621,9 +676,15 @@ function buildPack(ox, embed = false) {
   const mast = box(.12, 1, .12, M.steel, 0, 0, 0); carr.add(mast);
   const grip = new THREE.Group(); carr.add(grip);
   grip.add(box(.72, .07, .5, M.dark, 0, 0, 0)); grip.add(box(.72, .02, .06, M.orange, 0, -.045, .21)); grip.add(box(.72, .02, .06, M.orange, 0, -.045, -.21));
+  for (let i = 0; i < 5; i++) g.add(box(1.2, .15, .8, M.wood, PX - 3.4, .075 + i * .16, 1.0)); // pallet magazine
+  for (const sx of [-1.95, 1.95]) g.add(box(.06, 1.8, .1, M.orange, PX + sx, .95, 1.55)); // light curtain
+  g.add(box(.9, 2.0, .6, M.white, PX + 2.6, 1.0, -1.1)); g.add(box(.5, .35, .04, M.screen, PX + 2.6, 1.35, -.79)); stackLight(g, PX + 2.6, 2.0, -1.1); // cabinet
+  for (const dz of [-.45, .45]) g.add(box(.12, .12, 2.6, M.steelD, PX, 4.55, dz).rotateY(Math.PI / 2)); // gantry slides
   // wrapper and exit roller
   const turn = cyl(.95, .95, .1, M.steel, WX, .05, 0, 40); g.add(turn); g.add(ring(.96, .03, M.orange, WX, .1, 0));
   g.add(box(.18, 3.4, .18, M.orange, WX + 1.6, 1.7, 0)); g.add(box(.5, .1, .5, M.steelD, WX + 1.6, .05, 0));
+  g.add(box(.7, 1.5, .5, M.white, WX + 1.9, .75, -1.0)); g.add(box(.4, .3, .04, M.screen, WX + 1.9, 1.2, -.74)); stackLight(g, WX + 1.9, 1.5, -1.0); // wrapper cabinet
+  for (let k = 0; k < 8; k++) { const a = k * Math.PI / 4; g.add(cyl(.05, .05, .08, M.dark, WX + Math.cos(a) * .8, .13, Math.sin(a) * .8, 8)); } // turntable rollers
   const wcar = new THREE.Group(); g.add(wcar); wcar.add(box(.9, .3, .34, M.dark, -.5, 0, 0)); wcar.add(cyl(.12, .12, .55, M.wrap, -.95, 0, 0, 14));
   const film = new THREE.Mesh(new THREE.CylinderGeometry(.74, .74, 1, 36, 1, true), M.film); g.add(film);
   g.add(box(3.6, .14, 1.1, M.steelD, EX - .6, .55, 0));
@@ -729,10 +790,10 @@ const beats = [
     [[-6.6, 13.4, -1], 'Silos di stoccaggio', 'sto', 1, 'mial'], [[-9, 6, -4.6], 'Prodotto e livello', 'sto', 0, 'mial'],
     [[-7, 15, -1], 'Trasportatore tubolare con dischi', 'tra', 1, 'mial'], [[-9, 13.6, -1], 'Deviatore verso il silo', 'tra', 0, 'mial'], [[-17, 16.6, 5], 'Elevatore a tazze', 'tra', 0, 'mial'],
         [[-1.2, 3.4, 3.8], 'Mulino a martelli', 'dos', 1, 'mial'], [[2.6, 6.3, -1], 'Miscelatore orizzontale', 'dos', 0, 'mial'], [[3, 10.9, -1], 'Scala di dosaggio', 'dos', 0, 'mial'],
-    [[3, 15, -1], 'Pressa per pellet', 'pro', 1, 'mial'], [[6, 7.4, 1.9], 'Raffreddatore a controcorrente', 'pro', 0, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'],
+    [[3, 15, -1], 'Pressa per pellet', 'pro', 1, 'mial'], [[6, 7.4, 1.9], 'Raffreddatore a controcorrente', 'pro', 0, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
     [[50, 6, -8], 'Mangimificio in allevamento', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Mulino a martelli', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Scala di dosaggio e miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silo', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
-    [[8.6, 7.3, -1], 'Insaccatrice a bocca aperta', 'ins', 1, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
-    [[20.6, 5.5, -1], 'Pallettizzatore cartesiano', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore pallet', 'pal', 0, 'mf'],
+    [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a bocca aperta', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
+    [[20.6, 5.5, -1], 'Pallettizzatore cartesiano', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore pallet', 'pal', 0, 'mf'], [[17.2, 1.7, 0], 'Magazzino pallet vuoti', 'pal', 0, 'mf'],
     [[19.4, 3.9, -4.8], 'Cartonatrice', 'car', 1, 'mf'],
     [[28.8, 3.4, 1.2], 'Carrello elevatore', 'spe', 1, 'mf'], [[28.2, 3.7, 12], 'Camion', 'spe', 0, 'mf']]),
   Bt(mConv, V3(3.5, 4.2, 0), 26, -24, 11, [[[0, 5.6, 0], 'Catena con dischi'], [[-2.3, 3.4, 0], 'Tramoggia di carico'], [[5, 7.6, -.8], 'Gruppo di trascinamento'], [[7.5, 5.4, 0], 'Silo di arrivo']]),
@@ -814,7 +875,7 @@ document.querySelectorAll('#cvP button').forEach(b => b.addEventListener('click'
 document.querySelectorAll('#cvV button').forEach(b => b.addEventListener('click', () => { mConv.setCut(b.dataset.v === 'cut'); setOn('#cvV button', b); }));
 
 /* ---------- UI: packaging line ---------- */
-const pk = mPack.st;
+const pk = mPack.st; pk.speed = 20;
 function pkUI() {
   const e = mPack.eff(), on = mPack.onPallet(), f = FORMATS[pk.fmt], cap = mPack.CAP(), sat = 60 / mPack.CYCLE;
   $('#pkRo').textContent = fmt(pk.rate) + ' sacchi/min'; $('#pkLyo').textContent = pk.layers + ' strati';
@@ -828,6 +889,7 @@ function pkUI() {
 $('#pkR').addEventListener('input', e => { pk.rate = +e.target.value; pkUI(); });
 $('#pkLy').addEventListener('input', e => { pk.layers = +e.target.value; mPack.reset(); pkUI(); });
 document.querySelectorAll('#pkFmt button').forEach(b => b.addEventListener('click', () => { pk.fmt = +b.dataset.f; setOn('#pkFmt button', b); mPack.reset(); pkUI(); }));
+document.querySelectorAll('#pkSp button').forEach(b => b.addEventListener('click', () => { pk.speed = +b.dataset.x; setOn('#pkSp button', b); }));
 $('#pkPause').addEventListener('click', e => { pk.run = !pk.run; e.currentTarget.textContent = pk.run ? 'Pausa' : 'Riprendi'; });
 $('#pkReset').addEventListener('click', () => { mPack.reset(); pkUI(); });
 
@@ -862,11 +924,11 @@ function tick(now) {
   const ab = Math.round(fS); if (ab !== activeBeat) { activeBeat = ab; labelHost.querySelectorAll('.tag.on').forEach(x => x.classList.remove('on')); }
   const run = inView() || Math.abs(fS - Math.round(fS)) > .02;
   if (run) {
-    models.forEach(m => { if (m.g.visible) m.update(dt, time); });
+    models.forEach(m => { if (m.g.visible) for (let k = m === mPack ? pk.speed : 1; k > 0; k--) m.update(dt, time); });
     uiT += dt; if (uiT > .12) { uiT = 0; if (fS < 1.5) plUI(); else if (fS < 2.5) cvUI(); else pkUI(); }
     beats.forEach((b, bi) => {
       const sr = secR[bi], cy = scrollY + vh / 2, inSec = sr && cy > sr[0] - vh * .1 && cy < sr[1] + vh * .1;
-      const show = inSec && Math.abs(fS - bi) < .22 && b.m.t > .97;
+      const show = (bi === 1 && auto.on && fS < 1.5) || (inSec && Math.abs(fS - bi) < .22 && b.m.t > .97);
       b.labels.forEach(l => {
         tmp2.copy(l.p).project(camera);
         const x = (tmp2.x * .5 + .5) * vw, y = (-tmp2.y * .5 + .5) * vh;
@@ -880,7 +942,7 @@ function tick(now) {
     renderer.render(scene, camera);
   } else if (labelsShown) { labelHost.querySelectorAll('.tag.on').forEach(x => x.classList.remove('on')); labelsShown = false; }
 }
-mPlant.setCap(20); plView(0); plUI(); cvCam(); cvUI(); mPack.reset(); pkUI();
+mConv.setCut(true); mPlant.setCap(20); plView(0); plUI(); cvCam(); cvUI(); mPack.reset(); pkUI();
 measure();
 requestAnimationFrame(tick);
 window.__massini = { models, beats, go(i) { const a = anchors.find(a => a.i === i); scrollTo({ top: a.y0 - vh / 2, behavior: 'instant' }); fS = i; camInit = false; intro = 1; models.forEach(m => m.t = 1); }, step(n = 60) { for (let k = 0; k < n; k++) models.forEach(m => m.update(.05, time)); }, stage: plView, auto, get f() { return fS; } };

@@ -207,7 +207,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
       <label class="row">Salto<input id="cvH" type="range" min="3" max="12" step=".5" value="6"><output id="cvHo">6 m</output></label>
       <label class="row">Tratto orizzontale<input id="cvW" type="range" min="2" max="14" step=".5" value="5"><output id="cvWo">5 m</output></label>
       <div class="seg" id="cvP"><button class="on" data-p="pet">Pet food</button><button data-p="feed">Mangime</button><button data-p="pellet">Pellet</button><button data-p="rice">Riso</button><button data-p="malt">Malto</button></div>
-      <div class="seg" id="cvV"><button class="on" data-v="out">Esterno</button><button data-v="cut">Spaccato</button></div>
+      <div class="seg" id="cvV"><button data-v="out">Esterno</button><button class="on" data-v="cut">Spaccato</button></div>
       <div class="read"><div><span class="l">Massa trasportata</span><strong id="cvT">—</strong> <small>t/h</small></div><div><span class="l">Motore stimato</span><strong id="cvK">—</strong> <small>kW</small></div><div><span class="l">Catena</span><strong id="cvC">—</strong> <small>m</small></div><div><span class="l">Riempimento</span><strong id="cvF">—</strong></div></div>
       <div><div class="mlab"><span>Livello del silo (tempo accelerato)</span><span id="cvLo">—</span></div><div class="meter"><i id="cvL"></i></div></div>
       <div class="status" id="cvS"></div>
@@ -224,6 +224,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <p class="lead">Insacco, controllo peso, pallettizzatore, fasciatrice e carrello. <strong>Cambia formato, strati e cadenza</strong> e guarda dove la linea arriva al limite.</p>
     <div class="ctl">
       <label class="row">Cadenza<input id="pkR" type="range" min="4" max="32" step="1" value="12"><output id="pkRo">12 sacchi/min</output></label>
+      <div class="seg" id="pkSp" aria-label="Velocità della simulazione"><button data-x="1">1×</button><button data-x="5">5×</button><button class="on" data-x="20">20×</button></div>
       <div class="seg" id="pkFmt"><button data-f="10">Sacco da 10 kg</button><button class="on" data-f="25">Sacco da 25 kg</button></div>
       <label class="row">Pallet<input id="pkLy" type="range" min="3" max="8" step="1" value="5"><output id="pkLyo">5 strati</output></label>
       <div class="read"><div><span class="l">Sacchi effettivi</span><strong id="pkE">…</strong> <small>/min</small></div><div><span class="l">Produzione</span><strong id="pkK">…</strong> <small>kg/h</small></div><div><span class="l">Pallet fasciati</span><strong id="pkD">0</strong></div><div><span class="l">Sacchi scartati</span><strong id="pkX">0</strong></div></div>
