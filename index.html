@@ -161,7 +161,30 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
 .people figure .ph{max-width:700px;margin-left:auto}
 .people .ph img{height:auto}
 .legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0}.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.dm{background:#ff9a4d}.df{background:#2997ff}
-.stgrid+.stt{margin-top:2px}</style>
+.stgrid+.stt{margin-top:2px}
+/* form guidato */
+.wz{background:var(--tile1);border-radius:var(--r-lg);padding:20px 24px 28px;min-height:440px;position:relative;overflow:hidden}
+.wz-top{display:flex;align-items:center;gap:12px;margin-bottom:26px;color:var(--mut);font-size:14px}
+.wz-back{width:32px;height:32px;border-radius:50%;border:1px solid var(--ln);background:none;color:#fff;font-size:22px;line-height:1;cursor:pointer}.wz-back[hidden]{display:block;visibility:hidden}
+.wz-prog{flex:1;display:flex;gap:5px}.wz-prog i{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.14);transition:background .3s}.wz-prog i.on{background:var(--primary-dark)}
+.wz-step{animation:wzin .35s cubic-bezier(.2,.8,.2,1)}@keyframes wzin{from{opacity:0;transform:translateX(calc(var(--d,1)*28px))}}
+.wz h3{font-size:28px;line-height:1.14;letter-spacing:0;margin:0 0 6px}.wz .cap{margin:0 0 16px}
+.wz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0}.wz-opts.sm{grid-template-columns:1fr 1fr}
+.wz-o{display:flex;flex-direction:column;gap:3px;text-align:left;padding:14px 16px;border-radius:var(--r-md);border:1.5px solid var(--ln);background:var(--tile2);color:#fff;font:inherit;cursor:pointer;transition:transform .12s,border-color .15s,background .15s}
+.wz-o b{font-weight:600;font-size:16px;letter-spacing:-.2px}.wz-o small{font-size:13px;color:var(--mut);line-height:1.35}
+.wz-o:hover{border-color:rgba(255,255,255,.4)}.wz-o:active{transform:scale(.97)}.wz-o.on{border-color:var(--primary-dark);background:rgba(41,151,255,.16)}
+.wz-l{margin:14px 0 0;font-size:14px;color:var(--mut)}.wz-l+.wz-opts{margin-top:8px}
+.wz .btn[disabled]{opacity:.35;cursor:default}.wz-next{margin-top:6px}
+.wz-range output{display:block;font-size:64px;font-weight:600;letter-spacing:-1px;line-height:1;margin:22px 0 14px}.wz-range output small{font-size:22px;color:var(--mut);font-weight:400}
+.wz-range input{width:100%;accent-color:var(--primary-dark);height:28px}
+.wz-form{display:grid;gap:12px;margin-top:16px}.wz-form label{display:grid;gap:5px;font-size:14px;color:var(--mut)}.wz-form small{font-size:13px}
+.wz-form input{font:inherit;font-size:17px;padding:12px 14px;border-radius:var(--r-md);border:1.5px solid var(--ln);background:var(--tile2);color:#fff}.wz-form input:focus{border-color:var(--primary-dark);outline:0}
+.wz-form .btn{margin-top:6px}
+.wz-done{text-align:center;display:grid;gap:12px;justify-items:center;padding:14px 0}.wz-done h3{margin:0}.wz-done .cap{margin:0;max-width:36ch}
+.wz-again{background:none;border:0;color:var(--primary-dark);font:inherit;font-size:14px;cursor:pointer;padding:6px}
+@media(max-width:640px){.wz{padding:16px 16px 24px}.wz h3{font-size:24px}.wz-opts{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.wz-step{animation:none}}
+</style>
 </head>
 <body id="top" class="t-black">
 <canvas id="gl"></canvas><div id="labels"></div>
@@ -368,34 +391,25 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
     <div class="cinfo">
       <p class="eyebrow rv">Contatti</p>
       <h2 class="rv">Raccontaci il tuo progetto.</h2>
-      <p class="lead rv">Dal prodotto sfuso al pallet: parliamone.</p>
+      <p class="lead rv">Sette tocchi, un minuto: ti diciamo a che punto è il tuo progetto.</p>
       <p class="rv"><strong style="font-weight:600;color:#fff">Massini Industries</strong><br>Via Porziuncola, 28<br>06081 Tordandrea di Assisi (PG), Italia</p>
       <p class="rv"><a href="mailto:info@massiniindustries.com">info@massiniindustries.com</a><br><a href="tel:+390758042312">+39 075 8042312</a></p>
       <figure class="rv" style="margin-top:28px"><div class="ph" style="height:220px"><img src="landing/img/mial-panoramica.jpg" alt="Veduta aerea dello stabilimento" loading="lazy"></div></figure>
     </div>
-    <form id="cform" class="rv" autocomplete="on">
-      <div class="fld"><label for="fn">Nome e azienda</label><input id="fn" required maxlength="120" autocomplete="name"></div>
-      <div class="fld"><label for="fm">Email</label><input id="fm" type="email" required maxlength="120" autocomplete="email"></div>
-      <div class="fld"><label for="fs">Mi interessa</label><select id="fs"><option>Impianto mangimistico</option><option>Impianto pet food</option><option>Trasporto di prodotti sfusi</option><option>Linea di confezionamento</option><option>Assistenza e ricambi</option></select></div>
-      <div class="fld"><label for="fg">Messaggio</label><textarea id="fg" rows="4" maxlength="1500" placeholder="Prodotto, produzione oraria, tempi…"></textarea></div>
-      <button class="btn" type="submit">Prepara l’email</button>
-      <p class="cap" style="margin:0">Si apre il tuo programma di posta con il messaggio già scritto: nessun dato viene inviato da questa pagina.</p>
-    </form>
+    <div id="wz" class="wz rv" aria-live="polite"></div>
   </div>
 </section>
 </main>
-<footer><div class="wrap"><div><img src="landing/logo-w.png" alt="Massini Industries"><p><strong>Concept non ufficiale</strong>, non realizzato né approvato da Massini Industries. Foto, loghi e testi provengono da massiniindustries.com e appartengono ai rispettivi titolari; i modelli 3D sono ricostruzioni stilizzate e dimostrative.</p><p>VAT 00470880543 · Capitale sociale € 1.000.000 i.v. (dati dal sito ufficiale)</p></div><div><p><a href="simulazioni.html">Simulazioni</a> · <a href="mial.html">Simulatore MIAL</a> · <a href="mftrio.html">Simulatore MF TECNO</a></p><p><a href="https://www.massiniindustries.com/" rel="noopener">massiniindustries.com ›</a></p></div></div></footer>
+<footer><div class="wrap"><div><img src="landing/logo-w.png" alt="Massini Industries"><p><strong>Concept non ufficiale</strong>, non realizzato né approvato da Massini Industries. Foto, loghi e testi provengono da massiniindustries.com e appartengono ai rispettivi titolari; i modelli 3D sono ricostruzioni stilizzate e dimostrative.</p><p>VAT 00470880543 · Capitale sociale € 1.000.000 i.v. (dati dal sito ufficiale)</p></div><div><p><a href="simulazioni.html">Simulazioni</a> · <a href="mial.html">Simulatore MIAL</a> · <a href="mftrio.html">Simulatore MF TECNO</a> · <a href="qualifica.html">Area commerciale (demo)</a></p><p><a href="https://www.massiniindustries.com/" rel="noopener">massiniindustries.com ›</a></p></div></div></footer>
 
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <script type="module" src="./landing/scene.js"></script>
+<script src="meddic.js"></script><script src="qualify.js" defer></script>
 <script>
 const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}}),{threshold:.12});
 document.querySelectorAll('.rv').forEach(el=>io.observe(el));
 const C=['tecnosupplier-logo-1','unicol-logo-1','monge-logo-3','befood-logo-1','durrah-logo-1','sucro-logo-2','premium-pet-food-logo-1','proa-logo-1','dinunzio-logo-1','xion-logo-1','castle-group-logo-1','friedland-industrial-logo-1','agroleader-logo-1','agroexpress-logo-4','federer-pellets-logo-1','riso-morgante-logo-1','bouling-group-logo-1','heng-feng-logo-1','hrafon-tpu-logo-1','lotus-rice-logo-1','yufeng-industrial-group-logo-1','pine-pacific-logo-1','suicra-logo-1','romana-logo'];
 const h=C.map(n=>`<img src="landing/clients/${n}.png" alt="" loading="lazy" height="52">`).join('');document.getElementById('lt').innerHTML=h+h;
-document.getElementById('cform').addEventListener('submit',e=>{e.preventDefault();const g=id=>document.getElementById(id).value.trim();
-const body=`Nome e azienda: ${g('fn')}\nEmail: ${g('fm')}\nInteresse: ${g('fs')}\n\n${g('fg')}`;
-location.href='mailto:info@massiniindustries.com?subject='+encodeURIComponent('Richiesta dal sito: '+g('fs'))+'&body='+encodeURIComponent(body)});
 </script>
 </body>
 </html>

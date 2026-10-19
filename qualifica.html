@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Area commerciale · Massini (demo)</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+:root{--blue:#2997ff;--bg:#000;--t1:#1d1d1f;--t2:#272729;--ln:rgba(255,255,255,.14);--mut:#a1a1a6;--ok:#30d158;--warn:#ffd60a;--cold:#8e8e93;--font:"SF Pro Text",-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:400 16px/1.45 var(--font);letter-spacing:-.2px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(16px,calc((100vw - 1180px)/2));border-bottom:1px solid var(--ln)}
+header img{height:24px}header .tag{font-size:12px;color:var(--mut)}header a.back{font-size:13px;color:var(--blue)}
+main{max-width:1180px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:0}.sub{color:var(--mut);margin:0 0 24px;max-width:62ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--t1);border-radius:14px;padding:14px 16px}.stat span{font-size:12px;color:var(--mut)}.stat b{display:block;font-size:30px;font-weight:600;letter-spacing:-.5px}
+.grid{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
+.list{background:var(--t1);border-radius:18px;padding:8px;display:grid;gap:4px}
+.lead{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid transparent;background:none;cursor:pointer}
+.lead:hover{background:var(--t2)}.lead.on{border-color:var(--blue);background:rgba(41,151,255,.12)}
+.lead b{font-weight:600}.lead small{color:var(--mut);grid-column:1}.lead .sc{grid-row:1/3;grid-column:2;align-self:center;font-weight:600;font-size:20px}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;margin-left:6px;font-weight:600;vertical-align:1px}
+.g-Caldo{background:rgba(48,209,88,.18);color:var(--ok)}.g-Tiepido{background:rgba(255,214,10,.16);color:var(--warn)}.g-Freddo{background:rgba(142,142,147,.2);color:#c7c7cc}
+.mine{font-size:11px;color:var(--blue);margin-left:6px}
+.det{background:var(--t1);border-radius:18px;padding:22px}
+.head{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head p{margin:2px 0 0;color:var(--mut);font-size:14px}
+.rows{display:grid;gap:10px;margin:6px 0 18px}
+.row{display:grid;grid-template-columns:44px 170px 1fr;gap:6px 14px;align-items:center;padding:12px 14px;background:var(--t2);border-radius:12px}
+.row .L{width:36px;height:36px;border-radius:10px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:14px}
+.row .n{font-weight:600;font-size:14px}.row .n small{display:block;font-weight:400;color:var(--mut);font-size:12px}
+.row .s{font-size:14px;color:#e8e8ed}.meter{grid-column:3;height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}.meter i{display:block;height:100%;border-radius:6px;background:var(--blue);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.next{border:1.5px solid var(--blue);border-radius:14px;padding:14px 16px;background:rgba(41,151,255,.1)}.next small{color:var(--blue);font-weight:600;display:block;margin-bottom:2px}
+.note{margin-top:22px;font-size:13px;color:var(--mut);max-width:80ch}
+.btn{display:inline-block;margin-top:14px;padding:10px 20px;border-radius:99px;background:#0066cc;color:#fff}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:44px 1fr}.row .s,.meter{grid-column:1/-1}}
+@media(max-width:480px){h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header><img src="landing/logo-w.png" alt="Massini Industries"><span class="tag">Area commerciale · schermata dimostrativa</span><a class="back" href="./">‹ Torna al sito</a></header>
+<main>
+  <h1>Chi sta davvero per comprare?</h1>
+  <p class="sub">Ogni risposta del form guidato viene letta con il metodo MEDDIC: sei domande chiave che separano i curiosi dai progetti veri. Qui vedi il punteggio, il perché e la prossima mossa.</p>
+  <div class="stats" id="st"></div>
+  <div class="grid"><div class="list" id="ls" role="listbox" aria-label="Lead"></div><div class="det" id="dt"></div></div>
+  <p class="note">I primi quattro lead sono dati inventati per la demo. I lead con l’etichetta «da questo browser» sono quelli compilati qui, nel form del sito: restano solo nel tuo browser (localStorage) e non vengono inviati né salvati da nessuna parte. Questa pagina non è protetta da password: su un sito statico non esiste un’area davvero riservata. Per un uso reale servono un accesso e un archivio lato server.</p>
+  <a class="btn" href="./#contatti">Prova il form come un cliente</a>
+</main>
+<script src="meddic.js"></script>
+<script>
+const { L, score, next, said } = MEDDIC;
+const demo = [
+  { name: 'Marco B.', company: 'Agrimix Demo', scope: 'imp', pains: ['old', 'bott', 'stop'], cap: 25, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si', demo: 1 },
+  { name: 'Elena R.', company: 'Pet Nutri Demo', scope: 'conf', pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def', demo: 1 },
+  { name: 'Paolo S.', company: 'Riseria Demo', scope: 'tra', pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no', demo: 1 },
+  { name: 'Giulia T.', company: 'Cereali Demo', scope: 'ass', pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no', demo: 1 },
+];
+let mine = []; try { mine = JSON.parse(localStorage.getItem('massini_leads') || '[]').reverse(); } catch (_) {}
+const leads = [...mine, ...demo].map(l => ({ ...l, r: score(l) })), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let cur = 0;
+$ = id => document.getElementById(id);
+$('st').innerHTML = [['Lead', leads.length], ['Caldi', leads.filter(l => l.r.grade === 'Caldo').length], ['Tiepidi', leads.filter(l => l.r.grade === 'Tiepido').length], ['Punteggio medio', Math.round(leads.reduce((a, l) => a + l.r.tot, 0) / leads.length)]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${b}</b></div>`).join('');
+function draw() {
+  $('ls').innerHTML = leads.map((l, i) => `<button class="lead ${i === cur ? 'on' : ''}" data-i="${i}" role="option" aria-selected="${i === cur}"><b>${esc(l.company)}${l.demo ? '' : '<span class="mine">da questo browser</span>'}</b><small>${esc(l.name)} · ${esc(MEDDIC.txt('scope', l.scope))}</small><span class="sc">${l.r.tot}</span></button>`).join('');
+  const l = leads[cur], s = said(l), C = 2 * Math.PI * 40;
+  $('dt').innerHTML = `<div class="head"><svg viewBox="0 0 100 100" width="104" height="104"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg><div><h2>${esc(l.company)}<span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p>${esc(l.name)}${l.email ? ' · ' + esc(l.email) : ''}${l.phone ? ' · ' + esc(l.phone) : ''}</p></div></div>
+  <div class="rows">${L.map(([k, en, it]) => `<div class="row"><div class="L">${k.replace('1', '').replace('2', '')}</div><div class="n">${en}<small>${it}</small></div><div class="s">${esc(s[k])}</div><div class="meter"><i style="width:${l.r.s[k]}%"></i></div></div>`).join('')}</div>
+  <div class="next"><small>Prossima mossa</small>${next(l)}</div>`;
+}
+$('ls').addEventListener('click', e => { const b = e.target.closest('.lead'); if (b) { cur = +b.dataset.i; draw(); } });
+draw();
+</script>
+</body>
+</html>
