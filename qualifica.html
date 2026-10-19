@@ -4,74 +4,104 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Area commerciale · Massini (demo)</title>
+<title>Area riservata · Massini (demo)</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-:root{--blue:#2997ff;--bg:#000;--t1:#1d1d1f;--t2:#272729;--ln:rgba(255,255,255,.14);--mut:#a1a1a6;--ok:#30d158;--warn:#ffd60a;--cold:#8e8e93;--font:"SF Pro Text",-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
+:root{--blue:#2997ff;--bg:#000;--t1:#1d1d1f;--t2:#272729;--ln:rgba(255,255,255,.14);--mut:#a1a1a6;--ok:#30d158;--warn:#ffd60a;--bad:#ff453a;--font:"SF Pro Text",-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:400 16px/1.45 var(--font);letter-spacing:-.2px;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}button{font:inherit;color:inherit}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(16px,calc((100vw - 1180px)/2));border-bottom:1px solid var(--ln)}
+a{color:inherit;text-decoration:none}button,textarea,select{font:inherit;color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(16px,calc((100vw - 1240px)/2));border-bottom:1px solid var(--ln)}
 header img{height:24px}header .tag{font-size:12px;color:var(--mut)}header a.back{font-size:13px;color:var(--blue)}
-main{max-width:1180px;margin:0 auto;padding:28px 16px 60px}
-h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:0}.sub{color:var(--mut);margin:0 0 24px;max-width:62ch}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+main{max-width:1240px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:0}.sub{color:var(--mut);margin:0 0 22px;max-width:66ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
 .stat{background:var(--t1);border-radius:14px;padding:14px 16px}.stat span{font-size:12px;color:var(--mut)}.stat b{display:block;font-size:30px;font-weight:600;letter-spacing:-.5px}
-.grid{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:start}
-.list{background:var(--t1);border-radius:18px;padding:8px;display:grid;gap:4px}
+.grid{display:grid;grid-template-columns:330px 1fr;gap:14px;align-items:start}
+.flt{display:flex;gap:6px;flex-wrap:wrap;padding:6px 6px 8px}.flt button{border:1px solid var(--ln);background:none;border-radius:99px;padding:4px 12px;font-size:13px;cursor:pointer}.flt button.on{background:var(--blue);border-color:var(--blue);color:#001}
+.list{background:var(--t1);border-radius:18px;padding:8px;display:grid;gap:4px;position:sticky;top:12px}
 .lead{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid transparent;background:none;cursor:pointer}
 .lead:hover{background:var(--t2)}.lead.on{border-color:var(--blue);background:rgba(41,151,255,.12)}
 .lead b{font-weight:600}.lead small{color:var(--mut);grid-column:1}.lead .sc{grid-row:1/3;grid-column:2;align-self:center;font-weight:600;font-size:20px}
-.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;margin-left:6px;font-weight:600;vertical-align:1px}
+.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;font-weight:600;vertical-align:2px}
 .g-Caldo{background:rgba(48,209,88,.18);color:var(--ok)}.g-Tiepido{background:rgba(255,214,10,.16);color:var(--warn)}.g-Freddo{background:rgba(142,142,147,.2);color:#c7c7cc}
-.mine{font-size:11px;color:var(--blue);margin-left:6px}
-.det{background:var(--t1);border-radius:18px;padding:22px}
-.head{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
-.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head p{margin:2px 0 0;color:var(--mut);font-size:14px}.head .prods{color:#e8e8ed;margin:6px 0}.head .prods b{font-weight:600}
-.rows{display:grid;gap:10px;margin:6px 0 18px}
-.row{display:grid;grid-template-columns:44px 170px 1fr;gap:6px 14px;align-items:center;padding:12px 14px;background:var(--t2);border-radius:12px}
-.row .L{width:36px;height:36px;border-radius:10px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:14px}
-.row .n{font-weight:600;font-size:14px}.row .n small{display:block;font-weight:400;color:var(--mut);font-size:12px}
-.row .s{font-size:14px;color:#e8e8ed}.meter{grid-column:3;height:6px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden}.meter i{display:block;height:100%;border-radius:6px;background:var(--blue);transition:width .6s cubic-bezier(.2,.8,.2,1)}
-.next{border:1.5px solid var(--blue);border-radius:14px;padding:14px 16px;background:rgba(41,151,255,.1)}.next small{color:var(--blue);font-weight:600;display:block;margin-bottom:2px}
-.note{margin-top:22px;font-size:13px;color:var(--mut);max-width:80ch}
-.btn{display:inline-block;margin-top:14px;padding:10px 20px;border-radius:99px;background:#0066cc;color:#fff}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.row{grid-template-columns:44px 1fr}.row .s,.meter{grid-column:1/-1}}
+.mine{font-size:11px;color:var(--blue);margin-left:6px;font-weight:400}
+.det{display:grid;gap:12px}.card{background:var(--t1);border-radius:18px;padding:20px 22px}.card h3{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.6px}
+.head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head .who{flex:1;min-width:240px}.head p{margin:3px 0 0;color:var(--mut);font-size:14px}
+.cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.b{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:99px;border:1px solid var(--blue);color:var(--blue);font-size:14px;cursor:pointer;background:none}.b.p{background:#0066cc;border-color:#0066cc;color:#fff}.b.dis{opacity:.4;pointer-events:none}
+.brief{font-size:17px;line-height:1.4}.sla{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.sla span{background:var(--t2);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--mut)}.sla b{color:#fff;font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rows{display:grid;gap:10px}.row{display:grid;grid-template-columns:40px 1fr;gap:4px 14px;padding:12px 14px;background:var(--t2);border-radius:12px}
+.row .L{width:36px;height:36px;border-radius:10px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:14px;grid-row:1/3}
+.row.weak .L{background:rgba(255,214,10,.16);color:var(--warn)}
+.row .n{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}.row .n small{font-weight:400;color:var(--mut)}
+.row .s{font-size:14px;color:#e8e8ed}.meter{height:5px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;margin:6px 0 2px}.meter i{display:block;height:100%;border-radius:5px;background:var(--blue)}.weak .meter i{background:var(--warn)}
+.ask{margin:6px 0 0;padding:0;list-style:none;font-size:14px}.ask li{padding:3px 0 3px 18px;position:relative}.ask li:before{content:"?";position:absolute;left:0;color:var(--warn);font-weight:600}.okm{font-size:13px;color:var(--ok);margin-top:4px}
+.ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px}.ul li{padding-left:22px;position:relative}.ul li:before{content:"›";position:absolute;left:6px;color:var(--blue);font-weight:600}.risk li:before{content:"!";color:var(--bad)}
+.offer b{font-size:20px;font-weight:600;display:block;margin:2px 0 4px}.chip{display:inline-block;font-size:12px;border-radius:99px;padding:2px 10px;background:rgba(238,115,25,.2);color:#ff9a4d;font-weight:600}.chip.mf{background:rgba(41,151,255,.2);color:var(--blue)}
+textarea,select{width:100%;background:var(--t2);border:1.5px solid var(--ln);border-radius:12px;padding:10px 12px}textarea{min-height:90px;resize:vertical}select{width:auto}.row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:14px;color:var(--mut)}
+.mail{white-space:pre-wrap;font-size:14px;background:var(--t2);border-radius:12px;padding:12px 14px;color:#e8e8ed;margin:0 0 10px}
+.note{margin-top:22px;font-size:13px;color:var(--mut);max-width:84ch}
+.link{display:inline-block;margin-top:14px;padding:10px 20px;border-radius:99px;background:#0066cc;color:#fff}
+@media(max-width:980px){.grid{grid-template-columns:1fr}.list{position:static}.stats{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
 @media(max-width:480px){h1{font-size:28px}}
 </style>
 </head>
 <body>
-<header><img src="landing/logo-w.png" alt="Massini Industries"><span class="tag">Area commerciale · schermata dimostrativa</span><a class="back" href="./">‹ Torna al sito</a></header>
+<header><img src="landing/logo-w.png" alt="Massini Industries"><span class="tag">Area riservata · schermata dimostrativa</span><a class="back" href="./">‹ Torna al sito</a></header>
 <main>
   <h1>Chi sta davvero per comprare?</h1>
-  <p class="sub">Ogni risposta del form guidato viene letta con il metodo MEDDIC: sei domande chiave che separano i curiosi dai progetti veri. Qui vedi il punteggio, il perché e la prossima mossa.</p>
+  <p class="sub">Ogni richiesta arriva già letta con il metodo MEDDIC: punteggio, scheda contatto, cosa proporre, cosa chiedere e i rischi da tenere d’occhio.</p>
   <div class="stats" id="st"></div>
-  <div class="grid"><div class="list" id="ls" role="listbox" aria-label="Lead"></div><div class="det" id="dt"></div></div>
-  <p class="note">I primi quattro lead sono dati inventati per la demo. I lead con l’etichetta «da questo browser» sono quelli compilati qui, nel form del sito: restano solo nel tuo browser (localStorage) e non vengono inviati né salvati da nessuna parte. Questa pagina non è protetta da password: su un sito statico non esiste un’area davvero riservata. Per un uso reale servono un accesso e un archivio lato server.</p>
-  <a class="btn" href="./#contatti">Prova il form come un cliente</a>
+  <div class="grid"><div class="list"><div class="flt" id="fl"></div><div id="ls" role="listbox" aria-label="Lead" style="display:grid;gap:4px"></div></div><div class="det" id="dt"></div></div>
+  <p class="note">I lead con etichetta «demo» sono dati e contatti inventati. Quelli «da questo browser» sono compilati nel form del sito e restano solo nel tuo browser (localStorage): note e stato che inserisci qui restano anch’essi solo qui. Non è un’area davvero protetta: su un sito statico non esiste una password reale. Per l’uso vero servono un accesso e un archivio lato server.</p>
+  <a class="link" href="./#contatti">Prova il form come un cliente</a>
 </main>
 <script src="meddic.js"></script>
 <script>
-const { L, score, next, said } = MEDDIC;
+const { L, score, hints, said, txt } = MEDDIC;
+const D = (name, company, email, phone, o) => ({ name, company, email, phone, demo: 1, ts: o.ts, ...o });
 const demo = [
-  { name: 'Marco B.', company: 'Agrimix Demo', scope: 'imp', prod: ['m5', 'silo', 'raf'], mat: ['mang'], pains: ['old', 'bott', 'stop'], cap: 25, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si', demo: 1 },
-  { name: 'Elena R.', company: 'Pet Nutri Demo', scope: 'conf', prod: ['ins', 'pall', 'avv'], mat: ['pet'], pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def', demo: 1 },
-  { name: 'Paolo S.', company: 'Riseria Demo', scope: 'tra', prod: ['tub', 'taz'], mat: ['riso', 'cer'], pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no', demo: 1 },
-  { name: 'Giulia T.', company: 'Cereali Demo', scope: 'ass', prod: ['ric'], mat: ['sem'], pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no', demo: 1 },
+  D('Marco Bianchi', 'Agrimix Demo', 'marco.bianchi@example.com', '+39 000 000 0001', { ts: 1, scope: 'imp', prod: ['m5', 'silo', 'raf'], mat: ['mang'], pains: ['old', 'bott', 'stop'], cap: 5, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si' }),
+  D('Elena Rossi', 'Pet Nutri Demo', 'elena.rossi@example.com', '+39 000 000 0002', { ts: 2, scope: 'conf', prod: ['ins', 'pall', 'avv'], mat: ['pet'], pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def' }),
+  D('Paolo Serra', 'Riseria Demo', 'paolo.serra@example.com', '+39 000 000 0003', { ts: 3, scope: 'tra', prod: ['tub', 'taz'], mat: ['riso', 'cer'], pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no' }),
+  D('Giulia Testa', 'Cereali Demo', 'giulia.testa@example.com', '+39 000 000 0004', { ts: 4, scope: 'ass', prod: ['ric'], mat: ['sem'], pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no' }),
 ];
 let mine = []; try { mine = JSON.parse(localStorage.getItem('massini_leads') || '[]').reverse(); } catch (_) {}
-const leads = [...mine, ...demo].map(l => ({ ...l, r: score(l) })), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-let cur = 0;
-$ = id => document.getElementById(id);
+const leads = [...mine, ...demo].map(l => ({ ...l, r: score(l), key: 'ml_' + l.ts }));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const $ = id => document.getElementById(id);
+const store = { get: k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (_) { return {}; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} } };
+let cur = leads[0].key, flt = 'Tutti';
 $('st').innerHTML = [['Lead', leads.length], ['Caldi', leads.filter(l => l.r.grade === 'Caldo').length], ['Tiepidi', leads.filter(l => l.r.grade === 'Tiepido').length], ['Punteggio medio', Math.round(leads.reduce((a, l) => a + l.r.tot, 0) / leads.length)]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${b}</b></div>`).join('');
-function draw() {
-  $('ls').innerHTML = leads.map((l, i) => `<button class="lead ${i === cur ? 'on' : ''}" data-i="${i}" role="option" aria-selected="${i === cur}"><b>${esc(l.company)}${l.demo ? '' : '<span class="mine">da questo browser</span>'}</b><small>${esc(l.name)} · ${esc(MEDDIC.txt('scope', l.scope))}</small><span class="sc">${l.r.tot}</span></button>`).join('');
-  const l = leads[cur], s = said(l), C = 2 * Math.PI * 40;
-  $('dt').innerHTML = `<div class="head"><svg viewBox="0 0 100 100" width="104" height="104"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg><div><h2>${esc(l.company)}<span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p class="prods">${esc(MEDDIC.txt('scope', l.scope))}: <b>${esc(MEDDIC.txt('prod', l.prod || []) || '—')}</b><br>Prodotto lavorato: <b>${esc(MEDDIC.txt('mat', l.mat || []) || '—')}</b></p><p>${esc(l.name)}${l.email ? ' · ' + esc(l.email) : ''}${l.phone ? ' · ' + esc(l.phone) : ''}</p></div></div>
-  <div class="rows">${L.map(([k, en, it]) => `<div class="row"><div class="L">${k.replace('1', '').replace('2', '')}</div><div class="n">${en}<small>${it}</small></div><div class="s">${esc(s[k])}</div><div class="meter"><i style="width:${l.r.s[k]}%"></i></div></div>`).join('')}</div>
-  <div class="next"><small>Prossima mossa</small>${next(l)}</div>`;
+function list() {
+  $('fl').innerHTML = ['Tutti', 'Caldo', 'Tiepido', 'Freddo'].map(f => `<button class="${f === flt ? 'on' : ''}" data-f="${f}">${f === 'Tutti' ? f : f.slice(0, -1) + 'i'}</button>`).join('');
+  $('ls').innerHTML = leads.filter(l => flt === 'Tutti' || l.r.grade === flt).sort((a, b) => b.r.tot - a.r.tot).map(l => `<button class="lead ${l.key === cur ? 'on' : ''}" data-k="${l.key}" role="option" aria-selected="${l.key === cur}"><b>${esc(l.company)}<span class="mine">${l.demo ? 'demo' : 'da questo browser'}</span></b><small>${esc(l.name)} · ${esc(txt('scope', l.scope))}</small><span class="sc">${l.r.tot}</span></button>`).join('');
 }
-$('ls').addEventListener('click', e => { const b = e.target.closest('.lead'); if (b) { cur = +b.dataset.i; draw(); } });
-draw();
+function draw() {
+  const l = leads.find(x => x.key === cur) || leads[0], h = hints(l), s = said(l), C = 2 * Math.PI * 40, st = store.get('st_' + l.key), col = l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93';
+  const first = l.name.split(' ')[0], tel = (l.phone || '').replace(/[^+\d]/g, '');
+  const mail = `Ciao ${first},\n\ngrazie per la richiesta${(l.prod || []).length ? ' su ' + txt('prod', l.prod).toLowerCase() : ''}. ${h.weak.includes('M') || h.weak.includes('I') ? 'Per proporti la soluzione giusta avrei bisogno di capire meglio produzione attuale e punti critici: ti va una chiamata di 20 minuti?' : 'Ti propongo una call tecnica per definire i dettagli e, se vuoi, un sopralluogo.'}\n\nTi allego il link alla simulazione 3D relativa.\n\nA presto`;
+  $('dt').innerHTML = `
+  <div class="card"><div class="head"><svg viewBox="0 0 100 100" width="96" height="96" role="img" aria-label="Punteggio ${l.r.tot} su 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg>
+    <div class="who"><h2>${esc(l.name)} <span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p>${esc(txt('role', l.role) || '')} · ${esc(l.company)}</p><p>${l.email ? `<a href="mailto:${esc(l.email)}" style="color:var(--blue)">${esc(l.email)}</a>` : ''}${l.phone ? ` · <a href="tel:${esc(tel)}" style="color:var(--blue)">${esc(l.phone)}</a>` : ''}</p>
+    <div class="cta"><a class="b p ${tel ? '' : 'dis'}" href="tel:${esc(tel)}">Chiama</a><a class="b" href="mailto:${esc(l.email)}?subject=${encodeURIComponent('Massini · la tua richiesta')}&body=${encodeURIComponent(mail)}">Scrivi con bozza pronta</a><button class="b" id="cp" type="button">Copia il briefing</button></div></div></div>
+    <p class="brief" style="margin:16px 0 0">${esc(h.brief)}</p>
+    <div class="sla"><span>Priorità <b>${h.grade}</b></span><span>Contatta <b>${h.sla}</b></span><span>Brand <b>${h.offer.brand}</b></span></div></div>
+  <div class="two">
+    <div class="card offer"><h3>Cosa proporre</h3><span class="chip ${h.offer.brand === 'MF TECNO' ? 'mf' : ''}">${h.offer.brand}</span><b>${esc(h.offer.t)}</b><span style="color:var(--mut);font-size:14px">${esc(h.offer.n)}</span></div>
+    <div class="card"><h3>Prossime mosse</h3><ul class="ul">${h.next.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></div>
+  <div class="card"><h3>MEDDIC · cosa sappiamo e cosa chiedere</h3><div class="rows">${L.map(([k, en, it]) => { const r = h.rows[k], v = l.r.s[k]; return `<div class="row ${v < 70 ? 'weak' : ''}"><div class="L">${k.replace(/\d/, '')}</div><div><div class="n"><span>${en} <small>· ${it}</small></span><span>${v}</span></div><div class="s">${esc(s[k])}</div><div class="meter"><i style="width:${v}%"></i></div>${r.ok ? `<div class="okm">${esc(r.ok)}</div>` : ''}${r.ask.length ? `<ul class="ask">${r.ask.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div></div>`; }).join('')}</div></div>
+  <div class="two">
+    <div class="card"><h3>Come parlarci</h3><ul class="ul">${h.angles.map(x => `<li>${esc(x)}</li>`).join('') || '<li>Nessun elemento: parti dalle domande sopra.</li>'}</ul></div>
+    <div class="card"><h3>Rischi</h3><ul class="ul risk">${h.risks.map(x => `<li>${esc(x)}</li>`).join('') || '<li style="color:var(--ok)">Nessun rischio evidente dalle risposte.</li>'}</ul></div></div>
+  <div class="card"><h3>Bozza di risposta</h3><div class="mail">${esc(mail)}</div><h3 style="margin-top:14px">Stato e note (restano nel tuo browser)</h3><div class="row2">Stato <select id="stg">${['Nuovo', 'Contattato', 'Qualificato', 'Proposta inviata', 'Vinto', 'Perso'].map(x => `<option ${st.stage === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div><textarea id="nt" placeholder="Note della chiamata…">${esc(st.note || '')}</textarea></div>`;
+  $('stg').onchange = e => store.set('st_' + l.key, { ...store.get('st_' + l.key), stage: e.target.value });
+  $('nt').oninput = e => store.set('st_' + l.key, { ...store.get('st_' + l.key), note: e.target.value });
+  $('cp').onclick = e => { navigator.clipboard && navigator.clipboard.writeText(h.brief).then(() => { e.target.textContent = 'Copiato'; setTimeout(() => e.target.textContent = 'Copia il briefing', 1400); }); };
+}
+$('ls').addEventListener('click', e => { const b = e.target.closest('.lead'); if (b) { cur = b.dataset.k; list(); draw(); } });
+$('fl').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { flt = b.dataset.f; list(); } });
+list(); draw();
 </script>
 </body>
 </html>
