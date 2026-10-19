@@ -4,104 +4,176 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#000000">
 <title>Area riservata · Massini (demo)</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
-:root{--blue:#2997ff;--bg:#000;--t1:#1d1d1f;--t2:#272729;--ln:rgba(255,255,255,.14);--mut:#a1a1a6;--ok:#30d158;--warn:#ffd60a;--bad:#ff453a;--font:"SF Pro Text",-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font:400 16px/1.45 var(--font);letter-spacing:-.2px;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}button,textarea,select{font:inherit;color:inherit}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px max(16px,calc((100vw - 1240px)/2));border-bottom:1px solid var(--ln)}
-header img{height:24px}header .tag{font-size:12px;color:var(--mut)}header a.back{font-size:13px;color:var(--blue)}
-main{max-width:1240px;margin:0 auto;padding:28px 16px 60px}
-h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:0}.sub{color:var(--mut);margin:0 0 22px;max-width:66ch}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.stat{background:var(--t1);border-radius:14px;padding:14px 16px}.stat span{font-size:12px;color:var(--mut)}.stat b{display:block;font-size:30px;font-weight:600;letter-spacing:-.5px}
-.grid{display:grid;grid-template-columns:330px 1fr;gap:14px;align-items:start}
-.flt{display:flex;gap:6px;flex-wrap:wrap;padding:6px 6px 8px}.flt button{border:1px solid var(--ln);background:none;border-radius:99px;padding:4px 12px;font-size:13px;cursor:pointer}.flt button.on{background:var(--blue);border-color:var(--blue);color:#001}
-.list{background:var(--t1);border-radius:18px;padding:8px;display:grid;gap:4px;position:sticky;top:12px}
-.lead{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid transparent;background:none;cursor:pointer}
-.lead:hover{background:var(--t2)}.lead.on{border-color:var(--blue);background:rgba(41,151,255,.12)}
-.lead b{font-weight:600}.lead small{color:var(--mut);grid-column:1}.lead .sc{grid-row:1/3;grid-column:2;align-self:center;font-weight:600;font-size:20px}
-.pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:99px;font-weight:600;vertical-align:2px}
-.g-Caldo{background:rgba(48,209,88,.18);color:var(--ok)}.g-Tiepido{background:rgba(255,214,10,.16);color:var(--warn)}.g-Freddo{background:rgba(142,142,147,.2);color:#c7c7cc}
-.mine{font-size:11px;color:var(--blue);margin-left:6px;font-weight:400}
-.det{display:grid;gap:12px}.card{background:var(--t1);border-radius:18px;padding:20px 22px}.card h3{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.6px}
-.head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head .who{flex:1;min-width:240px}.head p{margin:3px 0 0;color:var(--mut);font-size:14px}
-.cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.b{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:99px;border:1px solid var(--blue);color:var(--blue);font-size:14px;cursor:pointer;background:none}.b.p{background:#0066cc;border-color:#0066cc;color:#fff}.b.dis{opacity:.4;pointer-events:none}
-.brief{font-size:17px;line-height:1.4}.sla{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.sla span{background:var(--t2);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--mut)}.sla b{color:#fff;font-weight:600}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.rows{display:grid;gap:10px}.row{display:grid;grid-template-columns:40px 1fr;gap:4px 14px;padding:12px 14px;background:var(--t2);border-radius:12px}
-.row .L{width:36px;height:36px;border-radius:10px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:14px;grid-row:1/3}
-.row.weak .L{background:rgba(255,214,10,.16);color:var(--warn)}
-.row .n{display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:14px}.row .n small{font-weight:400;color:var(--mut)}
-.row .s{font-size:14px;color:#e8e8ed}.meter{height:5px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;margin:6px 0 2px}.meter i{display:block;height:100%;border-radius:5px;background:var(--blue)}.weak .meter i{background:var(--warn)}
-.ask{margin:6px 0 0;padding:0;list-style:none;font-size:14px}.ask li{padding:3px 0 3px 18px;position:relative}.ask li:before{content:"?";position:absolute;left:0;color:var(--warn);font-weight:600}.okm{font-size:13px;color:var(--ok);margin-top:4px}
-.ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px}.ul li{padding-left:22px;position:relative}.ul li:before{content:"›";position:absolute;left:6px;color:var(--blue);font-weight:600}.risk li:before{content:"!";color:var(--bad)}
-.offer b{font-size:20px;font-weight:600;display:block;margin:2px 0 4px}.chip{display:inline-block;font-size:12px;border-radius:99px;padding:2px 10px;background:rgba(238,115,25,.2);color:#ff9a4d;font-weight:600}.chip.mf{background:rgba(41,151,255,.2);color:var(--blue)}
-textarea,select{width:100%;background:var(--t2);border:1.5px solid var(--ln);border-radius:12px;padding:10px 12px}textarea{min-height:90px;resize:vertical}select{width:auto}.row2{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:14px;color:var(--mut)}
-.mail{white-space:pre-wrap;font-size:14px;background:var(--t2);border-radius:12px;padding:12px 14px;color:#e8e8ed;margin:0 0 10px}
-.note{margin-top:22px;font-size:13px;color:var(--mut);max-width:84ch}
-.link{display:inline-block;margin-top:14px;padding:10px 20px;border-radius:99px;background:#0066cc;color:#fff}
-@media(max-width:980px){.grid{grid-template-columns:1fr}.list{position:static}.stats{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
-@media(max-width:480px){h1{font-size:28px}}
+:root{--blue:#2997ff;--blue-d:#0066cc;--bg:#000;--t1:#1c1c1e;--t2:#2a2a2c;--t3:#3a3a3c;--ln:rgba(255,255,255,.12);--mut:#98989d;--ok:#30d158;--warn:#ffd60a;--bad:#ff453a;--org:#ff9a4d;--font:"SF Pro Text",-apple-system,BlinkMacSystemFont,"Inter",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:#fff;font:400 15px/1.45 var(--font);letter-spacing:-.2px;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.top{display:flex;align-items:center;gap:14px;padding:10px 18px;border-bottom:1px solid var(--ln);background:rgba(0,0,0,.85);backdrop-filter:blur(20px);position:sticky;top:0;z-index:20}
+.top img{height:22px}.top .ttl{font-weight:600;font-size:15px}.top .ttl small{color:var(--mut);font-weight:400;margin-left:8px}
+.top .sp{flex:1}.seg{display:flex;background:var(--t1);border-radius:99px;padding:3px}.seg button{border:0;background:none;padding:5px 14px;border-radius:99px;font-size:13px;color:var(--mut)}.seg button.on{background:var(--t3);color:#fff}
+.top a.back{font-size:13px;color:var(--blue)}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr) 1.6fr;gap:10px;padding:14px 18px 0}
+.k{background:var(--t1);border-radius:14px;padding:12px 14px}.k span{font-size:12px;color:var(--mut)}.k b{display:block;font-size:26px;font-weight:600;letter-spacing:-.5px;line-height:1.2}
+.dist{display:flex;height:8px;border-radius:8px;overflow:hidden;margin:10px 0 6px;background:var(--t3)}.dist i{display:block}.leg{display:flex;gap:12px;font-size:12px;color:var(--mut)}.leg em{font-style:normal}.leg u{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;text-decoration:none}
+.app{flex:1;display:grid;grid-template-columns:340px 1fr;gap:14px;padding:14px 18px 24px;min-height:0}
+.side{background:var(--t1);border-radius:18px;display:flex;flex-direction:column;min-height:0;max-height:calc(100vh - 170px);position:sticky;top:64px}
+.tools{padding:12px;display:grid;gap:8px;border-bottom:1px solid var(--ln)}
+.tools input[type=search]{width:100%;background:var(--t2);border:1px solid transparent;border-radius:10px;padding:9px 12px}.tools input:focus{border-color:var(--blue);outline:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{border:1px solid var(--ln);background:none;border-radius:99px;padding:3px 11px;font-size:12px;color:var(--mut)}.chips button.on{background:var(--blue);border-color:var(--blue);color:#001}
+.list{overflow:auto;padding:6px;display:grid;gap:2px;align-content:start}
+.lead{display:grid;grid-template-columns:42px 1fr auto;gap:0 12px;text-align:left;padding:10px;border-radius:12px;border:1.5px solid transparent;background:none;align-items:center}
+.lead:hover{background:var(--t2)}.lead.on{background:rgba(41,151,255,.14);border-color:rgba(41,151,255,.6)}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:14px;background:var(--t3);position:relative}
+.av.Caldo{background:rgba(48,209,88,.2);color:var(--ok)}.av.Tiepido{background:rgba(255,214,10,.18);color:var(--warn)}.av.Freddo{background:rgba(152,152,157,.2);color:#c7c7cc}
+.lead b{font-weight:600;display:block;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lead small{color:var(--mut);font-size:12.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lead .sc{font-weight:600;font-size:18px;text-align:right}.lead .sc small{font-weight:400}
+.new{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--blue);margin-left:6px;vertical-align:1px}.dm{font-size:10.5px;color:var(--mut);border:1px solid var(--ln);border-radius:5px;padding:0 4px;margin-left:6px;font-weight:400}
+.empty{padding:30px 16px;text-align:center;color:var(--mut)}
+.main{min-width:0}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--ln);margin-bottom:14px;overflow:auto}.tabs button{border:0;background:none;padding:10px 14px;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}.tabs button.on{color:#fff;border-color:var(--blue)}.tabs .n{background:var(--warn);color:#000;border-radius:99px;font-size:11px;padding:0 6px;margin-left:5px;font-weight:600}
+.card{background:var(--t1);border-radius:18px;padding:18px 20px;margin-bottom:12px}.card h3{margin:0 0 12px;font-size:12px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.7px}
+.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap}.hero .who{flex:1;min-width:230px}.hero h2{margin:0;font-size:26px;letter-spacing:-.3px;font-weight:600;line-height:1.15}.hero p{margin:3px 0 0;color:var(--mut);font-size:14px}.hero p a{color:var(--blue)}
+.pill{display:inline-block;font-size:12px;padding:2px 10px;border-radius:99px;font-weight:600;vertical-align:3px;margin-left:6px}.g-Caldo{background:rgba(48,209,88,.18);color:var(--ok)}.g-Tiepido{background:rgba(255,214,10,.16);color:var(--warn)}.g-Freddo{background:rgba(152,152,157,.22);color:#c7c7cc}
+.cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.b{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:99px;border:1px solid var(--blue);color:var(--blue);font-size:14px;background:none;transition:transform .12s}.b:active{transform:scale(.96)}.b.p{background:var(--blue-d);border-color:var(--blue-d);color:#fff}.b.dis{opacity:.4;pointer-events:none}.b svg{width:15px;height:15px}
+.brief{font-size:17px;line-height:1.45;margin:0}.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.meta span{background:var(--t2);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--mut)}.meta b{color:#fff;font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two .card{margin:0}.gap{margin-bottom:12px}
+.radar{display:grid;place-items:center}.radar svg{max-width:260px;width:100%}
+.offer .chip{display:inline-block;font-size:12px;border-radius:99px;padding:2px 10px;background:rgba(238,115,25,.2);color:var(--org);font-weight:600}.offer .chip.mf{background:rgba(41,151,255,.2);color:var(--blue)}.offer b{display:block;font-size:20px;font-weight:600;margin:6px 0 4px;line-height:1.25}.offer p{margin:0;color:var(--mut);font-size:14px}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:10px}.steps li{counter-increment:s;display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start}.steps li:before{content:counter(s);width:24px;height:24px;border-radius:50%;background:rgba(41,151,255,.18);color:var(--blue);display:grid;place-items:center;font-size:12px;font-weight:600}
+.rows{display:grid;gap:10px}.row{display:grid;grid-template-columns:40px 1fr;gap:4px 14px;padding:14px;background:var(--t2);border-radius:14px}
+.row .L{width:38px;height:38px;border-radius:11px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;grid-row:1/4}.row.weak .L{background:rgba(255,214,10,.16);color:var(--warn)}
+.row .n{display:flex;justify-content:space-between;gap:10px;font-weight:600}.row .n small{font-weight:400;color:var(--mut)}.row .s{color:#e8e8ed;font-size:14px}
+.meter{height:5px;border-radius:5px;background:rgba(255,255,255,.12);overflow:hidden;margin:6px 0}.meter i{display:block;height:100%;border-radius:5px;background:var(--blue)}.weak .meter i{background:var(--warn)}.okm{font-size:13px;color:var(--ok)}
+.ck{display:grid;gap:4px;margin-top:4px}.ck label{display:flex;gap:10px;align-items:flex-start;padding:6px 8px;border-radius:9px;font-size:14px;cursor:pointer}.ck label:hover{background:var(--t3)}.ck input{margin-top:3px;accent-color:var(--blue);width:16px;height:16px}.ck input:checked+span{color:var(--mut);text-decoration:line-through}
+.ul{margin:0;padding:0;list-style:none;display:grid;gap:9px}.ul li{padding-left:22px;position:relative}.ul li:before{content:"›";position:absolute;left:6px;color:var(--blue);font-weight:700}.risk li:before{content:"!";color:var(--bad)}
+.mail{white-space:pre-wrap;background:var(--t2);border-radius:12px;padding:14px;font-size:14px;margin:0 0 10px}
+textarea,select{background:var(--t2);border:1.5px solid transparent;border-radius:12px;padding:10px 12px;width:100%}textarea{min-height:140px;resize:vertical}textarea:focus,select:focus{border-color:var(--blue);outline:0}select{width:auto}
+.stage{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}.stage button{border:1px solid var(--ln);background:none;border-radius:99px;padding:6px 14px;font-size:13px;color:var(--mut)}.stage button.on{background:var(--blue-d);border-color:var(--blue-d);color:#fff}
+.pipe{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:10px;overflow:auto;padding-bottom:8px;align-items:start}
+.col{background:var(--t1);border-radius:16px;padding:10px;min-height:200px}.col.over{outline:2px dashed var(--blue)}.col h4{margin:2px 4px 10px;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.6px;display:flex;justify-content:space-between}
+.pc{background:var(--t2);border-radius:12px;padding:11px 12px;margin-bottom:8px;border-left:3px solid var(--mut);cursor:grab;display:grid;gap:2px}.pc.Caldo{border-color:var(--ok)}.pc.Tiepido{border-color:var(--warn)}.pc b{font-weight:600}.pc small{color:var(--mut);font-size:12.5px}.pc .r{display:flex;justify-content:space-between;align-items:center;margin-top:4px;font-size:12.5px}
+.hint{color:var(--mut);font-size:13px;margin:6px 4px 0}.foot{max-width:84ch;margin:6px 18px 30px;color:var(--mut);font-size:13px}.foot a{color:var(--blue)}
+.mback{display:none}
+@media(max-width:980px){.kpi{grid-template-columns:1fr 1fr}.k.d{grid-column:1/-1}.app{grid-template-columns:1fr}.side{position:static;max-height:none}.two{grid-template-columns:1fr}.two .card{margin-bottom:12px}.main{display:none}body.det .main{display:block}body.det .side{display:none}.mback{display:inline-flex;margin-bottom:10px;background:none;border:0;color:var(--blue);padding:0;font-size:15px}.top .ttl small,.top a.back span{display:none}.hero h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<header><img src="landing/logo-w.png" alt="Massini Industries"><span class="tag">Area riservata · schermata dimostrativa</span><a class="back" href="./">‹ Torna al sito</a></header>
-<main>
-  <h1>Chi sta davvero per comprare?</h1>
-  <p class="sub">Ogni richiesta arriva già letta con il metodo MEDDIC: punteggio, scheda contatto, cosa proporre, cosa chiedere e i rischi da tenere d’occhio.</p>
-  <div class="stats" id="st"></div>
-  <div class="grid"><div class="list"><div class="flt" id="fl"></div><div id="ls" role="listbox" aria-label="Lead" style="display:grid;gap:4px"></div></div><div class="det" id="dt"></div></div>
-  <p class="note">I lead con etichetta «demo» sono dati e contatti inventati. Quelli «da questo browser» sono compilati nel form del sito e restano solo nel tuo browser (localStorage): note e stato che inserisci qui restano anch’essi solo qui. Non è un’area davvero protetta: su un sito statico non esiste una password reale. Per l’uso vero servono un accesso e un archivio lato server.</p>
-  <a class="link" href="./#contatti">Prova il form come un cliente</a>
-</main>
+<div class="top"><a href="./"><img src="landing/logo-w.png" alt="Massini Industries"></a><span class="ttl">Area riservata<small>schermata dimostrativa</small></span><span class="sp"></span><div class="seg" id="vw" role="tablist"><button data-v="list" class="on">Lista</button><button data-v="pipe">Pipeline</button></div><a class="back" href="./">‹ <span>Torna al </span>sito</a></div>
+<div class="kpi" id="kpi"></div>
+<div class="app" id="app">
+  <aside class="side" id="side"><div class="tools"><input id="q" type="search" placeholder="Cerca azienda, nome, macchina…  ( / )" aria-label="Cerca"><div class="chips" id="fl"></div><div class="chips" id="so"></div></div><div class="list" id="ls" role="listbox" aria-label="Lead"></div></aside>
+  <section class="main" id="mn"></section>
+</div>
+<p class="foot">I lead «demo» hanno dati e contatti inventati. Quelli «reali» sono compilati nel form del sito e restano solo nel tuo browser (localStorage), come stato e note. Non è un’area davvero protetta: su un sito statico non esiste una password reale; per l’uso vero servono un accesso e un archivio lato server. <a href="./#contatti">Prova il form come un cliente</a></p>
 <script src="meddic.js"></script>
 <script>
 const { L, score, hints, said, txt } = MEDDIC;
-const D = (name, company, email, phone, o) => ({ name, company, email, phone, demo: 1, ts: o.ts, ...o });
+const STAGES = ['Nuovo', 'Contattato', 'Qualificato', 'Proposta inviata', 'Vinto', 'Perso'];
+const D = (id, h, src, name, company, o) => ({ ts: id, demo: 1, h, src, name, company, email: name.toLowerCase().replace(/[^a-z ]/g, '').split(' ').join('.') + '@' + company.toLowerCase().replace(/[^a-z]/g, '') + '.example.com', phone: '+39 000 000 ' + String(1000 + id).slice(1), ...o });
 const demo = [
-  D('Marco Bianchi', 'Agrimix Demo', 'marco.bianchi@example.com', '+39 000 000 0001', { ts: 1, scope: 'imp', prod: ['m5', 'silo', 'raf'], mat: ['mang'], pains: ['old', 'bott', 'stop'], cap: 5, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si' }),
-  D('Elena Rossi', 'Pet Nutri Demo', 'elena.rossi@example.com', '+39 000 000 0002', { ts: 2, scope: 'conf', prod: ['ins', 'pall', 'avv'], mat: ['pet'], pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def' }),
-  D('Paolo Serra', 'Riseria Demo', 'paolo.serra@example.com', '+39 000 000 0003', { ts: 3, scope: 'tra', prod: ['tub', 'taz'], mat: ['riso', 'cer'], pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no' }),
-  D('Giulia Testa', 'Cereali Demo', 'giulia.testa@example.com', '+39 000 000 0004', { ts: 4, scope: 'ass', prod: ['ric'], mat: ['sem'], pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no' }),
+  D(1, 2, 'Form del sito', 'Marco Bianchi', 'Agrimix Demo', { scope: 'imp', prod: ['m5', 'silo', 'raf'], mat: ['mang'], pains: ['old', 'bott', 'stop'], cap: 5, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si' }),
+  D(2, 5, 'Simulatore MF TECNO', 'Elena Rossi', 'Pet Nutri Demo', { scope: 'conf', prod: ['ins', 'pall', 'avv'], mat: ['pet'], pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def' }),
+  D(3, 20, 'Form del sito', 'Paolo Serra', 'Riseria Demo', { scope: 'tra', prod: ['tub', 'taz'], mat: ['riso', 'cer'], pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no' }),
+  D(4, 30, 'Form del sito', 'Giulia Testa', 'Cereali Demo', { scope: 'ass', prod: ['ric'], mat: ['sem'], pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no' }),
+  D(5, 3, 'Simulatore MIAL', 'Luca Fontana', 'Mangimi del Sole Demo', { scope: 'imp', prod: ['m3', 'mol', 'mis', 'bil'], mat: ['mang'], pains: ['old', 'man'], cap: 3, role: 'dir', decide: 'con', criteria: ['aff', 'prez'], timeline: '3-6', budget: 'def' }),
+  D(6, 52, 'Fiera di settore', 'Anna Greco', 'Zootecnica Valle Demo', { scope: 'imp', prod: ['m1', 'silo'], mat: ['mang'], pains: ['new'], cap: 1, role: 'dir', decide: 'io', criteria: ['prez', 'fle'], timeline: '3-6', budget: 'def' }),
+  D(7, 1, 'Form del sito', 'Davide Conti', 'Biscotti Pet Demo', { scope: 'imp', prod: ['pf', 'raf', 'pre', 'bb'], mat: ['pet'], pains: ['bott', 'qual', 'stop'], cap: 15, role: 'dir', decide: 'con', criteria: ['ig', 'aff'], timeline: '<3', budget: 'si' }),
+  D(8, 26, 'Simulatore MF TECNO', 'Sara Moretti', 'Fertil Demo', { scope: 'conf', prod: ['pall', 'avv', 'car'], mat: ['fer'], pains: ['man', 'bott'], cap: 20, role: 'tec', decide: 'prop', criteria: ['temp', 'aff'], timeline: '3-6', budget: 'si' }),
+  D(9, 96, 'Form del sito', 'Roberto Villa', 'Zuccheri Nord Demo', { scope: 'tra', prod: ['tub', 'tazb', 'red', 'pne'], mat: ['zuc'], pains: ['stop', 'qual'], cap: 40, role: 'acq', decide: 'prop', criteria: ['prez', 'en'], timeline: '6-12', budget: 'def' }),
+  D(10, 140, 'Form del sito', 'Chiara Neri', 'Sementi Alba Demo', { scope: 'conf', prod: ['ins'], mat: ['sem'], pains: ['man'], cap: 2, role: 'dir', decide: 'io', criteria: ['prez'], timeline: '6-12', budget: 'no' }),
+  D(11, 8, 'Form del sito', 'Filippo Gatti', 'Chimica Nova Demo', { scope: 'tra', prod: ['cot', 'spi'], mat: ['chim'], pains: ['qual', 'old'], cap: 6, role: 'con', decide: 'prop', criteria: ['ig', 'prez'], timeline: 'val', budget: 'def' }),
+  D(12, 70, 'Fiera di settore', 'Valentina Ferri', 'Molino Ferri Demo', { scope: 'imp', prod: ['m5', 'mol', 'mis'], mat: ['cer', 'mang'], pains: ['old', 'stop'], cap: 25, role: 'tec', decide: 'prop', criteria: ['aff', 'temp'], timeline: '3-6', budget: 'si', stage: 'Contattato' }),
+  D(13, 200, 'Form del sito', 'Stefano Riva', 'Pasto Felice Demo', { scope: 'conf', prod: ['vff', 'ins', 'pall'], mat: ['pet'], pains: ['bott'], cap: 10, role: 'dir', decide: 'io', criteria: ['aff', 'ig'], timeline: '<3', budget: 'si', stage: 'Proposta inviata' }),
 ];
 let mine = []; try { mine = JSON.parse(localStorage.getItem('massini_leads') || '[]').reverse(); } catch (_) {}
-const leads = [...mine, ...demo].map(l => ({ ...l, r: score(l), key: 'ml_' + l.ts }));
+const ago = h => h < 1 ? 'pochi minuti fa' : h < 24 ? `${Math.round(h)} h fa` : `${Math.round(h / 24)} g fa`;
+const leads = [...mine.map(l => ({ ...l, h: (Date.now() - l.ts) / 36e5, src: 'Form del sito' })), ...demo].map(l => ({ ...l, r: score(l), key: 'ml_' + l.ts, name: l.name || '—' }));
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const $ = id => document.getElementById(id);
 const store = { get: k => { try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch (_) { return {}; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) {} } };
-let cur = leads[0].key, flt = 'Tutti';
-$('st').innerHTML = [['Lead', leads.length], ['Caldi', leads.filter(l => l.r.grade === 'Caldo').length], ['Tiepidi', leads.filter(l => l.r.grade === 'Tiepido').length], ['Punteggio medio', Math.round(leads.reduce((a, l) => a + l.r.tot, 0) / leads.length)]].map(([a, b]) => `<div class="stat"><span>${a}</span><b>${b}</b></div>`).join('');
-function list() {
-  $('fl').innerHTML = ['Tutti', 'Caldo', 'Tiepido', 'Freddo'].map(f => `<button class="${f === flt ? 'on' : ''}" data-f="${f}">${f === 'Tutti' ? f : f.slice(0, -1) + 'i'}</button>`).join('');
-  $('ls').innerHTML = leads.filter(l => flt === 'Tutti' || l.r.grade === flt).sort((a, b) => b.r.tot - a.r.tot).map(l => `<button class="lead ${l.key === cur ? 'on' : ''}" data-k="${l.key}" role="option" aria-selected="${l.key === cur}"><b>${esc(l.company)}<span class="mine">${l.demo ? 'demo' : 'da questo browser'}</span></b><small>${esc(l.name)} · ${esc(txt('scope', l.scope))}</small><span class="sc">${l.r.tot}</span></button>`).join('');
+const st = l => store.get('st_' + l.key), stage = l => st(l).stage || l.stage || 'Nuovo', patch = (l, p) => store.set('st_' + l.key, { ...st(l), ...p });
+const prefs = store.get('qa_prefs'); let cur = leads[0].key, flt = 'Tutti', sort = 'prio', view = prefs.view || 'list', tab = prefs.tab || 'ov', query = '';
+const savePrefs = () => store.set('qa_prefs', { view, tab });
+const ini = n => n.split(' ').map(x => x[0]).slice(0, 2).join('').toUpperCase();
+const COL = { Caldo: '#30d158', Tiepido: '#ffd60a', Freddo: '#8e8e93' };
+
+function kpi() {
+  const n = g => leads.filter(l => l.r.grade === g).length, tot = leads.length, open = leads.filter(l => !['Vinto', 'Perso'].includes(stage(l)));
+  $('kpi').innerHTML = [['Lead totali', tot], ['Da contattare', leads.filter(l => stage(l) === 'Nuovo').length], ['Caldi', n('Caldo')], ['Punteggio medio', Math.round(leads.reduce((a, l) => a + l.r.tot, 0) / tot)]].map(([a, b]) => `<div class="k"><span>${a}</span><b>${b}</b></div>`).join('') +
+    `<div class="k d"><span>Qualità del flusso</span><div class="dist">${['Caldo', 'Tiepido', 'Freddo'].map(g => `<i style="width:${n(g) / tot * 100}%;background:${COL[g]}"></i>`).join('')}</div><div class="leg">${['Caldo', 'Tiepido', 'Freddo'].map(g => `<em><u style="background:${COL[g]}"></u>${n(g)} ${g.toLowerCase().slice(0, -1)}${n(g) === 1 ? 'o' : 'i'}</em>`).join('')}</div></div>`;
 }
-function draw() {
-  const l = leads.find(x => x.key === cur) || leads[0], h = hints(l), s = said(l), C = 2 * Math.PI * 40, st = store.get('st_' + l.key), col = l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93';
-  const first = l.name.split(' ')[0], tel = (l.phone || '').replace(/[^+\d]/g, '');
-  const mail = `Ciao ${first},\n\ngrazie per la richiesta${(l.prod || []).length ? ' su ' + txt('prod', l.prod).toLowerCase() : ''}. ${h.weak.includes('M') || h.weak.includes('I') ? 'Per proporti la soluzione giusta avrei bisogno di capire meglio produzione attuale e punti critici: ti va una chiamata di 20 minuti?' : 'Ti propongo una call tecnica per definire i dettagli e, se vuoi, un sopralluogo.'}\n\nTi allego il link alla simulazione 3D relativa.\n\nA presto`;
-  $('dt').innerHTML = `
-  <div class="card"><div class="head"><svg viewBox="0 0 100 100" width="96" height="96" role="img" aria-label="Punteggio ${l.r.tot} su 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg>
-    <div class="who"><h2>${esc(l.name)} <span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p>${esc(txt('role', l.role) || '')} · ${esc(l.company)}</p><p>${l.email ? `<a href="mailto:${esc(l.email)}" style="color:var(--blue)">${esc(l.email)}</a>` : ''}${l.phone ? ` · <a href="tel:${esc(tel)}" style="color:var(--blue)">${esc(l.phone)}</a>` : ''}</p>
-    <div class="cta"><a class="b p ${tel ? '' : 'dis'}" href="tel:${esc(tel)}">Chiama</a><a class="b" href="mailto:${esc(l.email)}?subject=${encodeURIComponent('Massini · la tua richiesta')}&body=${encodeURIComponent(mail)}">Scrivi con bozza pronta</a><button class="b" id="cp" type="button">Copia il briefing</button></div></div></div>
-    <p class="brief" style="margin:16px 0 0">${esc(h.brief)}</p>
-    <div class="sla"><span>Priorità <b>${h.grade}</b></span><span>Contatta <b>${h.sla}</b></span><span>Brand <b>${h.offer.brand}</b></span></div></div>
-  <div class="two">
-    <div class="card offer"><h3>Cosa proporre</h3><span class="chip ${h.offer.brand === 'MF TECNO' ? 'mf' : ''}">${h.offer.brand}</span><b>${esc(h.offer.t)}</b><span style="color:var(--mut);font-size:14px">${esc(h.offer.n)}</span></div>
-    <div class="card"><h3>Prossime mosse</h3><ul class="ul">${h.next.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div></div>
-  <div class="card"><h3>MEDDIC · cosa sappiamo e cosa chiedere</h3><div class="rows">${L.map(([k, en, it]) => { const r = h.rows[k], v = l.r.s[k]; return `<div class="row ${v < 70 ? 'weak' : ''}"><div class="L">${k.replace(/\d/, '')}</div><div><div class="n"><span>${en} <small>· ${it}</small></span><span>${v}</span></div><div class="s">${esc(s[k])}</div><div class="meter"><i style="width:${v}%"></i></div>${r.ok ? `<div class="okm">${esc(r.ok)}</div>` : ''}${r.ask.length ? `<ul class="ask">${r.ask.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}</div></div>`; }).join('')}</div></div>
-  <div class="two">
-    <div class="card"><h3>Come parlarci</h3><ul class="ul">${h.angles.map(x => `<li>${esc(x)}</li>`).join('') || '<li>Nessun elemento: parti dalle domande sopra.</li>'}</ul></div>
-    <div class="card"><h3>Rischi</h3><ul class="ul risk">${h.risks.map(x => `<li>${esc(x)}</li>`).join('') || '<li style="color:var(--ok)">Nessun rischio evidente dalle risposte.</li>'}</ul></div></div>
-  <div class="card"><h3>Bozza di risposta</h3><div class="mail">${esc(mail)}</div><h3 style="margin-top:14px">Stato e note (restano nel tuo browser)</h3><div class="row2">Stato <select id="stg">${['Nuovo', 'Contattato', 'Qualificato', 'Proposta inviata', 'Vinto', 'Perso'].map(x => `<option ${st.stage === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div><textarea id="nt" placeholder="Note della chiamata…">${esc(st.note || '')}</textarea></div>`;
-  $('stg').onchange = e => store.set('st_' + l.key, { ...store.get('st_' + l.key), stage: e.target.value });
-  $('nt').oninput = e => store.set('st_' + l.key, { ...store.get('st_' + l.key), note: e.target.value });
-  $('cp').onclick = e => { navigator.clipboard && navigator.clipboard.writeText(h.brief).then(() => { e.target.textContent = 'Copiato'; setTimeout(() => e.target.textContent = 'Copia il briefing', 1400); }); };
+function filtered() {
+  const q = query.trim().toLowerCase();
+  return leads.filter(l => (flt === 'Tutti' || l.r.grade === flt) && (!q || [l.company, l.name, txt('scope', l.scope), txt('prod', l.prod || [])].join(' ').toLowerCase().includes(q))).sort((a, b) => sort === 'prio' ? b.r.tot - a.r.tot : a.h - b.h);
 }
-$('ls').addEventListener('click', e => { const b = e.target.closest('.lead'); if (b) { cur = b.dataset.k; list(); draw(); } });
-$('fl').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { flt = b.dataset.f; list(); } });
-list(); draw();
+function side() {
+  $('fl').innerHTML = ['Tutti', 'Caldo', 'Tiepido', 'Freddo'].map(f => `<button data-f="${f}" class="${f === flt ? 'on' : ''}">${f === 'Tutti' ? f : f.slice(0, -1) + 'i'}</button>`).join('');
+  $('so').innerHTML = [['prio', 'Per priorità'], ['rec', 'Più recenti']].map(([k, t]) => `<button data-s="${k}" class="${k === sort ? 'on' : ''}">${t}</button>`).join('');
+  const f = filtered();
+  $('ls').innerHTML = f.length ? f.map(l => `<button class="lead ${l.key === cur ? 'on' : ''}" data-k="${l.key}" role="option" aria-selected="${l.key === cur}"><span class="av ${l.r.grade}">${ini(l.name)}</span><span><b>${esc(l.company)}${stage(l) === 'Nuovo' ? '<i class="new" title="Da contattare"></i>' : ''}${l.demo ? '' : '<span class="dm">reale</span>'}</b><small>${esc(l.name)} · ${esc(txt('scope', l.scope))}</small><small>${ago(l.h)}</small></span><span class="sc">${l.r.tot}</span></button>`).join('') : '<div class="empty">Nessun lead corrisponde alla ricerca.</div>';
+}
+const ICON = { tel: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>', mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>', cp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>' };
+function radar(s) {
+  const K = L.map(x => x[0]), c = 100, R = 70, pt = (i, v) => { const a = -Math.PI / 2 + i * Math.PI / 3; return [c + Math.cos(a) * R * v / 100, c + Math.sin(a) * R * v / 100]; };
+  const ring = v => K.map((_, i) => pt(i, v).join(',')).join(' ');
+  return `<svg viewBox="0 0 200 200" role="img" aria-label="Profilo MEDDIC">${[25, 50, 75, 100].map(v => `<polygon points="${ring(v)}" fill="none" stroke="rgba(255,255,255,.12)"/>`).join('')}${K.map((_, i) => `<line x1="100" y1="100" x2="${pt(i, 100)[0]}" y2="${pt(i, 100)[1]}" stroke="rgba(255,255,255,.1)"/>`).join('')}<polygon points="${K.map((k, i) => pt(i, Math.max(6, s[k])).join(',')).join(' ')}" fill="rgba(41,151,255,.28)" stroke="#2997ff" stroke-width="2"/>${K.map((k, i) => { const [x, y] = pt(i, 122); return `<text x="${x}" y="${y + 4}" text-anchor="middle" fill="${s[k] < 70 ? '#ffd60a' : '#98989d'}" font-size="11" font-weight="600">${k.replace(/\d/, '')}</text>`; }).join('')}</svg>`;
+}
+function detail() {
+  const l = leads.find(x => x.key === cur) || leads[0], h = hints(l), s = said(l), tel = (l.phone || '').replace(/[^+\d]/g, ''), ss = st(l), cs = ss.ck || {};
+  const first = l.name.split(' ')[0], weakN = h.weak.length;
+  const mail = `Ciao ${first},\n\ngrazie per la richiesta${(l.prod || []).length ? ' su ' + txt('prod', l.prod).toLowerCase() : ''}. ${h.weak.includes('M') || h.weak.includes('I') ? 'Per proporti la soluzione giusta vorrei capire meglio produzione attuale e punti critici: ti va una chiamata di 20 minuti?' : 'Ti propongo una call tecnica per definire i dettagli e, se vuoi, un sopralluogo.'}\n\nTi allego il link alla simulazione 3D relativa.\n\nA presto`;
+  const tabs = [['ov', 'Panoramica'], ['md', 'MEDDIC', weakN], ['sg', 'Strategia'], ['nt', 'Stato e note']];
+  const T = { ov: `
+    <div class="card"><div class="hero"><div class="av ${l.r.grade}" style="width:72px;height:72px;font-size:24px">${ini(l.name)}</div><div class="who"><h2>${esc(l.name)}<span class="pill g-${l.r.grade}">${l.r.grade} · ${l.r.tot}</span></h2><p>${esc(txt('role', l.role) || '')} · ${esc(l.company)}</p><p>${l.email ? `<a href="mailto:${esc(l.email)}">${esc(l.email)}</a>` : ''}${l.phone ? ` · <a href="tel:${esc(tel)}">${esc(l.phone)}</a>` : ''}</p></div></div>
+      <div class="cta"><a class="b p ${tel ? '' : 'dis'}" href="tel:${esc(tel)}">${ICON.tel}Chiama</a><a class="b" href="mailto:${esc(l.email)}?subject=${encodeURIComponent('Massini · la tua richiesta')}&body=${encodeURIComponent(mail)}">${ICON.mail}Scrivi con bozza</a><button class="b" id="cp" type="button">${ICON.cp}<span>Copia briefing</span></button></div></div>
+    <div class="card"><h3>Briefing in 30 secondi</h3><p class="brief">${esc(h.brief)}</p><div class="meta"><span>Contatta <b>${h.sla}</b></span><span>Ricevuta <b>${ago(l.h)}</b></span><span>Fonte <b>${esc(l.src)}</b></span><span>Stato <b>${stage(l)}</b></span></div></div>
+    <div class="two gap"><div class="card"><h3>Profilo MEDDIC</h3><div class="radar">${radar(l.r.s)}</div></div><div class="card offer"><h3>Cosa proporre</h3><span class="chip ${h.offer.brand === 'MF TECNO' ? 'mf' : ''}">${h.offer.brand}</span><b>${esc(h.offer.t)}</b><p>${esc(h.offer.n)}</p><h3 style="margin-top:18px">Prossime mosse</h3><ol class="steps">${h.next.map(x => `<li>${esc(x)}</li>`).join('')}</ol></div></div>`,
+    md: `<div class="card"><h3>Cosa sappiamo e cosa chiedere</h3><p class="hint" style="margin:-6px 0 12px">Spunta le domande man mano che le fai in chiamata.</p><div class="rows">${L.map(([k, en, it]) => { const r = h.rows[k], v = l.r.s[k]; return `<div class="row ${v < 70 ? 'weak' : ''}"><div class="L">${k.replace(/\d/, '')}</div><div class="n"><span>${en} <small>· ${it}</small></span><span>${v}</span></div><div class="s">${esc(s[k])}</div><div><div class="meter"><i style="width:${v}%"></i></div>${r.ok ? `<div class="okm">✓ ${esc(r.ok)}</div>` : ''}<div class="ck">${r.ask.map((x, i) => `<label><input type="checkbox" data-c="${k}${i}" ${cs[k + i] ? 'checked' : ''}><span>${esc(x)}</span></label>`).join('')}</div></div></div>`; }).join('')}</div></div>`,
+    sg: `<div class="two gap"><div class="card"><h3>Come parlarci</h3><ul class="ul">${h.angles.map(x => `<li>${esc(x)}</li>`).join('') || '<li>Parti dalle domande della scheda MEDDIC.</li>'}</ul></div><div class="card"><h3>Rischi</h3><ul class="ul risk">${h.risks.map(x => `<li>${esc(x)}</li>`).join('') || '<li style="color:var(--ok)">Nessun rischio evidente dalle risposte.</li>'}</ul></div></div>
+      <div class="card"><h3>Bozza di risposta</h3><div class="mail">${esc(mail)}</div><div class="cta" style="margin-top:0"><a class="b p" href="mailto:${esc(l.email)}?subject=${encodeURIComponent('Massini · la tua richiesta')}&body=${encodeURIComponent(mail)}">${ICON.mail}Apri nella posta</a><button class="b" id="cm" type="button">${ICON.cp}<span>Copia testo</span></button></div></div>`,
+    nt: `<div class="card"><h3>Stato della trattativa</h3><div class="stage" id="stg">${STAGES.map(x => `<button data-s="${x}" class="${stage(l) === x ? 'on' : ''}">${x}</button>`).join('')}</div><h3>Note</h3><textarea id="nt" placeholder="Note della chiamata, obiezioni, prossimo appuntamento…">${esc(ss.note || '')}</textarea><p class="hint">Salvato automaticamente, solo in questo browser.</p></div>` };
+  $('mn').innerHTML = `<button class="mback" id="mb" type="button">‹ Tutti i lead</button><div class="tabs" id="tb" role="tablist">${tabs.map(([k, t, n]) => `<button data-t="${k}" role="tab" class="${tab === k ? 'on' : ''}" aria-selected="${tab === k}">${t}${n ? `<span class="n" title="Punti da chiarire">${n}</span>` : ''}</button>`).join('')}</div>${T[tab]}`;
+  const copy = (id, txt0, label) => { const b = $(id); b && (b.onclick = () => navigator.clipboard && navigator.clipboard.writeText(txt0).then(() => { const sp = b.querySelector('span'); sp.textContent = 'Copiato ✓'; setTimeout(() => sp.textContent = label, 1400); })); };
+  copy('cp', h.brief, 'Copia briefing'); copy('cm', mail, 'Copia testo');
+  $('mb').onclick = () => document.body.classList.remove('det');
+  $('tb').onclick = e => { const b = e.target.closest('button'); if (b) { tab = b.dataset.t; savePrefs(); detail(); } };
+  const stg = $('stg'); stg && (stg.onclick = e => { const b = e.target.closest('button'); if (b) { patch(l, { stage: b.dataset.s }); kpi(); side(); detail(); } });
+  const nt = $('nt'); nt && (nt.oninput = e => patch(l, { note: e.target.value }));
+  $('mn').querySelectorAll('[data-c]').forEach(c => c.onchange = () => patch(l, { ck: { ...(st(l).ck || {}), [c.dataset.c]: c.checked } }));
+}
+function pipe() {
+  $('mn').innerHTML = `<div class="pipe" id="pp">${STAGES.map(sg => { const cs = filtered().filter(l => stage(l) === sg).sort((a, b) => b.r.tot - a.r.tot); return `<div class="col" data-s="${sg}"><h4><span>${sg}</span><span>${cs.length}</span></h4>${cs.map(l => `<div class="pc ${l.r.grade}" draggable="true" data-k="${l.key}" tabindex="0"><b>${esc(l.company)}</b><small>${esc(l.name)}</small><small>${esc(hints(l).offer.t)}</small><span class="r"><span class="pill g-${l.r.grade}" style="margin:0">${l.r.grade}</span><b>${l.r.tot}</b></span></div>`).join('')}</div>`; }).join('')}</div><p class="hint">Trascina le schede tra le colonne per cambiare stato; clic per aprire la scheda.</p>`;
+  const pp = $('pp'); let drag = null;
+  pp.ondragstart = e => { drag = e.target.closest('.pc'); drag && e.dataTransfer.setData('text', drag.dataset.k); };
+  pp.ondragover = e => { const c = e.target.closest('.col'); if (c) { e.preventDefault(); pp.querySelectorAll('.col').forEach(x => x.classList.toggle('over', x === c)); } };
+  pp.ondrop = e => { e.preventDefault(); const c = e.target.closest('.col'), l = drag && leads.find(x => x.key === drag.dataset.k); if (c && l) { patch(l, { stage: c.dataset.s }); kpi(); side(); pipe(); } };
+  pp.onclick = e => { const c = e.target.closest('.pc'); if (c) { cur = c.dataset.k; view = 'list'; render(); document.body.classList.add('det'); } };
+  pp.onkeydown = e => { if (e.key === 'Enter') pp.onclick(e); };
+}
+function render() {
+  document.querySelectorAll('#vw button').forEach(b => b.classList.toggle('on', b.dataset.v === view));
+  document.getElementById('app').style.gridTemplateColumns = view === 'pipe' ? '1fr' : '';
+  $('side').style.display = view === 'pipe' ? 'none' : '';
+  if (view === 'pipe') { document.body.classList.add('det'); $('mn').style.display = 'block'; pipe(); } else { $('mn').style.display = ''; detail(); side(); }
+  savePrefs();
+}
+$('ls').onclick = e => { const b = e.target.closest('.lead'); if (b) { cur = b.dataset.k; side(); detail(); document.body.classList.add('det'); scrollTo(0, 0); } };
+$('fl').onclick = e => { const b = e.target.closest('button'); if (b) { flt = b.dataset.f; side(); } };
+$('so').onclick = e => { const b = e.target.closest('button'); if (b) { sort = b.dataset.s; side(); } };
+$('q').oninput = e => { query = e.target.value; side(); };
+$('vw').onclick = e => { const b = e.target.closest('button'); if (b) { view = b.dataset.v; if (view === 'pipe') document.body.classList.add('det'); else document.body.classList.remove('det'); render(); } };
+addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') { e.preventDefault(); $('q').focus(); return; }
+  if (view !== 'list' || ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName) || !['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+  const f = filtered(), i = f.findIndex(l => l.key === cur), n = f[Math.max(0, Math.min(f.length - 1, i + (e.key === 'ArrowDown' ? 1 : -1)))];
+  if (n) { e.preventDefault(); cur = n.key; side(); detail(); $('ls').querySelector('.on')?.scrollIntoView({ block: 'nearest' }); }
+});
+kpi(); render();
 </script>
 </body>
 </html>

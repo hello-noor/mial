@@ -24,7 +24,7 @@ window.MEDDIC = (() => {
   function score(l) {
     const s = { M: l.cap ? (l.cap >= 10 ? 100 : l.cap >= 3 ? 70 : 40) : 0, E: DEC[l.decide] ?? 0, D1: Math.min(100, (l.criteria || []).length * 50), D2: Math.round(((TL[l.timeline] ?? 0) + (BG[l.budget] ?? 0)) / 2), I: (l.pains || []).length ? Math.min(100, 50 + l.pains.length * 25) : 0, C: ROLE[l.role] ?? 30 };
     const tot = Math.round(Object.values(s).reduce((a, b) => a + b, 0) / 6);
-    return { s, tot, grade: tot >= 70 ? 'Caldo' : tot >= 45 ? 'Tiepido' : 'Freddo' };
+    return { s, tot, grade: tot >= 85 ? 'Caldo' : tot >= 70 ? 'Tiepido' : 'Freddo' };
   }
   const NEXT = { M: 'Quantifica l’obiettivo: chiedi produzione oraria, prodotto e margini attuali.', E: 'Individua chi firma: proponi una call con la direzione.', D1: 'Chiarisci i criteri di scelta e come verranno confrontate le offerte.', D2: 'Definisci tempi e budget: proponi un sopralluogo con una data.', I: 'Fai emergere il problema: chiedi il costo di fermi e colli di bottiglia.', C: 'Rafforza il referente: dagli materiale per convincere i colleghi.' };
   const next = l => NEXT[Object.entries(score(l).s).sort((a, b) => a[1] - b[1])[0][0]];
