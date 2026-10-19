@@ -232,7 +232,7 @@ const VIEWS = [
   { n: 'Dosaggio', b: 'mial', f: 'dos', sec: 'dos', c: [1.2, 5.2, 1.6], dist: 22, az: -26, el: 14, t: 'Sezione: dosaggio e miscela', d: 'La bilancia di dosaggio pesa gli ingredienti, il miscelatore orizzontale monoalbero li omogeneizza.' },
   { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: raffreddamento', d: 'Il raffreddatore a controcorrente raffredda il pellet con aria. Impianti da 1 a 60 t/h, anche modulari.' },
   { n: 'Pet food', b: 'mial', f: 'pet', sec: 'hall', c: [16, 2.5, -10.5], dist: 40, az: -22, el: 26, t: 'Sezione: la linea pet food', d: 'Svuotamento big bag, molino a martelli per pet food, dosaggio, miscelazione e vagliatura: il prodotto sale nel trasportatore tubolare e arriva alla pesatrice multitesta.' },
-  { n: 'Insacco', b: 'mf', f: 'ins', sec: 'hall', c: [11, 3, -1], dist: 24, az: -26, el: 28, t: 'Sezione: pesatura e insacco', d: 'Pesatrice multitesta e insaccatrice a bocca aperta riempiono i sacchi, che passano dal controllo peso.' },
+  { n: 'Insacco', b: 'mf', f: 'ins', sec: 'hall', c: [11, 3, -1], dist: 24, az: -26, el: 28, t: 'Sezione: pesatura e insacco', d: 'Pesatrice multitesta e insaccatrice a bocca aperta riempiono i sacchi, che passano dal metal detector.' },
   { n: 'Pallet', b: 'mf', f: 'pal', sec: 'hall', c: [21, 2.5, -1], dist: 28, az: -24, el: 30, t: 'Sezione: pallettizzazione e fasciatura', d: 'Pallettizzatore cartesiano e avvolgitore pallet completano il pallet, pronto per la spedizione.' },
   { n: 'Cartoni', b: 'mf', f: 'car', sec: 'hall', c: [19, 1.4, -4.5], dist: 30, az: -16, el: 34, t: 'Sezione: incartonamento', d: 'Cartonatrice: i prodotti confezionati entrano nelle scatole, pronte per essere pallettizzate.' },
   { n: 'Spedizione', b: 'mf', f: 'spe', sec: 'hall', c: [28, 2, 3], dist: 32, az: -30, el: 22, t: 'Dal pallet al camion', d: 'Il carrello elevatore preleva il pallet a fine linea, esce dal portone e carica il camion.' },
@@ -873,22 +873,18 @@ const INFO = { // label text -> [brand, page, description]; pages and wording fo
   'Bilancia di Dosaggio e Miscelatore': ['MIAL', MIAL + 'bilance-di-dosaggio/', 'Pesa gli ingredienti e li miscela nel mangimificio dell’azienda agricola.'],
   'Silos MIAL': ['MIAL', MIAL + 'silos-sistemi/', 'Stoccaggio delle materie prime a fianco dell’impianto.'],
   'Linee di alimentazione': ['MIAL', MIAL + 'zootecnia/', 'Portano il mangime alle mangiatoie. Soluzioni MIAL per zootecnia, dalla suinicoltura all’avicoltura.'],
-  'Pesatrice multitesta': ['MF TECNO', MF + 'pesatrici-elettroniche/', 'Pesatrici elettroniche a peso netto o a peso lordo, secondo le esigenze di produzione.'],
+  'Pesatrice multitesta': ['MF TECNO', MF + 'pesatrice-multitesta/', 'Pesatrice elettronica a teste multiple, ad alta velocità e precisione. Ideale per prodotti a media e alta scorrevolezza.'],
   'Insaccatrice a Bocca Aperta MF TECNO': ['MF TECNO', MF + 'insaccatrici/', 'Insaccatrici automatiche e semiautomatiche per prodotti sfusi di ogni natura e formato in sacchi a bocca aperta.'],
-  'Controllo peso e metal detector': ['MF TECNO', MF + 'impianti-completi-di-confezionamento/', 'Ogni sacco viene pesato e controllato: i non conformi sono scartati.'],
-  'Pallettizzatore MF PCA SMART PRO': ['MF TECNO', MF + 'pallettizzatore-mf-pca-smart/', 'Pallettizzatore cartesiano per sacchi, scatole o fardelli, per medie e alte produzioni e spazi relativamente ristretti.'],
+  'Metal detector': ['MF TECNO', MF + 'movimentazione-pallet-e-accessori/', 'Fra gli accessori MF TECNO a completamento della linea: il sacco viene ispezionato e sottoposto ai check di idoneità.'],
+  'Pallettizzatore MF PCA SMART PRO': ['MF TECNO', MF + 'pallettizzatore-mf-pca-smart-pro/', 'Pallettizzatore cartesiano per sacchi, scatole o fardelli, per alte produzioni e spazi ristretti.'],
   'Avvolgitore Pallet MF WRAP 35': ['MF TECNO', MF + 'avvolgipallet-mf-wrap-35/', 'Avvolgitore automatico a piattaforma rotante per il carico pallettizzato.'],
-  'Magazzino pallet vuoti': ['MF TECNO', MF + 'movimentazione-pallet-e-accessori/', 'Movimentazione pallet e accessori per completare il processo di insacco.'],
-  'Cartonatrice MF CUBE': ['MF TECNO', MF + 'macchine-cartonatrici/', 'Formatrici automatiche per il riempimento delle scatole di cartone.'],
-  'Carrello elevatore': ['MF TECNO', MF + 'movimentazione-pallet-e-accessori/', 'Preleva il pallet a fine linea e lo porta al camion.'],
-  'Camion': ['MF TECNO', MF + 'impianti-completi-di-confezionamento/', 'Linee complete di confezionamento, dal sacco al pallet pronto alla spedizione.'],
+  'Magazzino pallet vuoti': ['MF TECNO', MF + 'pallettizzatore-mf-pca-smart/', 'Nella versione automatica del pallettizzatore l’operatore deve solo caricare il magazzino dei pallet vuoti.'],
+  'Cartonatrice MF CUBE': ['MF TECNO', MF + 'macchine-cartonatrici/', 'Forma, riempie e chiude scatole americane.'],
   'Trasportatore Tubolare a Catena CLEAN200': ['MIAL', MIAL + 'trasportatore-tubolare-catena-standard-clean/', 'Versione Clean del trasportatore tubolare: pensata per ridurre i residui e semplificare la pulizia.'],
   'Tramoggia di carico': ['MIAL', MIAL + 'trasporto-tubolare-a-catena/', 'Qui il prodotto entra nel tubo.'],
   'Gruppo di trascinamento': ['MIAL', MIAL + 'trasporto-tubolare-a-catena/', 'Il motore che muove la catena con i dischi.'],
   'Silo di arrivo': ['MIAL', MIAL + 'silos-sistemi/', 'Qui il prodotto viene scaricato dal tubo.'],
   'Insaccatrice a Bocca Aperta': ['MF TECNO', MF + 'insaccatrici/', 'Insaccatrici automatiche e semiautomatiche per prodotti sfusi di ogni natura e formato in sacchi a bocca aperta.'],
-  'Scarto': ['MF TECNO', MF + 'impianti-completi-di-confezionamento/', 'I sacchi non conformi escono dalla linea in questo contenitore.'],
-  'Carrello': ['MF TECNO', MF + 'movimentazione-pallet-e-accessori/', 'Preleva il pallet fasciato a fine linea.'],
 };
 const info = { el: $('#info'), open: false };
 function showInfo(t) {
@@ -917,12 +913,12 @@ const beats = [
     [[3, 15.2, -1], 'Impianto Produzione Mangime 5 Ton/h', 'man', 1, 'mial'], [[2.8, 3.6, 3.6], 'Molino a Martelli FARMY', 'man', 0, 'mial'],
     [[4.2, 5.6, -10.5], 'Svuotamento Big Bag', 'pet', 1, 'mial'], [[11.5, 3.6, -10.5], 'Molino a Martelli PET-THOR', 'pet', 0, 'mial'], [[16.5, 6.3, -10.5], 'Bilancia di Dosaggio', 'pet', 0, 'mial'], [[16.5, 2.6, -10.5], 'Miscelatore Orizzontale Monoalbero', 'pet', 0, 'mial'], [[24, 3.0, -10.5], 'Vaglio vibrante', 'pet', 0, 'mial'], [[19, 7.0, -10.5], 'Trasportatore Tubolare a Catena · al confezionamento', 'pet', 0, 'mial'],
     [[50, 6, -8], 'Impianto Produzione Mangime 1 Ton/h', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Molino a Martelli FARMY', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Bilancia di Dosaggio e Miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silos MIAL', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
-    [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a Bocca Aperta MF TECNO', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
+    [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a Bocca Aperta MF TECNO', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Metal detector', 'ins', 0, 'mf'],
     [[20.6, 5.5, -1], 'Pallettizzatore MF PCA SMART PRO', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore Pallet MF WRAP 35', 'pal', 0, 'mf'], [[17.2, 1.7, 0], 'Magazzino pallet vuoti', 'pal', 0, 'mf'],
     [[19.4, 3.9, -4.8], 'Cartonatrice MF CUBE', 'car', 1, 'mf'],
     [[28.8, 3.4, 1.2], 'Carrello elevatore', 'spe', 1, 'mf'], [[28.2, 3.7, 12], 'Camion', 'spe', 0, 'mf']]),
   Bt(mConv, V3(3.5, 4.2, 0), 26, -24, 11, [[[0, 5.6, 0], 'Trasportatore Tubolare a Catena CLEAN200'], [[-2.3, 3.4, 0], 'Tramoggia di carico'], [[5, 7.6, -.8], 'Gruppo di trascinamento'], [[7.5, 5.4, 0], 'Silo di arrivo']]),
-  Bt(mPack, V3(8.6, 2.2, 0), 36, -22, 17, [[[.2, 7.0, 0], 'Insaccatrice a Bocca Aperta'], [[4.2, 2.4, 0], 'Controllo peso e metal detector'], [[5.6, 1.6, 1.05], 'Scarto'], [[12.2, 5.1, 0], 'Pallettizzatore MF PCA SMART PRO'], [[16.8, 3.2, 0], 'Avvolgitore Pallet MF WRAP 35'], [[22.6, 1.8, 0], 'Carrello']]),
+  Bt(mPack, V3(8.6, 2.2, 0), 36, -22, 17, [[[.2, 7.0, 0], 'Insaccatrice a Bocca Aperta'], [[4.2, 2.4, 0], 'Metal detector'], [[5.6, 1.6, 1.05], 'Scarto'], [[12.2, 5.1, 0], 'Pallettizzatore MF PCA SMART PRO'], [[16.8, 3.2, 0], 'Avvolgitore Pallet MF WRAP 35'], [[22.6, 1.8, 0], 'Carrello']]),
 ];
 beats.forEach((b, i) => { (b.m.beats ||= []).push(i); });
 
@@ -1038,7 +1034,7 @@ function pkUI() {
   $('#pkD').textContent = fmt(pk.done); $('#pkX').textContent = fmt(pk.rej);
   $('#pkB').textContent = `${on} / ${cap} · ${fmt(cap * f.kg)} kg`; $('#pkM').style.width = on / cap * 100 + '%';
   const over = pk.rate > sat + .5;
-  $('#pkS').textContent = !pk.run ? 'In pausa.' : over ? `Oltre circa ${fmt(sat)} sacchi/min il pallettizzatore non regge: i sacchi si accodano sul nastro.` : pk.blocked ? 'Nastro pieno: l’insaccatrice aspetta.' : `Ogni sacco passa dal controllo peso e dal metal detector: i non conformi finiscono nel contenitore degli scarti (${fmt(pk.rej)} finora).`;
+  $('#pkS').textContent = !pk.run ? 'In pausa.' : over ? `Oltre circa ${fmt(sat)} sacchi/min il pallettizzatore non regge: i sacchi si accodano sul nastro.` : pk.blocked ? 'Nastro pieno: l’insaccatrice aspetta.' : `Ogni sacco passa dal metal detector: i non conformi finiscono nel contenitore degli scarti (${fmt(pk.rej)} finora).`;
   $('#pkS').className = 'status ' + (over ? 'warn' : '');
 }
 $('#pkR').addEventListener('input', e => { pk.rate = +e.target.value; pkUI(); });

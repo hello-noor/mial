@@ -39,9 +39,9 @@ a{color:inherit;text-decoration:none}img{display:block;max-width:100%}figure{mar
 #labels{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
 .tag{position:absolute;left:0;top:0;white-space:nowrap;font:400 12px/1 var(--font);letter-spacing:-.12px;color:#fff;padding:7px 11px 7px 22px;border-radius:var(--pill);background:rgba(29,29,31,.72);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);opacity:0;transition:opacity .5s;will-change:transform}
 .tag:before{content:"";position:absolute;left:9px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:var(--primary-dark)}
-.tag.on{opacity:1;pointer-events:auto;cursor:pointer;transition:opacity .5s,background .2s}
-.tag.on:hover,.tag.on:focus-visible{background:var(--primary)}
-.tag:after{content:"›";margin-left:7px;opacity:.7}
+.tag.on{opacity:1;transition:opacity .5s,background .2s}.tag.on[role=button]{pointer-events:auto;cursor:pointer}
+.tag.on[role=button]:hover,.tag.on[role=button]:focus-visible{background:var(--primary)}
+.tag[role=button]:after{content:"›";margin-left:7px;opacity:.7}
 #impianti,.hero{touch-action:pan-y;user-select:none;-webkit-user-select:none}#impianti .card{user-select:text;-webkit-user-select:text}
 #impianti.drag{cursor:grabbing}
 #info{position:fixed;z-index:35;right:max(16px,3vw);bottom:max(16px,5vh);width:min(340px,calc(100vw - 32px));background:rgba(29,29,31,.86);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border:1px solid rgba(255,255,255,.12);border-radius:var(--r-lg);padding:22px 22px 20px;color:#fff}
@@ -263,7 +263,7 @@ footer .wrap{display:flex;gap:30px;justify-content:space-between;flex-wrap:wrap;
   <div class="stick"><div class="card">
     <p class="eyebrow">MF TECNO · Fine linea</p>
     <h2>Configura la linea di confezionamento.</h2>
-    <p class="lead">Insacco, controllo peso, pallettizzatore, fasciatrice e carrello. <strong>Cambia formato, strati e cadenza</strong> e guarda dove la linea arriva al limite.</p>
+    <p class="lead">Insacco, metal detector, pallettizzatore, fasciatrice e carrello. <strong>Cambia formato, strati e cadenza</strong> e guarda dove la linea arriva al limite.</p>
     <div class="ctl">
       <label class="row">Cadenza<input id="pkR" type="range" min="4" max="32" step="1" value="12"><output id="pkRo">12 sacchi/min</output></label>
       <div class="seg" id="pkSp" aria-label="Velocità della simulazione"><button data-x="1">1×</button><button data-x="5">5×</button><button class="on" data-x="20">20×</button></div>
