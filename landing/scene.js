@@ -786,18 +786,18 @@ const V0 = VIEWS[0];
 const beats = [
   Bt(mPlant, V3(...V0.c), V0.dist, V0.az, V0.el),
   Bt(mPlant, V3(...V0.c), V0.dist, V0.az, V0.el, [
-    [[-17, 16.6, 5], 'Elevatore a tazze', 'ric', 1, 'mial'], [[-17, -.6, 8.5], 'Fossa di scarico', 'ric', 0, 'mial'],
-    [[-6.6, 13.4, -1], 'Silos di stoccaggio', 'sto', 1, 'mial'], [[-9, 6, -4.6], 'Prodotto e livello', 'sto', 0, 'mial'],
-    [[-7, 15, -1], 'Trasportatore tubolare con dischi', 'tra', 1, 'mial'], [[-9, 13.6, -1], 'Deviatore verso il silo', 'tra', 0, 'mial'], [[-17, 16.6, 5], 'Elevatore a tazze', 'tra', 0, 'mial'],
-        [[-1.2, 3.4, 3.8], 'Mulino a martelli', 'dos', 1, 'mial'], [[2.6, 6.3, -1], 'Miscelatore orizzontale', 'dos', 0, 'mial'], [[3, 10.9, -1], 'Scala di dosaggio', 'dos', 0, 'mial'],
-    [[3, 15, -1], 'Pressa per pellet', 'pro', 1, 'mial'], [[6, 7.4, 1.9], 'Raffreddatore a controcorrente', 'pro', 0, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
-    [[50, 6, -8], 'Mangimificio in allevamento', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Mulino a martelli', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Scala di dosaggio e miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silo', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
-    [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a bocca aperta', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
-    [[20.6, 5.5, -1], 'Pallettizzatore cartesiano', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore pallet', 'pal', 0, 'mf'], [[17.2, 1.7, 0], 'Magazzino pallet vuoti', 'pal', 0, 'mf'],
-    [[19.4, 3.9, -4.8], 'Cartonatrice', 'car', 1, 'mf'],
+    [[-17, 16.6, 5], 'Elevatore a Tazze Basculanti', 'ric', 1, 'mial'], [[-17, -.6, 8.5], 'Fossa di scarico · Trasportatore a Coclea a Cassa Aperta', 'ric', 0, 'mial'],
+    [[-6.6, 13.4, -1], 'Silos MIAL · Sistemi di Stoccaggio', 'sto', 1, 'mial'], [[-9, 6, -4.6], 'Prodotto e livello', 'sto', 0, 'mial'],
+    [[-7, 15, -1], 'Trasportatore Tubolare a Catena', 'tra', 1, 'mial'], [[-9, 13.6, -1], 'Deviatore sui silos', 'tra', 0, 'mial'], [[-17, 16.6, 5], 'Elevatore a Tazze Basculanti', 'tra', 0, 'mial'],
+        [[-1.2, 3.4, 3.8], 'Molino a Martelli FARMY', 'dos', 1, 'mial'], [[2.6, 6.3, -1], 'Miscelatore Orizzontale Monoalbero', 'dos', 0, 'mial'], [[3, 10.9, -1], 'Bilancia di Dosaggio', 'dos', 0, 'mial'],
+    [[3, 15, -1], 'Pressa per pellet', 'pro', 1, 'mial'], [[6, 7.4, 1.9], 'Raffreddatore EOLO a controcorrente', 'pro', 0, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
+    [[50, 6, -8], 'Impianto Produzione Mangime 1 Ton/h', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Molino a Martelli FARMY', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Bilancia di Dosaggio e Miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silos MIAL', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
+    [[8.6, 7.3, -1], 'Pesatrice multitesta', 'ins', 1, 'mf'], [[8.6, 2.5, -1], 'Insaccatrice a Bocca Aperta MF TECNO', 'ins', 0, 'mf'], [[12.6, 2.6, -1], 'Controllo peso e metal detector', 'ins', 0, 'mf'],
+    [[20.6, 5.5, -1], 'Pallettizzatore MF PCA SMART PRO', 'pal', 1, 'mf'], [[25.2, 3.5, -1], 'Avvolgitore Pallet MF WRAP 35', 'pal', 0, 'mf'], [[17.2, 1.7, 0], 'Magazzino pallet vuoti', 'pal', 0, 'mf'],
+    [[19.4, 3.9, -4.8], 'Cartonatrice MF CUBE', 'car', 1, 'mf'],
     [[28.8, 3.4, 1.2], 'Carrello elevatore', 'spe', 1, 'mf'], [[28.2, 3.7, 12], 'Camion', 'spe', 0, 'mf']]),
-  Bt(mConv, V3(3.5, 4.2, 0), 26, -24, 11, [[[0, 5.6, 0], 'Catena con dischi'], [[-2.3, 3.4, 0], 'Tramoggia di carico'], [[5, 7.6, -.8], 'Gruppo di trascinamento'], [[7.5, 5.4, 0], 'Silo di arrivo']]),
-  Bt(mPack, V3(8.6, 2.2, 0), 36, -22, 17, [[[.2, 7.0, 0], 'Insaccatrice'], [[4.2, 2.4, 0], 'Controllo peso e metal detector'], [[5.6, 1.6, 1.05], 'Scarto'], [[12.2, 5.1, 0], 'Pallettizzatore'], [[16.8, 3.2, 0], 'Fasciatrice'], [[22.6, 1.8, 0], 'Carrello']]),
+  Bt(mConv, V3(3.5, 4.2, 0), 26, -24, 11, [[[0, 5.6, 0], 'Trasportatore Tubolare a Catena CLEAN200'], [[-2.3, 3.4, 0], 'Tramoggia di carico'], [[5, 7.6, -.8], 'Gruppo di trascinamento'], [[7.5, 5.4, 0], 'Silo di arrivo']]),
+  Bt(mPack, V3(8.6, 2.2, 0), 36, -22, 17, [[[.2, 7.0, 0], 'Insaccatrice a Bocca Aperta'], [[4.2, 2.4, 0], 'Controllo peso e metal detector'], [[5.6, 1.6, 1.05], 'Scarto'], [[12.2, 5.1, 0], 'Pallettizzatore MF PCA SMART PRO'], [[16.8, 3.2, 0], 'Avvolgitore Pallet MF WRAP 35'], [[22.6, 1.8, 0], 'Carrello']]),
 ];
 beats.forEach((b, i) => { (b.m.beats ||= []).push(i); });
 
