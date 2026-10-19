@@ -1,7 +1,15 @@
 /* MEDDIC: domande del form, punteggio e prossima mossa. Usato da index.html (form) e qualifica.html (area commerciale). */
 window.MEDDIC = (() => {
+  const PROD = {
+    imp: [['m1', 'Impianto mangime 1 Ton/h'], ['m3', 'Impianto mangime 3 Ton/h'], ['m5', 'Impianto mangime 5 Ton/h'], ['pf', 'Impianto Pet Food'], ['silo', 'Silos'], ['mol', 'Molino a martelli'], ['mis', 'Miscelatori'], ['bil', 'Bilance di dosaggio'], ['raf', 'Raffreddatori'], ['pre', 'Prepulitore vibrante e vagli'], ['bb', 'Svuotamento big bag']],
+    tra: [['tub', 'Trasportatore tubolare a catena'], ['taz', 'Elevatore a tazze'], ['tazb', 'Elevatore a tazze basculanti'], ['red', 'Trasportatore Redler'], ['pal', 'Trasportatore a palette'], ['cot', 'Coclea tubolare'], ['coa', 'Coclea a cassa aperta'], ['spi', 'Spirale flessibile'], ['pne', 'Trasportatore pneumatico'], ['ban', 'Bandebord'], ['est', 'Estrattore a coclea']],
+    conf: [['ins', 'Insaccatrice a bocca aperta'], ['vff', 'Confezionatrice verticale VFFS'], ['ffs', 'Formatrice tubolare FFS'], ['pall', 'Pallettizzatore'], ['avv', 'Avvolgitore pallet'], ['car', 'Cartonatrice'], ['imc', 'Impianto completo di confezionamento']],
+    ass: [['ric', 'Ricambi'], ['man', 'Manutenzione programmata'], ['rev', 'Revisione o ammodernamento'], ['urg', 'Assistenza urgente']],
+  };
   const Q = [
     { k: 'scope', t: 'Cosa ti serve?', type: 'one', o: [['imp', 'Impianto completo', 'Mangimificio o pet food, dal silo al pallet'], ['tra', 'Trasporto di prodotti sfusi', 'Catene tubolari, elevatori, coclee'], ['conf', 'Fine linea e confezionamento', 'Insacco, pallet, fasciatura'], ['ass', 'Assistenza e ricambi', 'Su impianti esistenti']] },
+    { k: 'mat', t: 'Che prodotto lavori?', sub: 'Anche più di uno', type: 'multi', max: 3, o: [['mang', 'Mangimi per animali'], ['pet', 'Pet food'], ['cer', 'Cereali e farine'], ['riso', 'Riso'], ['sem', 'Semi'], ['zuc', 'Zucchero'], ['fer', 'Fertilizzanti'], ['chim', 'Chimico e alimentare']] },
+    { k: 'prod', t: 'Quali macchine ti interessano?', sub: 'Scegline fino a 4', type: 'multi', max: 4, by: 'scope', map: PROD },
     { k: 'pains', t: 'Cosa non funziona oggi?', sub: 'Scegline fino a 3', type: 'multi', max: 3, o: [['old', 'Impianto datato'], ['bott', 'Colli di bottiglia'], ['stop', 'Troppi fermi'], ['man', 'Troppa manodopera'], ['qual', 'Qualità e contaminazioni'], ['new', 'Parto da zero']] },
     { k: 'cap', t: 'Quanto vuoi produrre?', sub: 'Muovi il cursore', type: 'range', min: 1, max: 60, def: 10, unit: 't/h' },
     { t: 'Chi sei nel progetto?', type: 'group', f: [{ k: 'role', l: 'Il tuo ruolo', o: [['dir', 'Titolare o direzione'], ['tec', 'Produzione o tecnico'], ['acq', 'Acquisti'], ['con', 'Consulente']] }, { k: 'decide', l: 'Chi decide?', o: [['io', 'Io'], ['con', 'Io con altri'], ['prop', 'Devo proporlo']] }] },
@@ -9,7 +17,7 @@ window.MEDDIC = (() => {
     { t: 'Quando si parte?', type: 'group', f: [{ k: 'timeline', l: 'Tempi', o: [['<3', 'Entro 3 mesi'], ['3-6', '3–6 mesi'], ['6-12', '6–12 mesi'], ['val', 'Sto valutando']] }, { k: 'budget', l: 'Budget', o: [['si', 'Approvato'], ['def', 'In definizione'], ['no', 'Non ancora']] }] },
     { t: 'Ultimo passo: come ti raggiungiamo?', type: 'contact' },
   ];
-  const label = {}; Q.forEach(q => (q.o ? [q] : q.f || []).forEach(x => x.o && x.o.forEach(o => (label[x.k || q.k] ||= {})[o[0]] = o[1])));
+  const label = { prod: Object.fromEntries(Object.values(PROD).flat()) }; Q.forEach(q => (q.o ? [q] : q.f || []).forEach(x => x.o && x.o.forEach(o => (label[x.k || q.k] ||= {})[o[0]] = o[1])));
   const txt = (k, v) => Array.isArray(v) ? v.map(x => label[k][x]).join(', ') : (label[k] && label[k][v]) || v;
   const L = [['M', 'Metrics', 'Obiettivo misurabile'], ['E', 'Economic buyer', 'Chi decide'], ['D1', 'Decision criteria', 'Criteri di scelta'], ['D2', 'Decision process', 'Tempi e budget'], ['I', 'Identify pain', 'Problema da risolvere'], ['C', 'Champion', 'Sponsor interno']];
   const TL = { '<3': 100, '3-6': 75, '6-12': 45, val: 15 }, BG = { si: 100, def: 60, no: 20 }, DEC = { io: 100, con: 65, prop: 30 }, ROLE = { dir: 100, tec: 85, acq: 60, con: 50 };
@@ -21,5 +29,6 @@ window.MEDDIC = (() => {
   const NEXT = { M: 'Quantifica l’obiettivo: chiedi produzione oraria, prodotto e margini attuali.', E: 'Individua chi firma: proponi una call con la direzione.', D1: 'Chiarisci i criteri di scelta e come verranno confrontate le offerte.', D2: 'Definisci tempi e budget: proponi un sopralluogo con una data.', I: 'Fai emergere il problema: chiedi il costo di fermi e colli di bottiglia.', C: 'Rafforza il referente: dagli materiale per convincere i colleghi.' };
   const next = l => NEXT[Object.entries(score(l).s).sort((a, b) => a[1] - b[1])[0][0]];
   const said = l => ({ M: l.cap ? `${l.cap} t/h (${l.cap * 16} t al giorno)` : '—', E: txt('decide', l.decide) || '—', D1: (l.criteria || []).length ? txt('criteria', l.criteria) : '—', D2: `${txt('timeline', l.timeline) || '—'} · budget ${(txt('budget', l.budget) || '—').toLowerCase()}`, I: (l.pains || []).length ? txt('pains', l.pains) : '—', C: txt('role', l.role) || '—' });
-  return { Q, L, score, next, said, txt };
+  const opts = (q, a) => q.by ? q.map[a[q.by]] || [] : q.o;
+  return { Q, L, opts, score, next, said, txt };
 })();

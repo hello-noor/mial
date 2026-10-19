@@ -26,7 +26,7 @@ h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:
 .mine{font-size:11px;color:var(--blue);margin-left:6px}
 .det{background:var(--t1);border-radius:18px;padding:22px}
 .head{display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
-.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head p{margin:2px 0 0;color:var(--mut);font-size:14px}
+.head h2{margin:0;font-size:24px;font-weight:600;letter-spacing:0}.head p{margin:2px 0 0;color:var(--mut);font-size:14px}.head .prods{color:#e8e8ed;margin:6px 0}.head .prods b{font-weight:600}
 .rows{display:grid;gap:10px;margin:6px 0 18px}
 .row{display:grid;grid-template-columns:44px 170px 1fr;gap:6px 14px;align-items:center;padding:12px 14px;background:var(--t2);border-radius:12px}
 .row .L{width:36px;height:36px;border-radius:10px;background:rgba(41,151,255,.16);color:var(--blue);display:grid;place-items:center;font-weight:600;font-size:14px}
@@ -53,10 +53,10 @@ h1{font-size:34px;line-height:1.1;margin:0 0 6px;font-weight:600;letter-spacing:
 <script>
 const { L, score, next, said } = MEDDIC;
 const demo = [
-  { name: 'Marco B.', company: 'Agrimix Demo', scope: 'imp', pains: ['old', 'bott', 'stop'], cap: 25, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si', demo: 1 },
-  { name: 'Elena R.', company: 'Pet Nutri Demo', scope: 'conf', pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def', demo: 1 },
-  { name: 'Paolo S.', company: 'Riseria Demo', scope: 'tra', pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no', demo: 1 },
-  { name: 'Giulia T.', company: 'Cereali Demo', scope: 'ass', pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no', demo: 1 },
+  { name: 'Marco B.', company: 'Agrimix Demo', scope: 'imp', prod: ['m5', 'silo', 'raf'], mat: ['mang'], pains: ['old', 'bott', 'stop'], cap: 25, role: 'dir', decide: 'io', criteria: ['aff', 'temp'], timeline: '<3', budget: 'si', demo: 1 },
+  { name: 'Elena R.', company: 'Pet Nutri Demo', scope: 'conf', prod: ['ins', 'pall', 'avv'], mat: ['pet'], pains: ['man', 'qual'], cap: 8, role: 'tec', decide: 'con', criteria: ['ig', 'en'], timeline: '3-6', budget: 'def', demo: 1 },
+  { name: 'Paolo S.', company: 'Riseria Demo', scope: 'tra', prod: ['tub', 'taz'], mat: ['riso', 'cer'], pains: ['old'], cap: 4, role: 'acq', decide: 'prop', criteria: ['prez'], timeline: '6-12', budget: 'no', demo: 1 },
+  { name: 'Giulia T.', company: 'Cereali Demo', scope: 'ass', prod: ['ric'], mat: ['sem'], pains: [], cap: 1, role: 'con', decide: 'prop', criteria: ['prez'], timeline: 'val', budget: 'no', demo: 1 },
 ];
 let mine = []; try { mine = JSON.parse(localStorage.getItem('massini_leads') || '[]').reverse(); } catch (_) {}
 const leads = [...mine, ...demo].map(l => ({ ...l, r: score(l) })), esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -66,7 +66,7 @@ $('st').innerHTML = [['Lead', leads.length], ['Caldi', leads.filter(l => l.r.gra
 function draw() {
   $('ls').innerHTML = leads.map((l, i) => `<button class="lead ${i === cur ? 'on' : ''}" data-i="${i}" role="option" aria-selected="${i === cur}"><b>${esc(l.company)}${l.demo ? '' : '<span class="mine">da questo browser</span>'}</b><small>${esc(l.name)} · ${esc(MEDDIC.txt('scope', l.scope))}</small><span class="sc">${l.r.tot}</span></button>`).join('');
   const l = leads[cur], s = said(l), C = 2 * Math.PI * 40;
-  $('dt').innerHTML = `<div class="head"><svg viewBox="0 0 100 100" width="104" height="104"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg><div><h2>${esc(l.company)}<span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p>${esc(l.name)}${l.email ? ' · ' + esc(l.email) : ''}${l.phone ? ' · ' + esc(l.phone) : ''}</p></div></div>
+  $('dt').innerHTML = `<div class="head"><svg viewBox="0 0 100 100" width="104" height="104"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="9"/><circle cx="50" cy="50" r="40" fill="none" stroke="${l.r.grade === 'Caldo' ? '#30d158' : l.r.grade === 'Tiepido' ? '#ffd60a' : '#8e8e93'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - l.r.tot / 100)}" transform="rotate(-90 50 50)"/><text x="50" y="58" text-anchor="middle" fill="#fff" font-size="26" font-weight="600">${l.r.tot}</text></svg><div><h2>${esc(l.company)}<span class="pill g-${l.r.grade}">${l.r.grade}</span></h2><p class="prods">${esc(MEDDIC.txt('scope', l.scope))}: <b>${esc(MEDDIC.txt('prod', l.prod || []) || '—')}</b><br>Prodotto lavorato: <b>${esc(MEDDIC.txt('mat', l.mat || []) || '—')}</b></p><p>${esc(l.name)}${l.email ? ' · ' + esc(l.email) : ''}${l.phone ? ' · ' + esc(l.phone) : ''}</p></div></div>
   <div class="rows">${L.map(([k, en, it]) => `<div class="row"><div class="L">${k.replace('1', '').replace('2', '')}</div><div class="n">${en}<small>${it}</small></div><div class="s">${esc(s[k])}</div><div class="meter"><i style="width:${l.r.s[k]}%"></i></div></div>`).join('')}</div>
   <div class="next"><small>Prossima mossa</small>${next(l)}</div>`;
 }
