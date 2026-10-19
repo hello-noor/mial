@@ -214,7 +214,7 @@ const FUNCS = {
   sto: { b: 'mial', boxes: [[-6.6, 6.4, -1, 13.8, 13.2, 12]] },
   tra: { b: 'mial', boxes: [[-7, 14.2, -1, 21, 1.6, 1.7], [-17, 14.2, 2, 1.7, 1.6, 7.2], [12, 10.4, -1, 15, 1.6, 1.7]] },
   dos: { b: 'mial', boxes: [[3, 4.8, -1, 5.2, 9.8, 5.2]] },
-  pro: { b: 'mial', boxes: [[6, 3.4, 1.9, 1.9, 6.9, 1.9], [3, 3.9, -6.4, 2.4, 7.8, 2.4]] },
+  pro: { b: 'mial', boxes: [[6, 3.4, 1.9, 1.9, 6.9, 1.9]] },
   alv: { b: 'mial', boxes: [[50, 2.6, -8, 29.5, 5.6, 10.5], [34, 3.7, -8, 3.4, 7.6, 3.4]] },
   ins: { b: 'mf', boxes: [[9.2, 3.4, -1, 3.4, 7, 3.6]] },
   pal: { b: 'mf', boxes: [[20.2, 2.6, -1, 5.8, 5.4, 3.8], [25.4, 1.8, -1, 2.6, 3.8, 2.6]] },
@@ -230,7 +230,7 @@ const VIEWS = [
   { n: 'Trasporto', b: 'mial', f: 'tra', sec: 'tra', c: [-8, 9.5, -1], dist: 42, az: -10, el: 16, t: 'Sezione: il prodotto nel tubo', d: 'Catena con dischi dentro il trasportatore tubolare: il prodotto sale dall’elevatore, corre sopra i silos e un deviatore lo fa scendere nel silo scelto.' },
   { n: 'Mangime 5 t/h', b: 'mial', f: 'man', sec: 'hall', c: [3.2, 6.5, 1], dist: 34, az: -24, el: 16, t: 'Impianto produzione mangime 5 t/h', d: 'Dentro il capannone: molino a martelli, scala di dosaggio, miscelatore e raffreddatore. Un impianto modulare completo per produzioni fino a 5 t/h.' },
   { n: 'Dosaggio', b: 'mial', f: 'dos', sec: 'dos', c: [1.2, 5.2, 1.6], dist: 22, az: -26, el: 14, t: 'Sezione: dosaggio e miscela', d: 'La bilancia di dosaggio pesa gli ingredienti, il miscelatore orizzontale monoalbero li omogeneizza.' },
-  { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: raffreddamento', d: 'Il raffreddatore a controcorrente raffredda il pellet con aria; il ciclone separa la polvere. Impianti da 1 a 60 t/h, anche modulari.' },
+  { n: 'Produzione', b: 'mial', f: 'pro', sec: 'pro', c: [4.6, 8, .5], dist: 26, az: -30, el: 12, t: 'Sezione: raffreddamento', d: 'Il raffreddatore a controcorrente raffredda il pellet con aria. Impianti da 1 a 60 t/h, anche modulari.' },
   { n: 'Pet food', b: 'mial', f: 'pet', sec: 'hall', c: [16, 2.5, -10.5], dist: 40, az: -22, el: 26, t: 'Sezione: la linea pet food', d: 'Svuotamento big bag, molino a martelli per pet food, dosaggio, miscelazione e vagliatura: il prodotto sale nel trasportatore tubolare e arriva alla pesatrice multitesta.' },
   { n: 'Insacco', b: 'mf', f: 'ins', sec: 'hall', c: [11, 3, -1], dist: 24, az: -26, el: 28, t: 'Sezione: pesatura e insacco', d: 'Pesatrice multitesta e insaccatrice a bocca aperta riempiono i sacchi, che passano dal controllo peso.' },
   { n: 'Pallet', b: 'mf', f: 'pal', sec: 'hall', c: [21, 2.5, -1], dist: 28, az: -24, el: 30, t: 'Sezione: pallettizzazione e fasciatura', d: 'Pallettizzatore cartesiano e avvolgitore pallet completano il pallet, pronto per la spedizione.' },
@@ -399,12 +399,6 @@ function buildPlant(ox) {
   const tMix = mkMixer(g, tx - .4, 5.0, tz), tScale = mkScale(g, tx, 9.6, tz);
   g.add(box(.9, 1.1, .6, M.dark, tx + 1.2, 4.9, tz + 1.55)); g.add(box(.5, .35, .04, M.screen, tx + 1.2, 5.05, tz + 1.87));
   const beacon = new THREE.Mesh(new THREE.SphereGeometry(.22, 12, 10), emi(0xee7319, 2)); beacon.position.set(tx, 14.6, tz); g.add(beacon);
-  // cyclone with steam
-  g.add(cyl(.95, .95, 2.4, M.steel, 3, 4.7, -6.4, 28)); g.add(cone(.95, 2.2, M.steel, 3, 2.4, -6.4, true, 28)); g.add(cyl(.22, .22, 1.6, M.steelD, 3, 6.7, -6.4, 14));
-  [[1, 1], [-1, 1], [1, -1], [-1, -1]].forEach(([a, b]) => g.add(box(.14, 2.4, .14, M.steelD, 3 + a * .7, 1.2, -6.4 + b * .7)));
-  const steamN = 36, steamGeo = new THREE.BufferGeometry(), sp = new Float32Array(steamN * 3), sph = Array.from({ length: steamN }, (_, i) => i / steamN);
-  steamGeo.setAttribute('position', new THREE.BufferAttribute(sp, 3));
-  const steam = new THREE.Points(steamGeo, new THREE.PointsMaterial({ color: 0xdfe6ee, size: .9, transparent: true, opacity: .16, depthWrite: false })); steam.frustumCulled = false; g.add(steam);
   // hall (cutaway-able) with the MF TECNO line inside
   const hx = 19, hz = -1;
   const ghost = c => std(c, .1, .55, { transparent: true, opacity: 1 });
@@ -493,8 +487,6 @@ function buildPlant(ox) {
   const tCool = mkCooler(g, 6, 3.2, 1.9, 6.4);
   g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(3.5, 4.0, -1), V3(3.5, 4.0, 1.9), V3(6, 4.0, 1.9), V3(6, 6.7, 1.9)], .6, false), 40, .2, 10, false), tubeMat)));
   stairs(g, V3(5.7, 0, -4.7), V3(5.7, 4.2, -1.9), .9); stairs(g, V3(5.7, 4.2, -1.9), V3(5.7, 8.4, -4.7), .9); // tower stairs
-  g.add(shadow(new THREE.Mesh(new THREE.TubeGeometry(tubeCurve([V3(6, 6.95, 1.9), V3(6, 7.5, 1.9), V3(6.35, 7.5, 1.9), V3(6.35, 5.6, -6.4), V3(3.95, 5.6, -6.4)], .5, false), 60, .15, 10, false), M.steel))); // cooler air to the cyclone
-  g.add(cyl(.3, .3, .6, M.blue, 3, .5, -6.4, 18)); g.add(box(.6, .2, .6, M.steelD, 3, .15, -6.4)); // cyclone airlock
   // coloured volumes: orange MIAL, blue MF TECNO; the focused function is brighter
   const mkVol = (color, b) => { const gr = new THREE.Group(), f = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .08, depthWrite: false })), e = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1)), new THREE.LineBasicMaterial({ color, transparent: true, opacity: .45 })); gr.add(f, e); gr.position.set(b[0], b[1], b[2]); gr.scale.set(b[3], b[4], b[5]); g.add(gr); return { f, e }; };
   const vols = {}; Object.entries(FUNCS).forEach(([k, fn]) => { vols[k] = fn.boxes.map(b => mkVol(fn.b === 'mial' ? MIAL_C : MF_C, b)); });
@@ -586,9 +578,6 @@ function buildPlant(ox) {
       beacon.material.emissiveIntensity = Math.sin(ph * 5) > 0 ? 3 : .2;
       fans.forEach((b, i) => b.rotation.y += dt * (6 + i));
       bars.forEach((b, i) => { const h = Math.max(.05, st.lev[i] * 7.0); b.scale.y = h; b.position.y = h / 2; });
-      const pos = steamGeo.attributes.position;
-      for (let i = 0; i < steamN; i++) { sph[i] = (sph[i] + dt * .12) % 1; const a = sph[i]; pos.setXYZ(i, 3 + a * 3 + Math.sin(i * 5 + ph) * .3, 7.6 + a * 5, -6.4 + Math.cos(i * 3) * .4); }
-      pos.needsUpdate = true;
       [tMill, tMix, tScale, tCool, bMill, bMix, bScale, ...petM].forEach(x => x.update(dt, ph)); petFlow.update(dt, .03 * (.35 + cap / 60 * 1.4), 12); petBelt.update(dt, .03, 8); flowA.update(dt); flowB.update(dt); lineFlow.update(dt, .03, 9);
       if (bkI.visible) for (let i = 0; i < bkN; i++) { const u = (i / bkN + ph * .04) % 1, up = u < .5; bo.position.set(-17 + (up ? -.2 : .2), up ? lerp(-1.2, 14.6, u * 2) : lerp(14.6, -1.2, (u - .5) * 2), 5); bo.updateMatrix(); bkI.setMatrixAt(i, bo.matrix); } if (bkI.visible) bkI.instanceMatrix.needsUpdate = true;
       // product inside the silos (section view)
@@ -875,8 +864,6 @@ const INFO = { // label text -> [brand, page, description]; pages and wording fo
   'Miscelatore Orizzontale Monoalbero': ['MIAL', MIAL + 'miscelatori/', 'Omogeneizza gli ingredienti in un unico lotto, con un albero a pale dentro la vasca orizzontale.'],
   'Bilancia di Dosaggio': ['MIAL', MIAL + 'bilance-di-dosaggio/', 'Controllo preciso delle materie prime nei mangimifici, anche nella versione a vasca rotante.'],
   'Raffreddatore EOLO a controcorrente': ['MIAL', MIAL + 'raffreddatori/', 'Raffredda il pellet con aria in controcorrente. Modelli in acciaio inox.'],
-  'Ciclone': ['MIAL', MIAL + 'impianti-produzione-mangimi/', 'Separa la polvere dall’aria di raffreddamento.'],
-  'Valvola stellare': ['MIAL', MIAL + 'impianti-produzione-mangimi/', 'Scarica il pellet raffreddato dosando il flusso.'],
   'Impianto Produzione Mangime 5 Ton/h': ['MIAL', MIAL + 'impianto-produzione-mangime-5-ton-h/', 'Impianto di produzione mangime modulare da 5 t/h: installazione rapida e facile da usare. Qui nel capannone: molino, dosaggio, miscelatore e raffreddatore.'],
   'Svuotamento Big Bag': ['MIAL', MIAL + 'svuotamento-big-bag/', 'Stazione per svuotare i big bag e alimentare la linea in modo controllato.'],
   'Molino a Martelli PET-THOR': ['MIAL', MIAL + 'molino-a-martelli-per-pet-food/', 'Molino a martelli progettato per la macinazione delle materie prime dei settori pet food e fish food.'],
@@ -926,7 +913,7 @@ const beats = [
     [[-6.6, 13.4, -1], 'Silos MIAL · Sistemi di Stoccaggio', 'sto', 1, 'mial'], [[-9, 6, -4.6], 'Prodotto e livello', 'sto', 0, 'mial'],
     [[-7, 15, -1], 'Trasportatore Tubolare a Catena', 'tra', 1, 'mial'], [[-9, 13.6, -1], 'Deviatore sui silos', 'tra', 0, 'mial'], [[-17, 16.6, 5], 'Elevatore a Tazze Basculanti', 'tra', 0, 'mial'],
         [[2.6, 6.3, -1], 'Miscelatore Orizzontale Monoalbero', 'dos', 1, 'mial'], [[3, 10.9, -1], 'Bilancia di Dosaggio', 'dos', 0, 'mial'],
-    [[6, 7.4, 1.9], 'Raffreddatore EOLO a controcorrente', 'pro', 1, 'mial'], [[3, 7.8, -6.4], 'Ciclone', 'pro', 0, 'mial'], [[6, 3.6, 1.9], 'Valvola stellare', 'pro', 0, 'mial'],
+    [[6, 7.4, 1.9], 'Raffreddatore EOLO a controcorrente', 'pro', 1, 'mial'],
     [[3, 15.2, -1], 'Impianto Produzione Mangime 5 Ton/h', 'man', 1, 'mial'], [[2.8, 3.6, 3.6], 'Molino a Martelli FARMY', 'man', 0, 'mial'],
     [[4.2, 5.6, -10.5], 'Svuotamento Big Bag', 'pet', 1, 'mial'], [[11.5, 3.6, -10.5], 'Molino a Martelli PET-THOR', 'pet', 0, 'mial'], [[16.5, 6.3, -10.5], 'Bilancia di Dosaggio', 'pet', 0, 'mial'], [[16.5, 2.6, -10.5], 'Miscelatore Orizzontale Monoalbero', 'pet', 0, 'mial'], [[24, 3.0, -10.5], 'Vaglio vibrante', 'pet', 0, 'mial'], [[19, 7.0, -10.5], 'Trasportatore Tubolare a Catena · al confezionamento', 'pet', 0, 'mial'],
     [[50, 6, -8], 'Impianto Produzione Mangime 1 Ton/h', 'alv', 1, 'mial'], [[38.8, 3.3, -8], 'Molino a Martelli FARMY', 'alv', 0, 'mial'], [[43.2, 5.3, -8], 'Bilancia di Dosaggio e Miscelatore', 'alv', 0, 'mial'], [[34, 8.4, -8], 'Silos MIAL', 'alv', 0, 'mial'], [[56, 3.2, -8], 'Linee di alimentazione', 'alv', 0, 'mial'],
