@@ -8,7 +8,7 @@ window.MEDDIC = (() => {
   };
   const Q = [
     { k: 'scope', t: 'Cosa ti serve?', type: 'one', o: [['imp', 'Impianto completo', 'Mangimificio o pet food, dal silo al pallet'], ['tra', 'Trasporto di prodotti sfusi', 'Catene tubolari, elevatori, coclee'], ['conf', 'Fine linea e confezionamento', 'Insacco, pallet, fasciatura'], ['ass', 'Assistenza e ricambi', 'Su impianti esistenti']] },
-    { k: 'mat', t: 'Che prodotto lavori?', sub: 'Anche più di uno', type: 'multi', max: 3, o: [['mang', 'Mangimi per animali'], ['pet', 'Pet food'], ['cer', 'Cereali e farine'], ['riso', 'Riso'], ['sem', 'Semi'], ['zuc', 'Zucchero'], ['fer', 'Fertilizzanti'], ['chim', 'Chimico e alimentare']] },
+    { k: 'mat', t: 'Che prodotto lavori?', sub: 'Anche più di uno', type: 'multi', max: 3, o: [['pet', 'Pet food'], ['mang', 'Mangimi per animali'], ['all', 'Allevamenti'], ['cer', 'Cereali e farine'], ['riso', 'Riso'], ['sem', 'Semi'], ['zuc', 'Zucchero'], ['fer', 'Fertilizzanti'], ['chim', 'Chimico e alimentare']] },
     { k: 'prod', t: 'Quali macchine ti interessano?', sub: 'Scegline fino a 4', type: 'multi', max: 4, by: 'scope', map: PROD },
     { k: 'num', t: 'I tuoi numeri', sub: 'Regola i valori: ci servono per dimensionare bene', type: 'nums' },
     { k: 'pains', t: 'Cosa non funziona oggi?', sub: 'Scegline fino a 3', type: 'multi', max: 3, o: [['old', 'Impianto datato'], ['bott', 'Colli di bottiglia'], ['stop', 'Troppi fermi'], ['man', 'Troppa manodopera'], ['qual', 'Qualità e contaminazioni'], ['new', 'Parto da zero']] },
@@ -18,6 +18,7 @@ window.MEDDIC = (() => {
     { t: 'Quando si parte?', type: 'group', f: [{ k: 'timeline', l: 'Tempi', o: [['<3', 'Entro 3 mesi'], ['3-6', '3–6 mesi'], ['6-12', '6–12 mesi'], ['val', 'Sto valutando']] }, { k: 'budget', l: 'Budget', o: [['si', 'Approvato'], ['def', 'In definizione'], ['no', 'Non ancora']] }, { k: 'brange', l: 'Fascia di budget', o: [['<100', 'Sotto 100 mila €'], ['100-300', '100–300 mila €'], ['300-1000', '300 mila – 1 milione €'], ['>1000', 'Oltre 1 milione €'], ['nd', 'Preferisco non dirlo']] }] },
     { t: 'Ultimo passo: come ti raggiungiamo?', type: 'contact' },
   ];
+  const COUNTRY = { IT: 'Italia', BR: 'Brasile', US: 'Stati Uniti', XX: 'Altro' }, SECT = [['pet', 'Pet food'], ['mang', 'Mangimi'], ['all', 'Allevamenti']];
   const label = { prod: Object.fromEntries(Object.values(PROD).flat()) }; Q.forEach(q => (q.o ? [q] : q.f || []).forEach(x => x.o && x.o.forEach(o => (label[x.k || q.k] ||= {})[o[0]] = o[1])));
   const txt = (k, v) => Array.isArray(v) ? v.map(x => label[k][x]).join(', ') : (label[k] && label[k][v]) || v;
   const L = [['M', 'Metrics', 'Obiettivo misurabile'], ['E', 'Economic buyer', 'Chi decide'], ['D1', 'Decision criteria', 'Criteri di scelta'], ['D2', 'Decision process', 'Tempi e budget'], ['I', 'Identify pain', 'Problema da risolvere'], ['C', 'Champion', 'Sponsor interno']];
@@ -27,7 +28,8 @@ window.MEDDIC = (() => {
   /* Cliente ideale: cinque segnali; i dati mancanti (lead vecchi) non penalizzano. anti = niente tempi e niente budget. */
   function icp(l) {
     const cap = derive(l).cap, c = [
-      ['Lavora un prodotto del nostro settore', (l.mat || []).length > 0],
+      ['Settore prioritario (pet food, mangimi, allevamenti)', (l.mat || []).length ? (l.mat || []).some(m => SECT.some(x => x[0] === m)) : null],
+      ['Paese prioritario (Italia, Brasile, Stati Uniti)', l.country ? l.country !== 'XX' : null],
       ['Ha un motivo concreto per muoversi ora', l.trigger ? l.trigger !== 'alt' : null],
       ['Volumi adatti (da 3 t/h; da 2 t/h per il fine linea)', l.scope === 'ass' ? true : cap ? cap >= (l.scope === 'conf' ? 2 : 3) : null],
       ['Tempi entro 12 mesi', l.timeline ? l.timeline !== 'val' : null],
@@ -126,7 +128,7 @@ window.MEDDIC = (() => {
     const mat = ((l.mat || []).length ? txt('mat', l.mat).toLowerCase() : 'il vostro prodotto'), pain = PTXT[(l.pains || [])[0]], of = offer(l), w = Object.entries(score(l).s).filter(([, v]) => v < 70).map(x => x[0]);
     const q = [w.includes('M') && 'quante tonnellate all’ora producete e quante ne servono', w.includes('E') && 'chi decide su questo tema', w.includes('D2') && 'entro quando vorreste partire', w.includes('D1') && 'cosa conta di più nella scelta'].filter(Boolean).slice(0, 3);
     return [
-      { n: 'Greet', t: 'Una cosa in comune', say: `«Lavorate ${mat}: da quanto? Come vi trovate con la campagna di quest’anno?»`, why: 'Abbassa le difese e apre il canale umano: nei primi secondi decidi se sei un venditore o una persona.' },
+      { n: 'Greet', t: 'Una cosa in comune', say: `«Vi occupate di ${mat}: da quanto? Come vi trovate con la campagna di quest’anno?»`, why: 'Abbassa le difese e apre il canale umano: nei primi secondi decidi se sei un venditore o una persona.' },
       { n: 'Hook', t: 'Perché ti cerco', say: pain ? `«Molti clienti nel tuo ruolo mi dicono che ${pain}. Capita anche a voi? Con altri clienti l’abbiamo risolto così: ${of.t}.»` : `«Cosa vi ha fatto chiedere un’offerta proprio ora? Con altri clienti che avevano la stessa esigenza abbiamo lavorato su ${of.t}.»`, why: 'Prima l’ipotesi sul problema, poi la prova sociale. Evita «immagina»: sii diretto e concreto.' },
       { n: 'Qualify', t: 'È il cliente ideale?', say: q.length ? `«Mi dite ${q.join(', ')}?»` : '«Ho tutto quello che serve: ti propongo il prossimo passo.»', why: 'Poche domande rapide su volumi, decisore e tempi. Se non è cliente ideale, meglio saperlo subito.' },
       { n: 'Lock', t: 'Il prossimo passo', say: '«Perfetto, ti scrivo io entro domani. Cosa vuoi che ci sia dentro perché sia utile per te?»', why: 'Chiedere cosa scrivere fa definire al cliente il contenuto: la mail diventa un impegno co-scritto.' },
@@ -136,5 +138,5 @@ window.MEDDIC = (() => {
   const QUOTE = ['Chiama prima di inviare: il preventivo non arriva mai da solo, lo annunci e fissi un momento per parlarne.', 'Leggetelo insieme, punto per punto, senza saltare nulla.', 'Chiedi il commitment: «Se i punti sono questi, siamo d’accordo di firmare?»', 'Gestisci ora le obiezioni: meglio sapere adesso perché non arriva il sì.'];
   const DISCO = 'Incontro di 30 minuti dal cliente dopo la fase SQL: 25 di conversazione, 5 sulla proposta. Videocall in piedi per dare ritmo; prima dei 5 minuti riassumi cosa hai capito; usa testimonianze di altri clienti; chiudi con un passo concreto.';
   const opts = (q, a) => q.by ? q.map[a[q.by]] || [] : q.o;
-  return { Q, L, STG, VAL, money, CHECK, QUOTE, DISCO, icp, big, opts, hints, F, numFields, derive, nsum, dim, score, next, said, txt };
+  return { COUNTRY, SECT, Q, L, STG, VAL, money, CHECK, QUOTE, DISCO, icp, big, opts, hints, F, numFields, derive, nsum, dim, score, next, said, txt };
 })();
