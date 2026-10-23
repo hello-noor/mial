@@ -2,6 +2,12 @@
 
 `index.html` is the Massini landing page (assets in `landing/`, scenes in `landing/scene.js`; it links to the simulators). `simulazioni.html` is a simple chooser with two cards: **MIAL** (`mial.html`, the CLEAN200 tubular chain conveyor, described below) and **MF TECNO** (`mftrio.html`, the MF Trio Line: MF 54 vertical packaging machine, MF Smart Palletizer and MF Wrap 35 stretch wrapper). Both simulators have the same controls and a small switcher at the top.
 
+## Sito Massini (landing) e pagina proposte
+
+- **`index.html` + `landing/`**: la home del concept non ufficiale di Massini Industries. Scena 3D dell'impianto (`landing/scene.js`), trasportatore tubolare, linea MF TECNO. Ogni macchina ha un'etichetta cliccabile: si apre una scheda con descrizione e link alla pagina corrispondente su mialtecno.com o mftecno.com. Si scorre orizzontalmente trascinando la scena o con il cursore «Percorri l'impianto»; si può anche girare intorno al modello («Trascina: ruota») o attivare la rotazione lenta a 360°. Il modulo contatti apre solo il client di posta (mailto), non invia dati.
+- **`proposte.html`**: pagina di lavoro sulle proposte di marketing (`noindex`). Contiene: il principio «Vendiamo concretezza», il decalogo di dieci idee, il sistema che le lega, il metodo (prodotto, posizionamento, narrazione, con il marketing come snodo e il cliente come punto di partenza) e gli esempi di ads con video verticali in `video/`.
+- **Non pubblicati** (in `.gitignore`): `qa.html`, `qa-completo.html` e `qa-numeri-privati.txt`. Contengono dati personali e restano solo in locale.
+
 ## MIAL tubular chain conveyor: interactive 3D simulator (CLEAN200)
 
 A single-page, physics-driven 3D model of the MIAL **CLEAN200** tubular chain conveyor (drive unit ø 204, up to 60 m³/h): a closed stainless tube with plastic discs bolted to a chain that lifts bulk product from a loading hopper at the bottom to a silo at the top. Every number on screen is computed by a small solver, not typed in.
@@ -55,10 +61,14 @@ Three machines in sequence, simulated as a queue: the **MF 54** forms and seals 
 ## Repository layout
 
 ```
-index.html   the chooser (MIAL or MF TECNO)
+index.html   the Massini landing (home 3D)
+landing/     scene.js, logo, client logos, photos for the landing
+proposte.html  marketing proposals page (noindex)
+img/         photo used on the proposals page
+simulazioni.html  chooser for the simulators
 mial.html    the MIAL simulator
 mftrio.html  the MF Trio Line simulator
-video/                        the film
+video/       films for the simulators and the ads examples (impianto-verticale.mp4, trio-verticale.mp4, lego-mial.mp4, podcast-*.jpg)
 docs/                         the MIAL brochure (PDF) and preview images
 src/machine.src.js            MIAL: geometry, solver, UI, film
 src/trio.src.js               MF Trio Line: geometry, queue simulation, UI
