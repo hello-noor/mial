@@ -6,7 +6,6 @@
 
 - **`index.html` + `landing/`**: la home del concept non ufficiale di Massini Industries. Scena 3D dell'impianto (`landing/scene.js`), trasportatore tubolare, linea MF TECNO. Ogni macchina ha un'etichetta cliccabile: si apre una scheda con descrizione e link alla pagina corrispondente su mialtecno.com o mftecno.com. Si scorre orizzontalmente trascinando la scena o con il cursore «Percorri l'impianto»; si può anche girare intorno al modello («Trascina: ruota») o attivare la rotazione lenta a 360°. Il modulo contatti apre solo il client di posta (mailto), non invia dati.
 - **`proposte.html`**: pagina di lavoro sulle proposte di marketing (`noindex`). Contiene: il principio «Vendiamo concretezza», il decalogo di dieci idee, il sistema che le lega, il metodo (prodotto, posizionamento, narrazione, con il marketing come snodo e il cliente come punto di partenza) e gli esempi di ads con video verticali in `video/`.
-- **Non pubblicati** (in `.gitignore`): `qa.html`, `qa-completo.html` e `qa-numeri-privati.txt`. Contengono dati personali e restano solo in locale.
 
 ## MIAL tubular chain conveyor: interactive 3D simulator (CLEAN200)
 
