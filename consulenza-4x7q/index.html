@@ -174,7 +174,7 @@ var toastTimer=null;
 var tEl=document.createElement('div');tEl.className='toast';tEl.setAttribute('role','status');tEl.hidden=true;document.body.appendChild(tEl);
 
 /* ---------- date e orari ---------- */
-function normState(){var s=state.settings;s.sites=s.sites||[];s.radius=+s.radius||250;if(state.active&&state.active.gpend)state.active.gpend=false}
+function normState(){var s=state.settings;s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){if(!s.sites.length)s.sites.push({name:'Massini Bastia',lat:43.05281,lng:12.54444});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
 function saveQuiet(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
@@ -601,7 +601,7 @@ function addSite(){
 function saveSettings(){
   var s=ui.sform;
   if(!s.startDate||!s.endDate||s.endDate<s.startDate){toast('Controlla le date del periodo');return}
-  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],radius:Math.max(50,+s.radius||250)};
+  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],sitesInit:true,radius:Math.max(50,+s.radius||250)};
   ui.modal=null;persist('Impostazioni salvate');
 }
 function copyText(){
