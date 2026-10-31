@@ -154,6 +154,8 @@ textarea.out{min-height:220px;font-size:13px;font-family:ui-monospace,Menlo,Cons
 .qf{display:flex;flex-direction:column;gap:12px}
 .save{border:0;border-radius:14px;padding:16px;font-weight:700;font-size:18px;font-family:var(--display);background:var(--ink);color:var(--surface);min-height:56px}
 .save.sede{background:var(--sede);color:var(--on-sede)}.save.smart{background:var(--smart);color:var(--on-smart)}
+.tag{font-size:11px;font-weight:600;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--muted)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
 .gbox{border-radius:12px;padding:10px 12px;font-weight:600;font-size:15px;display:flex;flex-direction:column;gap:8px}
 .gbox.ok{background:var(--ok-soft);color:var(--ok)}.gbox.warn{background:var(--smart-soft);color:var(--ink)}.gbox.err{background:var(--err-soft);color:var(--ink)}.gbox.wait{background:var(--bg);color:var(--muted)}
 .gbox button{align-self:flex-start}
@@ -177,7 +179,8 @@ var toastTimer=null;
 var tEl=document.createElement('div');tEl.className='toast';tEl.setAttribute('role','status');tEl.hidden=true;document.body.appendChild(tEl);
 
 /* ---------- date e orari ---------- */
-function normState(){var s=state.settings;s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){[{name:'Massini Bastia',lat:43.05281,lng:12.54444},{name:'Massini Tordandrea',lat:43.03847,lng:12.56242}].forEach(function(d){if(!s.sites.some(function(x){return x.name===d.name}))s.sites.push(d)});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
+var DEFAULT_TAGS=['Audit','Riunione','Affiancamento marketing','Sales','Produzione','Sito web','Report','Formazione'];
+function normState(){var s=state.settings;if(!s.tagsInit){s.tags=(s.tags&&s.tags.length)?s.tags:DEFAULT_TAGS.slice();s.tagsInit=true}s.tags=s.tags||[];s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){[{name:'Massini Bastia',lat:43.05281,lng:12.54444},{name:'Massini Tordandrea',lat:43.03847,lng:12.56242}].forEach(function(d){if(!s.sites.some(function(x){return x.name===d.name}))s.sites.push(d)});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
 function saveQuiet(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
@@ -272,6 +275,13 @@ function activeGeo(a){
   if(a.gin.site)return 'Posizione verificata: '+esc(a.gin.site);
   return state.settings.sites.length?'Fuori dalle sedi salvate':'Posizione salvata';
 }
+function tagChips(sel,action){
+  sel=sel||[];var all=state.settings.tags.slice();
+  sel.forEach(function(t){if(all.indexOf(t)<0)all.push(t)});
+  if(!all.length)return '';
+  return '<div class="presets">'+all.map(function(t){return '<button type="button" class="chip" data-a="'+action+'" data-v="'+esc(t)+'" aria-pressed="'+(sel.indexOf(t)>=0)+'">'+esc(t)+'</button>'}).join('')+'</div>';
+}
+function toggleTag(list,t){var i=list.indexOf(t);if(i>=0)list.splice(i,1);else list.push(t)}
 function defaultSite(){
   var s=state.settings.sites;if(!s.length)return '';
   var last=sorted(state.entries.filter(function(e){return e.type==='sede'&&e.site})).pop();
@@ -290,12 +300,13 @@ function defaultsFor(type){
 function newQ(type){
   type=type||(sorted(state.entries).pop()||{}).type||'sede';
   var d=defaultsFor(type);
-  return {type:type,date:todayIso(),start:d.start,end:d.end,pause:d.pause,note:'',site:defaultSite()};
+  return {type:type,date:todayIso(),start:d.start,end:d.end,pause:d.pause,note:'',tags:[],site:defaultSite()};
 }
 function itemHTML(e,withMonth){
   var d=parse(e.date);
   return '<button class="item '+e.type+'" data-a="edit" data-id="'+e.id+'"><div class="dnum"><b>'+d.getDate()+'</b><span>'+wd(e.date)+'</span></div>'
-   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+(e.type==='sede'&&e.site?' · '+esc(e.site):'')+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+(e.note?'<span class="note">'+esc(e.note)+'</span>':'')
+   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+(e.type==='sede'&&e.site?' · '+esc(e.site):'')+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+((e.tags&&e.tags.length)?'<span class="tags">'+e.tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>'}).join('')+'</span>':'')
+   +(e.note?'<span class="note">'+esc(e.note)+'</span>':'')
    +((e.gin||e.gout)?'<span class="note geo'+(((e.gin&&e.gin.site)||(e.gout&&e.gout.site))?' ok':'')+'">Posizione · entrata: '+(e.gin?geoWord(e.gin):'n.d.')+' · uscita: '+(e.gout?geoWord(e.gout):'n.d.')+'</span>':'')+'</div>'
    +'<div class="h">'+fmtH(mins(e))+'</div></button>';
 }
@@ -310,7 +321,7 @@ function quickForm(){
    +'<div class="presets"><button type="button" class="chip" data-a="qpreset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="qpreset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="qpreset" data-v="pm">Pomeriggio 14–18</button></div>'
    +'<div class="two"><div class="field"><label for="q-start">Inizio</label><input id="q-start" type="time" data-q="start" value="'+q.start+'"></div><div class="field"><label for="q-end">Fine</label><input id="q-end" type="time" data-q="end" value="'+q.end+'"></div></div>'
    +'<div class="two" style="align-items:flex-end"><div class="field"><label for="q-pause">Pausa</label><select id="q-pause" data-q="pause">'+pauses+'</select></div><div class="dur" id="qdur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:10px">'+durText(q)+'</div></div>'
-   +'<div class="field"><label for="q-note">Cosa hai fatto (facoltativo)</label><textarea id="q-note" data-q="note" rows="2" placeholder="Es. audit marketing">'+esc(q.note)+'</textarea></div>'
+   +'<div class="field"><label>Cosa hai fatto</label>'+tagChips(q.tags,'qtag')+'</div><div class="field"><label for="q-note">Dettagli (facoltativo)</label><textarea id="q-note" data-q="note" rows="2" placeholder="Es. audit marketing">'+esc(q.note)+'</textarea></div>'
    +'<button class="save '+q.type+'" data-a="qsave">Salva giornata</button></div>';
 }
 function recCard(){
@@ -429,7 +440,7 @@ function formModal(){
    +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button></div>'
    +'<div class="two"><div class="field"><label for="f-start">Inizio</label><input id="f-start" type="time" data-f="start" value="'+f.start+'"></div><div class="field"><label for="f-end">Fine</label><input id="f-end" type="time" data-f="end" value="'+f.end+'"></div></div>'
    +'<div class="two" style="align-items:flex-end"><div class="field"><label for="f-pause">Pausa</label><select id="f-pause" data-f="pause">'+pauses+'</select></div><div class="dur" id="dur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:10px">'+durText(ui.form)+'</div></div>'
-   +'<div class="field"><label for="f-note">Cosa hai fatto (facoltativo)</label><textarea id="f-note" data-f="note" rows="2" placeholder="Es. audit marketing, incontro con il reparto vendite">'+esc(f.note)+'</textarea></div>'
+   +'<div class="field"><label>Cosa hai fatto</label>'+tagChips(f.tags,'ftag')+'</div><div class="field"><label for="f-note">Dettagli (facoltativo)</label><textarea id="f-note" data-f="note" rows="2" placeholder="Es. audit marketing, incontro con il reparto vendite">'+esc(f.note)+'</textarea></div>'
    +'<div class="actions">'+(editing?'<button class="btn del" data-a="del">'+(ui.confirmDel?'Conferma eliminazione':'Elimina')+'</button>':'')+'<button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="saveentry">'+(f.fromClock?'Salva e chiudi':'Salva')+'</button></div>'
    +'</div></div>';
 }
@@ -448,6 +459,7 @@ function settingsModal(){
    +'<div class="two"><div class="field"><label for="s-start">Inizio periodo</label><input id="s-start" type="date" data-s="startDate" value="'+s.startDate+'"></div><div class="field"><label for="s-end">Fine periodo</label><input id="s-end" type="date" data-s="endDate" value="'+s.endDate+'"></div></div>'
    +'<div class="two"><div class="field"><label for="s-ts">Giorni in sede a settimana</label><input id="s-ts" type="number" min="0" max="7" data-s="targetSede" value="'+s.targetSede+'"></div><div class="field"><label for="s-tm">Giorni smart a settimana</label><input id="s-tm" type="number" min="0" max="7" data-s="targetSmart" value="'+s.targetSmart+'"></div></div>'
    +'<div class="field"><label for="s-rate">Tariffa giornaliera in € (facoltativa)</label><input id="s-rate" type="number" min="0" step="1" data-s="rate" value="'+s.rate+'"></div>'
+   +'<div class="field"><label for="s-tags">Tag per “Cosa hai fatto” (separati da virgola)</label><textarea id="s-tags" rows="3" data-s="tagsText">'+esc(s.tagsText||'')+'</textarea></div>'
    +'<p class="hint">La tariffa serve solo a mostrare il valore delle giornate registrate. Lasciala a 0 per nasconderlo.</p>'
    +'<div class="bk"><p class="sub">Sedi per la verifica della posizione</p>'+(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b> <span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>')
    +'<div class="field"><label for="s-sname">Nome sede</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div>'
@@ -465,7 +477,7 @@ function summaryText(){
     if(!list.length)return;
     var st=stats(list);
     out.push(fmtMonth(+p[0],+p[1]-1).toUpperCase());
-    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+(e.site?' ('+e.site+')':'')+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+(e.note?' · '+e.note:'')+geoSum(e))});
+    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+(e.site?' ('+e.site+')':'')+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+((e.tags&&e.tags.length)?' · '+e.tags.join(', '):'')+(e.note?' · '+e.note:'')+geoSum(e))});
     out.push('Totale mese: '+gg(st.sede.days)+' in sede ('+fmtH(st.sede.min)+'), '+gg(st.smart.days)+' smart working ('+fmtH(st.smart.min)+'), '+fmtH(st.min)+' complessive','');
   });
   var t=stats(state.entries);
@@ -474,8 +486,8 @@ function summaryText(){
 }
 function csvText(){
   function q(v){return '"'+String(v).replace(/"/g,'""')+'"'}
-  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Sede','Note','Posizione entrata','Posizione uscita'].map(q).join(';')];
-  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.site||'',e.note||'',e.gin?(e.gin.site||'fuori sede'):'',e.gout?(e.gout.site||'fuori sede'):''].map(q).join(';'))});
+  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Sede','Tag','Note','Posizione entrata','Posizione uscita'].map(q).join(';')];
+  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.site||'',(e.tags||[]).join(', '),e.note||'',e.gin?(e.gin.site||'fuori sede'):'',e.gout?(e.gout.site||'fuori sede'):''].map(q).join(';'))});
   return '﻿'+rows.join('\r\n');
 }
 function summaryModal(){
@@ -546,10 +558,10 @@ function backupRestore(){
 function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function openForm(type,date,entry){
   ui.confirmDel=false;
-  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||'',site:entry.site||'',gin:entry.gin||null,gout:entry.gout||null}}
+  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||'',tags:(entry.tags||[]).slice(),site:entry.site||'',gin:entry.gin||null,gout:entry.gout||null}}
   else{
     var last=sorted(state.entries.filter(function(e){return e.type===type})).pop();
-    ui.form={id:null,type:type,date:date||todayIso(),start:last?last.start:'09:00',end:last?last.end:'18:00',pause:last?(last.pause||0):60,note:'',site:defaultSite()};
+    ui.form={id:null,type:type,date:date||todayIso(),start:last?last.start:'09:00',end:last?last.end:'18:00',pause:last?(last.pause||0):60,note:'',tags:[],site:defaultSite()};
   }
   ui.modal='form';draw();
 }
@@ -578,7 +590,7 @@ function onClick(e){
   else if(a==='thismonth'){ui.view=initialView();draw()}
   else if(a==='filter'){ui.filter=el.dataset.v;draw()}
   else if(a==='summary'){ui.modal='summary';draw()}
-  else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.modal='settings';draw()}
+  else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.sform.tagsText=state.settings.tags.join(', ');ui.modal='settings';draw()}
   else if(a==='savesettings'){saveSettings()}
   else if(a==='copy'){copyText()}
   else if(a==='setmode'){ui.mode=el.dataset.v;state.mode=ui.mode;try{localStorage.setItem(LS,JSON.stringify(state))}catch(x){}draw()}
@@ -586,8 +598,10 @@ function onClick(e){
   else if(a==='qdate'){ui.q.date=el.dataset.v;draw()}
   else if(a==='qpreset'){var pp=PRESET[el.dataset.v];ui.q.start=pp[0];ui.q.end=pp[1];ui.q.pause=pp[2];draw()}
   else if(a==='qsave'){saveQuick()}
+  else if(a==='qtag'){toggleTag(ui.q.tags,el.dataset.v);draw()}
+  else if(a==='ftag'){toggleTag(ui.form.tags,el.dataset.v);draw()}
   else if(a==='clockin'){var n=new Date();var ts=n.getTime();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:ts,gin:null,gpend:true};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start);locate(ts)}
-  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,site:(ac.gin&&ac.gin.site)||defaultSite(),gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;if(g&&g.err){fm.gerr=g.err}else{fm.gout=tagSite(g)}fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
+  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,tags:[],site:(ac.gin&&ac.gin.site)||defaultSite(),gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;if(g&&g.err){fm.gerr=g.err}else{fm.gout=tagSite(g)}fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
   else if(a==='discard'){if(!ui.confirmDiscard){ui.confirmDiscard=true;draw();return}ui.confirmDiscard=false;state.active=null;persist('Sessione scartata')}
   else if(a==='csv'){downloadCsv()}
   else if(a==='siteadd'){addSite()}
@@ -605,6 +619,7 @@ function saveEntry(){
   if(!f.start||!f.end||net<=0){toast('Controlla orari e pausa');return}
   var rec={id:f.id||newId(),type:f.type,date:f.date,start:f.start,end:f.end,pause:+f.pause||0,note:f.note.trim()};
   if(f.type==='sede'&&f.site)rec.site=f.site;
+  if(f.tags&&f.tags.length)rec.tags=f.tags.slice();
   if(f.gin)rec.gin=f.gin;if(f.gout)rec.gout=f.gout;
   if(f.id){state.entries=state.entries.map(function(x){return x.id===f.id?rec:x})}else{state.entries.push(rec)}
   if(f.fromClock)state.active=null;
@@ -616,9 +631,9 @@ function saveQuick(){
   if(!q.date){toast('Scegli il giorno');return}
   var net=span(q.start,q.end)-(+q.pause||0);
   if(!q.start||!q.end||net<=0){toast('Controlla orari e pausa');return}
-  var qr={id:newId(),type:q.type,date:q.date,start:q.start,end:q.end,pause:+q.pause||0,note:q.note.trim()};if(q.type==='sede'&&q.site)qr.site=q.site;state.entries.push(qr);
+  var qr={id:newId(),type:q.type,date:q.date,start:q.start,end:q.end,pause:+q.pause||0,note:q.note.trim()};if(q.type==='sede'&&q.site)qr.site=q.site;if(q.tags.length)qr.tags=q.tags.slice();state.entries.push(qr);
   var d=parse(q.date);ui.view={y:d.getFullYear(),m:d.getMonth()};
-  ui.q.note='';
+  ui.q.note='';ui.q.tags=[];
   persist('Giornata salvata: '+fmtH(net));
 }
 function locate(ts){
@@ -652,7 +667,7 @@ function addSite(){
 function saveSettings(){
   var s=ui.sform;
   if(!s.startDate||!s.endDate||s.endDate<s.startDate){toast('Controlla le date del periodo');return}
-  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],sitesInit:true,radius:Math.max(50,+s.radius||250)};
+  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],sitesInit:true,tagsInit:true,tags:(function(){var o=[];String(s.tagsText||'').split(/[,;\n]/).forEach(function(t){t=t.trim().slice(0,28);if(t&&o.indexOf(t)<0)o.push(t)});return o})(),radius:Math.max(50,+s.radius||250)};
   ui.modal=null;persist('Impostazioni salvate');
 }
 function copyText(){
