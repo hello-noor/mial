@@ -154,6 +154,7 @@ textarea.out{min-height:220px;font-size:13px;font-family:ui-monospace,Menlo,Cons
 .qf{display:flex;flex-direction:column;gap:12px}
 .save{border:0;border-radius:14px;padding:16px;font-weight:700;font-size:18px;font-family:var(--display);background:var(--ink);color:var(--surface);min-height:56px}
 .save.sede{background:var(--sede);color:var(--on-sede)}.save.smart{background:var(--smart);color:var(--on-smart)}
+.note.geo{font-size:12px}.note.geo.ok{color:var(--ok);font-weight:600}
 .sub{margin:0;font-size:13px;color:var(--muted);font-weight:600}
 .manual{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);flex-wrap:wrap}
 .toast[hidden]{display:none}
@@ -173,6 +174,8 @@ var toastTimer=null;
 var tEl=document.createElement('div');tEl.className='toast';tEl.setAttribute('role','status');tEl.hidden=true;document.body.appendChild(tEl);
 
 /* ---------- date e orari ---------- */
+function normState(){var s=state.settings;s.sites=s.sites||[];s.radius=+s.radius||250;if(state.active&&state.active.gpend)state.active.gpend=false}
+function saveQuiet(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
 function parse(s){var p=s.split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
@@ -219,6 +222,7 @@ try{
   var raw=localStorage.getItem(LS);
   if(raw){var b=JSON.parse(raw);if(b&&b.entries&&b.settings)state=b}
 }catch(e){}
+normState();
 ui.view=initialView();
 ui.mode=state.mode||'clock';
 ui.q=newQ();
@@ -229,6 +233,29 @@ function toast(msg,ms){
   toastTimer=setTimeout(function(){tEl.hidden=true},ms||2200);
 }
 
+function dist(a,b){var R=6371000,r=Math.PI/180,dl=(b.lat-a.la)*r,dn=(b.lng-a.lo)*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.la*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
+function getPos(){
+  return new Promise(function(res){
+    if(!navigator.geolocation){res(null);return}
+    navigator.geolocation.getCurrentPosition(function(p){res({la:+p.coords.latitude.toFixed(5),lo:+p.coords.longitude.toFixed(5),ac:Math.round(p.coords.accuracy)})},function(){res(null)},{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+  });
+}
+function tagSite(g){
+  if(!g)return g;
+  var best=null,bd=1e12,s=state.settings;
+  s.sites.forEach(function(x){var d=dist(g,x);if(d<bd){bd=d;best=x}});
+  g.site=(best&&bd<=s.radius+Math.min(g.ac||0,100))?best.name:'';
+  return g;
+}
+function geoWord(g){return g.site?esc(g.site)+' ✓':(state.settings.sites.length?'fuori sede':'salvata')}
+function geoFormLine(f){var i=f.gin?geoWord(f.gin):'n.d.',o=f.gpend?'cerco…':(f.gout?geoWord(f.gout):'n.d.');return 'Posizione · entrata: '+i+' · uscita: '+o}
+function geoSum(e){if(!e.gin&&!e.gout)return '';return ' · pos. '+(e.gin?(e.gin.site||'fuori sede'):'n.d.')+'/'+(e.gout?(e.gout.site||'fuori sede'):'n.d.')}
+function activeGeo(a){
+  if(a.gpend)return 'Cerco la posizione…';
+  if(!a.gin)return 'Posizione non disponibile. Controlla il permesso di posizione.';
+  if(a.gin.site)return 'Posizione verificata: '+esc(a.gin.site);
+  return state.settings.sites.length?'Fuori dalle sedi salvate':'Posizione salvata';
+}
 function defaultsFor(type){
   var last=sorted(state.entries.filter(function(e){return e.type===type})).pop();
   return last?{start:last.start,end:last.end,pause:last.pause||0}:{start:'09:00',end:'18:00',pause:60};
@@ -241,7 +268,8 @@ function newQ(type){
 function itemHTML(e,withMonth){
   var d=parse(e.date);
   return '<button class="item '+e.type+'" data-a="edit" data-id="'+e.id+'"><div class="dnum"><b>'+d.getDate()+'</b><span>'+wd(e.date)+'</span></div>'
-   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+(e.note?'<span class="note">'+esc(e.note)+'</span>':'')+'</div>'
+   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+(e.note?'<span class="note">'+esc(e.note)+'</span>':'')
+   +((e.gin||e.gout)?'<span class="note geo'+(((e.gin&&e.gin.site)||(e.gout&&e.gout.site))?' ok':'')+'">Posizione · entrata: '+(e.gin?geoWord(e.gin):'n.d.')+' · uscita: '+(e.gout?geoWord(e.gout):'n.d.')+'</span>':'')+'</div>'
    +'<div class="h">'+fmtH(mins(e))+'</div></button>';
 }
 function quickForm(){
@@ -275,7 +303,7 @@ function clockInner(){
   if(a){
     var long=Date.now()-a.ts>16*3600e3;
     return '<div style="display:flex;flex-direction:column;gap:12px"><div class="row"><span class="pill '+a.type+'">'+TYPE[a.type]+'</span><span class="hint">Entrata alle <b>'+a.start+'</b>'+(a.date!==todayIso()?' del '+fmtShortMonth(a.date):'')+'</span></div>'
-     +'<div class="timer" id="clock">'+elapsedStr(Date.now()-a.ts)+'</div>'
+     +'<div class="timer" id="clock">'+elapsedStr(Date.now()-a.ts)+'</div><p class="hint">'+activeGeo(a)+'</p>'
      +(long?'<p class="hint">Aperta da molto: se ti sei dimenticato di chiudere, timbra l’uscita e correggi l’orario.</p>':'')
      +'<div class="actions"><button class="btn del" data-a="discard">'+(ui.confirmDiscard?'Conferma: scarta':'Scarta')+'</button><button class="btn" data-a="clockout">Timbra uscita</button></div></div>';
   }
@@ -366,6 +394,7 @@ function formModal(){
   return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="'+(editing?'Modifica giornata':(f.fromClock?'Timbra uscita':'Nuova giornata'))+'">'
    +'<h2>'+(editing?'Modifica giornata':(f.fromClock?'Timbra uscita':'Nuova giornata'))+'</h2>'
    +(f.fromClock?'<p class="hint">Uscita alle '+f.end+'. Aggiungi la pausa se serve, poi salva.</p>':'')
+   +((f.fromClock||f.gin||f.gout)?'<p class="hint" id="gline">'+geoFormLine(f)+'</p>':'')
    +'<div class="seg">'+seg+'</div>'
    +'<div class="field"><label for="f-date">Giorno</label><input id="f-date" type="date" data-f="date" value="'+f.date+'"></div>'
    +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button></div>'
@@ -391,6 +420,10 @@ function settingsModal(){
    +'<div class="two"><div class="field"><label for="s-ts">Giorni in sede a settimana</label><input id="s-ts" type="number" min="0" max="7" data-s="targetSede" value="'+s.targetSede+'"></div><div class="field"><label for="s-tm">Giorni smart a settimana</label><input id="s-tm" type="number" min="0" max="7" data-s="targetSmart" value="'+s.targetSmart+'"></div></div>'
    +'<div class="field"><label for="s-rate">Tariffa giornaliera in € (facoltativa)</label><input id="s-rate" type="number" min="0" step="1" data-s="rate" value="'+s.rate+'"></div>'
    +'<p class="hint">La tariffa serve solo a mostrare il valore delle giornate registrate. Lasciala a 0 per nasconderlo.</p>'
+   +'<div class="bk"><p class="sub">Sedi per la verifica della posizione</p>'+(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b> <span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>')
+   +'<div class="field"><label for="s-sname">Nome sede</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div>'
+   +'<button class="btn alt" data-a="siteadd">Aggiungi sede</button><p class="hint">Senza coordinate usa la tua posizione attuale: premi mentre sei nella sede. Le coordinate si copiano da Google Maps tenendo premuto sul punto.</p>'
+   +'<div class="field"><label for="s-rad">Raggio di tolleranza (metri)</label><input id="s-rad" type="number" min="50" max="2000" data-s="radius" value="'+s.radius+'"></div></div>'
    +'<div class="bk"><div class="field"><label for="s-bk">Backup dei dati</label><textarea id="s-bk" rows="3" placeholder="Per ripristinare, incolla qui un backup"></textarea></div><div class="actions"><button class="btn alt" data-a="bkcopy">Copia backup</button><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div><p class="hint">I dati stanno solo su questo telefono. Copia ogni tanto un backup e conservalo nelle note.</p></div>'
    +'<div class="actions"><button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="savesettings">Salva</button></div></div></div>';
 }
@@ -402,7 +435,7 @@ function summaryText(){
     if(!list.length)return;
     var st=stats(list);
     out.push(fmtMonth(+p[0],+p[1]-1).toUpperCase());
-    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+(e.note?' · '+e.note:''))});
+    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+(e.note?' · '+e.note:'')+geoSum(e))});
     out.push('Totale mese: '+gg(st.sede.days)+' in sede ('+fmtH(st.sede.min)+'), '+gg(st.smart.days)+' smart working ('+fmtH(st.smart.min)+'), '+fmtH(st.min)+' complessive','');
   });
   var t=stats(state.entries);
@@ -411,8 +444,8 @@ function summaryText(){
 }
 function csvText(){
   function q(v){return '"'+String(v).replace(/"/g,'""')+'"'}
-  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Note'].map(q).join(';')];
-  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.note||''].map(q).join(';'))});
+  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Note','Posizione entrata','Posizione uscita'].map(q).join(';')];
+  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.note||'',e.gin?(e.gin.site||'fuori sede'):'',e.gout?(e.gout.site||'fuori sede'):''].map(q).join(';'))});
   return '﻿'+rows.join('\r\n');
 }
 function summaryModal(){
@@ -466,7 +499,7 @@ function backupRestore(){
   try{
     var b=JSON.parse(ta.value);
     if(!b||!Array.isArray(b.entries)||!b.settings)throw 0;
-    state=b;ui.modal=null;ui.view=initialView();persist('Backup ripristinato');
+    state=b;normState();ui.modal=null;ui.view=initialView();persist('Backup ripristinato');
   }catch(e){toast('Il testo incollato non è un backup valido',3500)}
 }
 
@@ -474,7 +507,7 @@ function backupRestore(){
 function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function openForm(type,date,entry){
   ui.confirmDel=false;
-  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||''}}
+  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||'',gin:entry.gin||null,gout:entry.gout||null}}
   else{
     var last=sorted(state.entries.filter(function(e){return e.type===type})).pop();
     ui.form={id:null,type:type,date:date||todayIso(),start:last?last.start:'09:00',end:last?last.end:'18:00',pause:last?(last.pause||0):60,note:''};
@@ -514,10 +547,12 @@ function onClick(e){
   else if(a==='qdate'){ui.q.date=el.dataset.v;draw()}
   else if(a==='qpreset'){var pp=PRESET[el.dataset.v];ui.q.start=pp[0];ui.q.end=pp[1];ui.q.pause=pp[2];draw()}
   else if(a==='qsave'){saveQuick()}
-  else if(a==='clockin'){var n=new Date();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:n.getTime()};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start)}
-  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true};ui.modal='form';draw()}
+  else if(a==='clockin'){var n=new Date();var ts=n.getTime();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:ts,gin:null,gpend:true};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start);getPos().then(function(g){if(!state.active||state.active.ts!==ts)return;state.active.gin=tagSite(g);state.active.gpend=false;saveQuiet();if(!ui.modal)draw()})}
+  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;fm.gout=tagSite(g);fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
   else if(a==='discard'){if(!ui.confirmDiscard){ui.confirmDiscard=true;draw();return}ui.confirmDiscard=false;state.active=null;persist('Sessione scartata')}
   else if(a==='csv'){downloadCsv()}
+  else if(a==='siteadd'){addSite()}
+  else if(a==='siterm'){ui.sform.sites.splice(+el.dataset.i,1);draw()}
   else if(a==='bkcopy'){backupCopy()}
   else if(a==='bkrestore'){backupRestore()}
 }
@@ -527,6 +562,7 @@ function saveEntry(){
   var net=span(f.start,f.end)-(+f.pause||0);
   if(!f.start||!f.end||net<=0){toast('Controlla orari e pausa');return}
   var rec={id:f.id||newId(),type:f.type,date:f.date,start:f.start,end:f.end,pause:+f.pause||0,note:f.note.trim()};
+  if(f.gin)rec.gin=f.gin;if(f.gout)rec.gout=f.gout;
   if(f.id){state.entries=state.entries.map(function(x){return x.id===f.id?rec:x})}else{state.entries.push(rec)}
   if(f.fromClock)state.active=null;
   var d=parse(f.date);ui.view={y:d.getFullYear(),m:d.getMonth()};
@@ -542,10 +578,20 @@ function saveQuick(){
   ui.q.note='';
   persist('Giornata salvata: '+fmtH(net));
 }
+function addSite(){
+  var name=document.getElementById('s-sname').value.trim(),co=document.getElementById('s-scoord').value.trim();
+  if(!name){toast('Dai un nome alla sede');return}
+  function push(la,lo){ui.sform.sites.push({name:name,lat:la,lng:lo});draw();toast('Sede aggiunta. Ricorda di salvare.')}
+  var m=co.match(/(-?\d+[.,]\d+)\s*[,;\s]\s*(-?\d+[.,]\d+)/);
+  if(m){push(parseFloat(m[1].replace(',','.')),parseFloat(m[2].replace(',','.')));return}
+  if(co){toast('Coordinate non riconosciute. Esempio: 43.0707, 12.6196',3500);return}
+  toast('Cerco la posizione…',8000);
+  getPos().then(function(g){if(!g){toast('Posizione non disponibile: controlla il permesso',3500);return}push(g.la,g.lo)});
+}
 function saveSettings(){
   var s=ui.sform;
   if(!s.startDate||!s.endDate||s.endDate<s.startDate){toast('Controlla le date del periodo');return}
-  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0)};
+  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],radius:Math.max(50,+s.radius||250)};
   ui.modal=null;persist('Impostazioni salvate');
 }
 function copyText(){
