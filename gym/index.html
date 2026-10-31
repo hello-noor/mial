@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Allenati con clienti simulati: obiezioni, discovery MEDDPICC e punteggio.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sales Gym · Massini">
+<meta property="og:description" content="Allenati con clienti simulati: obiezioni, discovery MEDDPICC e punteggio.">
+<meta property="og:url" content="https://hello-noor.github.io/mial/gym/">
+<meta property="og:image" content="https://hello-noor.github.io/mial/gym/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hello-noor.github.io/mial/gym/og-image.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sales Gym — Simulatore trattative</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Russo+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#090b0f; --bg2:#0d1015; --panel:#13161c; --panel2:#191d25; --line:#242a34; --line2:#313946;
+  --tx:#f5f5f7; --mut:#9ea7b6; --mut2:#c6ccd6;
+  /* Massini: blu = struttura e selezioni, arancione = azioni e premi */
+  --blu:#2997ff; --blu2:#7cc0ff; --bluBg:#0e1c2e; --blu3:#1a5fb8;
+  --acc:#ff9a4d; --acc2:#ffc08f; --teal:var(--blu); --xp:var(--blu2); --ok:#34d399; --ko:#f87171; --mid:#fbbf24;
+  --r:16px; --hd:"Space Grotesk",Inter,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body{background:radial-gradient(1200px 520px at 50% -220px,#10223a 0%,var(--bg) 62%) fixed}
+button{font:inherit;cursor:pointer;color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 110px}
+.hidden{display:none!important}
+.muted{color:var(--mut);font-size:13px}
+h2.sec{font-family:var(--hd);font-size:18px;margin:26px 0 10px;display:flex;align-items:center;gap:10px}
+h2.sec .n{width:26px;height:26px;border-radius:8px;background:var(--panel2);border:1px solid var(--line2);display:grid;place-items:center;font-size:13px;color:var(--acc2)}
+h2.sec .r{margin-left:auto;display:flex;gap:6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card h3{font-family:var(--hd);font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin:0 0 12px;font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{background:linear-gradient(180deg,#ffab66,#ff8a33);color:#1f1005;border:0;border-radius:12px;padding:12px 18px;font-weight:700;box-shadow:0 6px 20px -8px #ff9a4d80;transition:transform .1s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn.ghost{background:var(--panel2);color:var(--tx);border:1px solid var(--line2);font-weight:500;box-shadow:none}
+.btn.sm{padding:8px 12px;font-size:13px;border-radius:10px}
+.chip{background:var(--panel2);border:1px solid var(--line2);border-radius:99px;padding:7px 13px;font-size:13px;transition:.15s}
+.chip.sel{background:var(--blu);color:#fff;border-color:var(--blu);font-weight:600}
+.chip small{opacity:.7;font-size:12px;margin-left:4px}
+textarea,input[type=text]{width:100%;background:var(--bg2);border:1px solid var(--line2);color:var(--tx);border-radius:12px;padding:11px 13px;font:inherit;resize:vertical}
+textarea:focus,input:focus{outline:none;border-color:var(--blu);box-shadow:0 0 0 3px #2997ff33}
+button:focus-visible{outline:2px solid var(--blu);outline-offset:2px}
+svg.av{border-radius:50%;display:block;flex:none}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.logo{display:flex;align-items:center;gap:9px;cursor:pointer}
+.logo .m{width:36px;height:36px;border-radius:11px;background:linear-gradient(135deg,#2997ff,#1a5fb8);display:grid;place-items:center;font-family:var(--hd);font-weight:700;color:#fff}
+.logo b{font-family:var(--hd);font-size:17px}
+.logo span{display:block;font-size:12px;color:var(--mut);margin-top:-2px}
+.prof{margin-left:auto;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:99px;padding:5px 12px 5px 5px}
+.lvl{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#2997ff,#1a5fb8);display:grid;place-items:center;font-family:var(--hd);font-weight:700;font-size:13px}
+.xpb{width:90px;height:6px;border-radius:99px;background:#252b35;overflow:hidden}
+.xpb i{display:block;height:100%;background:linear-gradient(90deg,#1a5fb8,#2997ff,#7cc0ff);transition:width .8s}
+.prof small{display:block;font-size:12px;color:var(--mut)}
+
+/* home */
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:12px;margin-top:14px}
+.hcard{background:linear-gradient(135deg,#16202f,#141922);border:1px solid var(--line);border-radius:20px;padding:20px;position:relative;overflow:hidden}
+.hcard .t{font-family:var(--hd);font-size:26px;font-weight:700;line-height:1.1;margin:4px 0 6px}
+.hcard .ttl{color:var(--xp);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.bigxp{height:10px;border-radius:99px;background:#252b35;overflow:hidden;margin:12px 0 6px}
+.bigxp i{display:block;height:100%;background:linear-gradient(90deg,#1a5fb8,#2997ff,#7cc0ff);transition:width 1s}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.stat{background:#0c0f14aa;border:1px solid var(--line);border-radius:12px;padding:9px 10px}
+.stat b{font-family:var(--hd);font-size:20px;display:block}
+.stat span{font-size:12px;color:var(--mut)}
+.cta{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.cta .btn{padding:16px;font-size:16px}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.bdg{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 6px;text-align:center;font-size:12px;color:var(--mut2)}
+.bdg .i{font-size:26px;display:block;margin-bottom:4px}
+.bdg.off{opacity:.35;filter:grayscale(1)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.gc{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;cursor:pointer;transition:.15s}
+.gc:hover{border-color:var(--line2);transform:translateY(-2px)}
+.gc svg{margin:0 auto 8px}
+.gc b{font-size:13px;display:block}
+.gc span{font-size:12px;color:var(--mut);display:block}
+.stars{color:#3a4456;font-size:13px;letter-spacing:1px;margin-top:4px}
+.stars .on{color:var(--acc)}
+.stars.nog{font-size:12px;color:var(--mut);letter-spacing:0;font-style:italic}
+.hist{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.hist:last-child{border-bottom:0}
+
+/* setup */
+.carousel{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory}
+.carousel::-webkit-scrollbar{height:6px}.carousel::-webkit-scrollbar-thumb{background:#2a3242;border-radius:9px}
+.pc{flex:none;width:132px;scroll-snap-align:start;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 8px;text-align:center;transition:.15s}
+.pc svg{margin:0 auto 6px}
+.pc b{font-size:12.5px;display:block;line-height:1.25}
+.pc span{font-size:12px;color:var(--mut);display:block;margin-top:2px}
+.pc.sel{border-color:var(--blu);box-shadow:0 0 0 1px var(--blu) inset,0 10px 30px -14px #2997ffaa;background:var(--bluBg)}
+.pc.special{border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--acc2)}
+.pc.special .i{font-size:30px}
+.pdet{display:flex;gap:16px;align-items:flex-start}
+.pdet .info{flex:1;min-width:0}
+.pdet .nm{font-family:var(--hd);font-size:19px;font-weight:700}
+.pdet .rl{color:var(--mut2);font-size:13.5px;margin:2px 0 8px}
+.pdet p{margin:0;font-size:13.5px;color:#cfd7e3}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-top:8px;font-size:13px}
+.kv span:nth-child(odd){color:var(--mut)}
+.src{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.so{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:11px;text-align:left;transition:.15s}
+.so .i{font-size:20px}
+.so b{display:block;font-size:13.5px;margin:4px 0 2px}
+.so span{font-size:12px;color:var(--mut)}
+.so.sel{border-color:var(--blu);box-shadow:0 0 0 1px var(--blu) inset;background:var(--bluBg)}
+.tmp{font-size:12px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:4px}
+.tmp.h{background:#3a1d12;color:#ff9b6b}.tmp.w{background:#3a3313;color:var(--mid)}.tmp.c{background:#132a3a;color:#7cc4ff}
+.seg{display:flex;background:var(--bg2);border:1px solid var(--line2);border-radius:12px;overflow:hidden;flex-wrap:wrap}
+.seg button{flex:1;background:none;border:0;color:var(--mut);padding:9px 8px;font-size:13px;border-right:1px solid var(--line);min-width:90px}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--bluBg);color:var(--teal);font-weight:600}
+.langs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.lg{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;align-items:center;gap:8px;font-size:14px}
+.lg .f{font-size:22px}
+.lg.sel{border-color:var(--blu);box-shadow:0 0 0 1px var(--blu) inset;background:var(--bluBg)}
+.lg small{display:block;font-size:12px;color:var(--acc2)}
+/* sliders */
+.sl{margin:14px 0}
+.sl .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:13.5px;margin-bottom:6px}
+.sl .lab b{font-weight:600}
+.sl .lab .v{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;background:#252b35;color:var(--mut2)}
+.sl .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-top:3px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;background:linear-gradient(90deg,#34d399,#fbbf24 50%,#f87171);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:4px solid #0b0e13;box-shadow:0 0 0 2px #fff4,0 2px 8px #0008;cursor:pointer}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid #0b0e13;cursor:pointer}
+.gauge{display:flex;align-items:center;gap:14px;margin-bottom:6px}
+.gauge .num{font-family:var(--hd);font-size:34px;font-weight:700;line-height:1}
+.gauge .meta{font-size:12.5px;color:var(--mut)}
+.gauge .meta b{color:var(--xp)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line2);margin-top:8px;cursor:pointer}
+.switch .tg{width:44px;height:26px;border-radius:99px;background:#2a3242;position:relative;flex:none;transition:.2s}
+.switch .tg::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.switch.on .tg{background:var(--teal)} .switch.on .tg::after{left:21px}
+.obj{display:flex;align-items:flex-start;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line)}
+.obj:last-child{border-bottom:0}
+.obj input{margin-top:3px;accent-color:var(--acc);width:17px;height:17px;flex:none}
+.obj .t{flex:1;font-size:14px}
+.obj .t small{display:block;color:var(--mut);font-size:12px}
+.obj .del{background:none;border:0;color:var(--mut);font-size:17px;padding:0 4px}
+.badge{font-size:12px;font-weight:600;padding:2px 7px;border-radius:99px;background:#2a2112;color:var(--acc2);margin-left:6px}
+.kb h4{margin:0 0 4px;font-size:15px}
+.kb .br{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--acc2)}
+.kb ul{margin:6px 0 10px;padding-left:18px;font-size:13.5px}
+.kb li{margin:2px 0}
+.kb .lim li{color:#ffb4b4}
+.kb .s{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-top:8px}
+details summary{cursor:pointer;color:var(--acc2);font-size:13.5px}
+.dock{position:fixed;left:0;right:0;bottom:0;background:#0b0e13ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px 16px;z-index:5}
+.dock .in{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.dock .sum{flex:1;min-width:0;display:flex;align-items:center;gap:10px}
+.dock .sum div{min-width:0}
+.dock .sum b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dock .sum span{font-size:12px;color:var(--mut);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* chat */
+#chat{display:flex;flex-direction:column;height:calc(100dvh - 32px);max-height:960px}
+.ch{display:flex;align-items:center;gap:12px;padding:12px 14px;background:linear-gradient(135deg,#16202f,#151a23);border:1px solid var(--line);border-radius:20px 20px 0 0}
+.ch .who{flex:1;min-width:0}
+.ch .who b{display:block;font-family:var(--hd);font-size:16px}
+.ch .who span{color:var(--mut);font-size:12.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.moodw{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font-size:12px;color:var(--mut);position:relative}
+.moodw .bar{width:120px;height:8px;background:#252b35;border-radius:99px;overflow:hidden}
+.moodw .bar i{display:block;height:100%;width:30%;background:linear-gradient(90deg,#f87171,#fbbf24,#34d399);background-size:120px 100%;transition:width .6s}
+.delta{position:absolute;right:0;top:-6px;font-weight:700;font-size:13px;animation:up 1.4s forwards}
+@keyframes up{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-16px)}}
+.otrack{display:flex;gap:6px;overflow-x:auto;padding:8px 12px;background:var(--panel);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.ot{flex:none;font-size:12px;padding:4px 10px;border-radius:99px;background:#1e2430;color:var(--mut);border:1px solid var(--line);white-space:nowrap;transition:.3s}
+.ot.raised{background:#3a2a12;color:var(--acc2);border-color:#5a4220}
+.ot.done{background:#12301f;color:var(--ok);border-color:#1f5a38}
+.ot.hid{border-style:dashed}
+#kbPanel{background:var(--panel);border-left:1px solid var(--line);border-right:1px solid var(--line);padding:12px 14px;max-height:45%;overflow-y:auto;border-top:1px solid var(--line)}
+#log{flex:1;overflow-y:auto;padding:16px 14px;background:var(--bg2);border-left:1px solid var(--line);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.mr{display:flex;gap:8px;align-items:flex-end;max-width:88%}
+.mr.s{align-self:flex-end;flex-direction:row-reverse}
+.msg{padding:10px 13px;border-radius:16px;white-space:pre-wrap;word-wrap:break-word}
+.mr.c .msg{background:var(--panel2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.mr.s .msg{background:linear-gradient(135deg,#2183ea,#1a65c4);border:1px solid #3a8ff0;color:#fff;border-bottom-right-radius:4px}
+.sys{align-self:center;color:var(--mut);font-size:12.5px;text-align:center;max-width:95%}
+.hint{align-self:stretch;background:#0f2620;border:1px dashed #2f6b4f;color:#bfeed6;font-size:13.5px;padding:10px 13px;border-radius:14px;white-space:pre-wrap}
+.lead{align-self:stretch;background:#121a26;border:1px solid #233149;border-radius:14px;padding:12px 14px;font-size:13px}
+.lead b{color:#7cc4ff}
+.lead .kv{margin-top:6px}
+.compose{display:flex;gap:8px;padding:10px;background:var(--panel);border:1px solid var(--line);border-radius:0 0 20px 20px}
+.compose textarea{min-height:46px;max-height:140px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 0;align-items:center}
+.turns{margin-left:auto;font-size:12px;color:var(--mut);font-variant-numeric:tabular-nums}
+.typing{color:var(--mut);font-style:italic}
+
+/* report */
+.rhead{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .c b{font-family:var(--hd);font-size:38px;line-height:1}
+.ring .c span{font-size:12px;color:var(--mut)}
+.esito{font-weight:700;padding:5px 12px;border-radius:99px;font-size:13px}
+.esito.w{background:#12301f;color:var(--ok)} .esito.l{background:#3a1717;color:var(--ko)} .esito.p{background:#3a3313;color:var(--mid)}
+.bigstars{font-size:30px;letter-spacing:4px;color:#2f3848}
+.bigstars .on{color:var(--acc);text-shadow:0 0 18px #ff9a4d80}
+.xpgain{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,#2a1a0e,#16130f);border:1px solid #6b3f1c;border-radius:16px;padding:14px 16px;margin-bottom:12px}
+.xpgain .p{font-family:var(--hd);font-size:28px;font-weight:700;color:var(--acc)}
+.objrow{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;background:var(--panel2)}
+.objrow .h{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}
+.vote{font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px;white-space:nowrap}
+.vote.ok{background:#12301f;color:var(--ok)} .vote.mid{background:#3a3313;color:var(--mid)} .vote.ko{background:#3a1717;color:var(--ko)} .vote.na{background:#252b33;color:var(--mut)}
+.better{margin-top:8px;padding:9px 11px;border-left:3px solid var(--blu);background:var(--bluBg);border-radius:6px;font-size:13.5px}
+.tb{display:flex;align-items:center;gap:10px;margin:8px 0}
+.tb span{flex:1;font-size:13.5px}
+.tb .bar{width:150px;height:8px;background:#252b35;border-radius:99px;overflow:hidden}
+.tb .bar i{display:block;height:100%;background:linear-gradient(90deg,#1a5fb8,#2997ff)}
+ul.clean{margin:6px 0 0;padding-left:18px} ul.clean li{margin:3px 0}
+.err{background:#3a1717;color:#ffc9c9;border:1px solid #6b2a2a;padding:10px 12px;border-radius:10px;font-size:13.5px}
+.toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:linear-gradient(135deg,#132840,#13161c);border:1px solid #2f5f9e;color:#fff;padding:12px 18px;border-radius:14px;z-index:20;display:flex;align-items:center;gap:10px;box-shadow:0 20px 40px -10px #000;animation:tin .4s}
+.toast .i{font-size:26px}
+@keyframes tin{from{opacity:0;transform:translate(-50%,-12px)}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:15}
+/* ===== v6: gamification, MEDDPICC, icone ===== */
+.stats{grid-template-columns:repeat(4,1fr)}
+.ch{position:relative}
+.react{position:absolute;top:8px;font-size:26px;animation:fl 1.4s forwards;pointer-events:none;z-index:3}
+@keyframes fl{0%{opacity:0;transform:translateY(8px) scale(.6)}25%{opacity:1;transform:translateY(-6px) scale(1.15)}100%{opacity:0;transform:translateY(-44px) scale(1)}}
+.av .eye{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+#cAv.talk svg{animation:talk .5s infinite alternate}
+@keyframes talk{to{transform:translateY(-2px) scale(1.04)}}
+.dots{display:inline-flex;gap:4px;padding:5px 2px}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:dot 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+.ics{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:6px;font-size:14px;line-height:1}
+.ics span{background:#0c0f14;border:1px solid var(--line);border-radius:8px;padding:3px 4px}
+.icl{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.icl span{display:inline-flex;align-items:center;gap:5px;background:#0c0f14;border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:12.5px;color:var(--mut2)}
+.stepper{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--mut);margin:10px 0 6px}
+.stepper span{padding:5px 12px;border-radius:99px;background:var(--panel);border:1px solid var(--line)}
+.stepper span.on{background:var(--blu);color:#fff;border-color:var(--blu);font-weight:700}
+.stepper i{flex:1;height:2px;background:var(--line);max-width:60px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.mode{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:left;transition:.15s}
+.mode .i{font-size:26px;display:block}
+.mode b{display:block;font-family:var(--hd);font-size:16px;margin:4px 0 2px}
+.mode .d{font-size:12.5px;color:var(--mut);display:block}
+.mode.sel{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal) inset,0 10px 30px -14px #2997ffaa;background:var(--bluBg)}
+.quest{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#2b2312,#1a1d26);border:1px solid #5a4220;border-radius:16px;padding:12px 14px;margin-top:12px}
+.quest.done{border-color:#1f5a38;background:linear-gradient(135deg,#12301f,#161b24)}
+.quest .qi{font-size:28px}.quest .qt{flex:1}
+.quest small{display:block;color:var(--acc2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.quest b{font-size:14.5px}
+.otrack.med{flex-wrap:wrap;overflow:visible}
+.mc{display:flex;align-items:center;gap:5px;flex:none;padding:5px 9px;border-radius:12px;background:#1a202b;border:1px solid var(--line);color:var(--mut);font-size:12px;transition:.3s}
+.mc b{font-family:var(--hd);font-size:13px;color:var(--mut2)}
+.mc i{font-style:normal;font-weight:700}
+.mc small{font-size:12px}
+.mc.l1{background:#33290f;border-color:#6b5420;color:var(--acc2)}
+.mc.l2{background:#12301f;border-color:#1f5a38;color:var(--ok)}
+.mc.l1 b,.mc.l2 b{color:inherit}
+.mc.pop{animation:pop .6s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25);box-shadow:0 0 0 6px #34d39933}100%{transform:scale(1)}}
+.mprog{margin-left:auto;font-family:var(--hd);font-size:13px;color:var(--teal);align-self:center}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.mg{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:13px}
+.mg b{display:block}.mg span{color:var(--mut);font-size:12px}
+.modal{position:fixed;inset:0;background:#000a;backdrop-filter:blur(4px);z-index:30;display:grid;place-items:center;padding:16px}
+.mbox{background:var(--panel);border:1px solid var(--line2);border-radius:20px;padding:20px;max-width:440px;width:100%}
+.mbox.lv{text-align:center}
+.mbox.lv .big{font-size:56px;animation:pop .8s}
+.vopt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line2);border-radius:14px;padding:12px;margin-bottom:8px}
+.vopt .i{font-size:26px}.vopt small{display:block;color:var(--mut);font-size:12px}
+.vopt:hover{border-color:var(--acc)}
+.mel{border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;background:var(--panel2)}
+.mel .h{display:flex;align-items:center;gap:10px}
+.mel .lt{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-family:var(--hd);font-weight:700;background:#252b35;flex:none}
+.mel.l2 .lt{background:#12301f;color:var(--ok)}.mel.l1 .lt{background:#33290f;color:var(--acc2)}.mel.l0 .lt{background:#3a1717;color:var(--ko)}
+.mel details{margin-top:8px}
+.rv{animation:rv .5s both}
+@keyframes rv{from{opacity:0;transform:translateY(10px)}}
+/* ===== v7: redesign Massini ===== */
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;display:inline-block}
+h2.sec .ico{color:var(--blu)}
+.bdg .i,.so .i,.mode .i,.vopt .i,.pc.special .i,.quest .qi,.toast .i{color:var(--blu);line-height:1}
+.bdg:not(.off) .i{color:var(--acc)}
+.quest .qi,.toast .i{color:var(--acc)}
+.iconbtn{width:40px;height:40px;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:17px;color:var(--mut2)}
+.iconbtn:hover{color:var(--tx);border-color:var(--line2)}
+.top .prof{margin-left:auto}
+.hcard .t{font-size:28px}
+.ttl{color:var(--blu2)!important}
+.cta .btn.ghost{font-weight:600}
+.fl{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+.mbox h3.mt{margin:0 0 2px;font-family:var(--hd);font-size:20px}
+details.adv{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:4px 16px 12px}
+details.adv>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 0 8px;color:var(--tx);font-size:15px;font-weight:600}
+details.adv>summary::-webkit-details-marker{display:none}
+details.adv>summary small{color:var(--mut);font-weight:400;font-size:13px}
+details.adv>summary::after{content:"";margin-left:auto;width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);transition:.2s}
+details.adv[open]>summary::after{transform:rotate(-135deg)}
+details.adv h2.sec:first-of-type{margin-top:8px}
+.btn.link{background:none;border:0;box-shadow:none;color:var(--mut);font-weight:500;padding:8px 6px}
+.btn.link:hover{color:var(--ko)}
+.focus{border-left:3px solid var(--acc)}
+.focus h3{color:var(--acc2)!important}
+#chat .ch{border-radius:20px 20px 0 0}
+.cbody{flex:1;min-height:0;display:flex;flex-direction:column}
+.cmain{flex:1;min-height:0;display:flex;flex-direction:column}
+.cside{order:-1;display:flex;flex-direction:column;min-height:0}
+.cside #kbPanel{max-height:40dvh}
+.sideh{display:none;font-family:var(--hd);font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin:0 0 10px}
+.wrap:has(#chat:not(.hidden)){max-width:1200px}
+@media (min-width:900px){
+  #chat{height:calc(100dvh - 32px);max-height:1000px}
+  #chat .ch{border-radius:20px;margin-bottom:12px}
+  .cbody{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px}
+  #log{border-top:1px solid var(--line);border-radius:20px 20px 0 0}
+  .cside{order:0;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px;overflow-y:auto}
+  .sideh{display:block}
+  .cside .otrack{flex-wrap:wrap;overflow:visible;background:none;border:0;padding:0}
+  .cside #kbPanel{border:0;border-top:1px solid var(--line);padding:12px 0 0;margin-top:14px;max-height:none;overflow:visible;background:none}
+}
+/* icone clienti leggibili */
+.gallery{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.gc{min-width:0;overflow:hidden}.ics span{min-width:0}
+.ics{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin:10px 2px 4px;text-align:left;border-top:1px solid var(--line);padding-top:10px}
+.ics span{display:flex;align-items:center;gap:8px;background:none;border:0;padding:0;font-size:12.5px;color:var(--mut2);line-height:1.25}
+.ics span em{font-style:normal;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ics .ico,.icl .ico{width:18px;height:18px;color:var(--blu2);flex:none;margin:0}
+.logo .demo-pill{display:inline-block;margin:0 0 0 8px;font-size:12px;text-transform:none;letter-spacing:.06em;vertical-align:6px}
+.icl span{font-size:13px;padding:5px 11px;gap:7px;color:var(--tx)}
+.demo-pill{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;background:#2a1a0e;border:1px solid #6b3f1c;color:var(--acc2);font-size:12px;font-weight:700;letter-spacing:.06em;vertical-align:middle}
+/* percorso guidato */
+.wz{display:flex;align-items:center;gap:12px;margin:12px 0 4px;font-size:13px;color:var(--mut2)}
+.wzbar{flex:1;max-width:260px;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.wzbar i{display:block;height:100%;background:linear-gradient(90deg,#1a5fb8,#2997ff);transition:width .4s}
+.wzhint{color:var(--mut);font-size:13px;margin:18px 0 0}
+/* finché non scegli, nulla appare selezionato */
+#setup:not(.p-mode) .mode.sel,#setup:not(.p-src) .so.sel,#setup:not(.p-lang) .lg.sel,#setup:not(.p-persona) .pc.sel,#setup:not(.p-product) #products .chip.sel,#setup:not(.p-diff) #presets .chip.sel{border-color:var(--line);box-shadow:none;background:var(--panel2);color:inherit;font-weight:inherit}
+#setup:not(.p-ch) #channels button.on{background:none;color:var(--mut);font-weight:400}
+#setup:not(.p-persona) #pdet{display:none}
+/* titolo grande in home */
+.brand{text-align:center;padding:30px 0 10px}
+.brand .wm{font-family:"Russo One",var(--hd);font-size:clamp(56px,11vw,104px);font-weight:400;line-height:1;letter-spacing:.02em;display:inline-block;transform:skewX(-8deg);background:linear-gradient(180deg,#fff 45%,#c3d3e8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #0b2a50) drop-shadow(0 14px 30px #2997ff55)}
+.brand .wm em{font-style:normal;margin-left:.2em;background:linear-gradient(180deg,#ffc08f,#ff7a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand p{margin:14px auto 0;max-width:560px;color:var(--mut2);font-size:16px}
+.brand p b{color:var(--blu2)}
+/* wordmark da gioco */
+.logo{gap:12px}
+.logo .m{width:46px;height:46px;border-radius:14px;color:#fff;font-size:24px;transform:rotate(-8deg);box-shadow:0 10px 26px -8px #2997ffaa,inset 0 1px 0 #ffffff40;transition:transform .2s}
+.logo:hover .m{transform:rotate(0) scale(1.05)}
+.logo .m .ico{stroke-width:2.4}
+.logo b.wm{font-family:"Russo One",var(--hd);font-size:28px;font-weight:400;letter-spacing:.03em;line-height:1;display:inline-block;transform:skewX(-8deg);background:linear-gradient(180deg,#fff 45%,#c3d3e8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 #0b2a50) drop-shadow(0 6px 14px #2997ff40)}
+.wm em{font-style:normal;margin-left:7px;background:linear-gradient(180deg,#ffc08f,#ff7a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo span{margin-top:5px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.logo span i{font-style:normal;font-weight:700;color:var(--blu2)}
+@media (max-width:640px){.logo b.wm{font-size:22px}.logo span{font-size:12px;letter-spacing:.02em}.logo .m{width:40px;height:40px;font-size:20px}}
+@media (max-width:640px){
+  .hero{grid-template-columns:1fr}
+  .modes{grid-template-columns:1fr}
+  .mr{max-width:94%}
+  .moodw .bar{width:80px}
+  .pdet{flex-direction:column;align-items:center;text-align:center}
+  .kv{text-align:left}
+  .xpb{width:60px}
+}
+</style>
+</head>
+<body>
+<canvas id="confetti"></canvas>
+<div class="modal hidden" id="verdictModal"><div class="mbox">
+  <h3 class="mt">Il tuo verdetto</h3>
+  <p class="muted" style="margin:0 0 12px">Dopo questa discovery, che cosa fai con il lead?</p>
+  <div id="vOpts"></div>
+  <input type="text" id="vNext" placeholder="Prossimo passo concreto (es. call con il direttore giovedì)…">
+  <div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn ghost sm" id="vCancel">Annulla</button></div>
+</div></div>
+<div class="modal hidden" id="lvlModal"><div class="mbox lv">
+  <div class="big" style="color:var(--blu)" data-ic="up"></div>
+  <div class="muted" style="margin-top:6px">Nuovo livello</div>
+  <div style="font-family:var(--hd);font-size:34px;font-weight:700" id="lvN"></div>
+  <div style="font-size:18px;color:var(--xp);margin-bottom:16px" id="lvT"></div>
+  <button class="btn" id="lvOk">Continua</button>
+</div></div>
+<div class="modal hidden" id="setModal"><div class="mbox">
+  <h3 class="mt">Impostazioni</h3>
+  <p class="muted" style="margin:0">Restano salvate in questo browser.</p>
+  <label class="fl" for="repName">Il tuo nome</label>
+  <input type="text" id="repName" placeholder="Es. Giulia">
+  <label class="fl" for="internal">Dati interni Massini</label>
+  <p class="muted" style="margin:0 0 8px">Dati non pubblici (prezzi indicativi, consegne, garanzia, referenze): servono al coach per verificare le tue risposte.</p>
+  <textarea id="internal" rows="5" placeholder="Es. IABA 1000 da ~X €; consegna standard 16 settimane; garanzia 12 mesi; referenza visitabile in Umbria…"></textarea>
+  <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn sm" id="setOk">Fatto</button></div>
+</div></div>
+<div class="wrap">
+
+  <div class="top" id="topbar">
+    <div class="logo" id="goHome"><div class="m" data-ic="dumbbell"></div><div><b class="wm">SALES<em>GYM</em></b><span>by <i>Massini</i> · allenamento commerciale</span></div></div>
+    <div class="prof"><div class="lvl" id="pLvl">1</div><div><small id="pTitle">Tirocinante</small><div class="xpb"><i id="pXp"></i></div></div></div>
+    <button class="iconbtn" id="setBtn" title="Impostazioni" aria-label="Impostazioni" data-ic="gear"></button>
+  </div>
+
+<!-- ================= HOME ================= -->
+<section id="home">
+  <div class="brand">
+    <b class="wm">SALES<em>GYM</em></b>
+    <p>Il simulatore di trattative <b>Massini</b>: clienti realistici, obiezioni vere, punteggio e livelli.</p>
+  </div>
+  <div class="hero">
+    <div class="hcard">
+      <div class="ttl" id="hTitle">Livello 1 · Tirocinante</div>
+      <div class="t">Ciao <span id="hName">commerciale</span></div>
+      <div class="muted" id="hNext"></div>
+      <div class="bigxp"><i id="hXp"></i></div>
+      <div class="stats">
+        <div class="stat"><b id="stN">0</b><span>trattative</span></div>
+        <div class="stat"><b id="stW">0</b><span>successi</span></div>
+        <div class="stat"><b id="stA">—</b><span>media punti</span></div>
+        <div class="stat"><b id="stS">0</b><span>giorni di fila</span></div>
+      </div>
+    </div>
+    <div class="hcard cta">
+      <button class="btn" id="hNew" data-ic="play">Nuova trattativa</button>
+      <button class="btn ghost" id="hRandom" data-ic="dice">Sfida a sorpresa</button>
+      <div class="muted" id="aiStatus" style="text-align:center">Connessione all'AI…</div>
+    </div>
+  </div>
+
+  <div class="quest" id="questCard"></div>
+
+  <h2 class="sec"><span data-ic="users"></span>I tuoi clienti <span class="r muted">★ ≥50 · ★★ ≥70 · ★★★ ≥85</span></h2>
+  <div class="gallery" id="gallery"></div>
+
+  <h2 class="sec"><span data-ic="clock"></span>Storico</h2>
+  <div class="card" id="hist"></div>
+
+  <h2 class="sec"><span data-ic="trophy"></span>Badge <span class="r"><span class="muted" id="bCount" style="align-self:center"></span><button class="btn ghost sm" id="bAll">Vedi tutti</button></span></h2>
+  <div class="badges" id="badges"></div>
+</section>
+
+<!-- ================= SETUP ================= -->
+<section id="setup" class="hidden">
+  <div class="wz"><div class="wzbar"><i id="wzBar"></i></div><span id="wzLab"></span></div>
+
+  <div class="wstep" data-s="0">
+    <h2 class="sec"><span data-ic="target"></span>Che allenamento vuoi fare?</h2>
+    <div class="modes" id="modes"></div>
+    <h2 class="sec"><span data-ic="user"></span>Il cliente</h2>
+    <div class="carousel" id="carousel"></div>
+    <div class="card" id="pdet"></div>
+  </div>
+
+  <div class="wstep" data-s="1">
+    <h2 class="sec"><span data-ic="inbox"></span>Da dove arriva il contatto</h2>
+    <div class="src" id="sources"></div>
+    <h2 class="sec"><span data-ic="chat"></span>Canale della conversazione</h2>
+    <div class="seg" id="channels"></div>
+  </div>
+
+  <div class="wstep" data-s="2">
+    <h2 class="sec"><span data-ic="globe"></span>Lingua della trattativa</h2>
+    <div class="langs" id="langs"></div>
+    <div class="row" style="margin-top:10px">
+      <span class="muted">Feedback del coach in:</span>
+      <div class="seg" id="fbLang" style="flex:1;max-width:360px"></div>
+    </div>
+    <h2 class="sec"><span data-ic="package"></span>Cosa vendi</h2>
+    <div class="row" id="products"></div>
+    <details style="margin-top:12px"><summary>Scheda prodotto (la conosce anche il cliente)</summary><div class="card kb" id="kbSetup" style="margin-top:10px"></div></details>
+  </div>
+
+  <div class="wstep" data-s="3">
+    <h2 class="sec"><span data-ic="dumbbell"></span>Difficoltà</h2>
+    <div class="card">
+      <div class="gauge"><div class="num" id="gNum">45</div><div class="meta">su 100<br>Moltiplicatore XP <b id="gMul">×1.0</b></div></div>
+      <div class="row" id="presets"></div>
+      <div id="sliders"></div>
+      <div class="switch" id="hidSw"><div><b style="font-size:13.5px"><span data-ic="eye"></span> Obiezione nascosta</b><div class="muted">Il cliente ha un vero motivo che non dice: va scoperto con le domande.</div></div><div class="tg"></div></div>
+    </div>
+  </div>
+
+  <div class="wstep" data-s="4">
+    <div id="objSec">
+    <h2 class="sec"><span data-ic="shield"></span>Obiezioni <span class="r"><button class="btn ghost sm" id="allObj">Tutte</button><button class="btn ghost sm" id="noneObj">Nessuna</button><button class="btn ghost sm" id="rndObj" data-ic="dice">3</button></span></h2>
+    <div class="card">
+      <div id="objList"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input type="text" id="newObj" placeholder="Obiezione raccolta sul campo…">
+        <button class="btn sm" id="addObj">Aggiungi</button>
+      </div>
+    </div>
+    </div>
+    <div id="discInfo" class="hidden"></div>
+    <h2 class="sec"><span data-ic="doc"></span>Contesto di questa trattativa</h2>
+    <div class="card">
+      <textarea id="extra" rows="2" placeholder="Facoltativo: es. ha un preventivo concorrente a −18%…"></textarea>
+      <p class="muted" style="margin:8px 0 0">I dati interni Massini (prezzi, consegne, garanzia) si impostano una volta sola in <b>Impostazioni</b>.</p>
+    </div>
+  </div>
+
+  <p class="wzhint"><span data-ic="dice"></span> Se non scegli, al passo successivo scelgo io a caso.</p>
+
+  <div class="dock"><div class="in">
+    <div class="sum" id="dockSum"></div>
+    <button class="btn ghost sm" id="sBack" aria-label="Indietro" data-ic="left"></button>
+    <button class="btn" id="wzNext">Avanti</button>
+    <button class="btn" id="start">Inizia</button>
+  </div></div>
+</section>
+
+<!-- ================= CHAT ================= -->
+<section id="chat" class="hidden">
+  <div class="ch">
+    <div id="cAv"></div>
+    <div class="who"><b id="cName"></b><span id="cRole"></span></div>
+    <div class="moodw"><span id="moodLbl">Propensione all'acquisto</span><div class="bar"><i id="mood"></i></div><span id="dWrap"></span></div>
+  </div>
+  <div class="cbody">
+    <div class="cmain">
+      <div id="log"></div>
+      <div class="compose">
+        <textarea id="input" rows="1" placeholder="Scrivi la tua risposta…"></textarea>
+        <button class="btn" id="send" data-ic="send">Invia</button>
+      </div>
+    </div>
+    <aside class="cside">
+      <h4 class="sideh">Andamento</h4>
+      <div class="otrack" id="otrack"></div>
+      <div id="kbPanel" class="kb hidden"></div>
+    </aside>
+  </div>
+  <div class="tools">
+    <button class="btn ghost sm" id="hintBtn" data-ic="bulb">Coach</button>
+    <button class="btn ghost sm" id="kbBtn" data-ic="doc">Scheda</button>
+    <button class="btn ghost sm" id="showBtn" data-ic="factory">Invita in showroom</button>
+    <button class="btn ghost sm" id="endBtn" data-ic="flag">Chiudi e valuta</button>
+    <span class="turns" id="turns"></span>
+    <button class="btn link sm" id="quitBtn">Abbandona</button>
+  </div>
+</section>
+
+<!-- ================= REPORT ================= -->
+<section id="report" class="hidden">
+  <div id="rBody"></div>
+  <div class="row" style="margin-top:6px">
+    <button class="btn" id="again" data-ic="refresh">Rigioca</button>
+    <button class="btn ghost" id="newSet">Nuovo scenario</button>
+    <button class="btn ghost" id="toHome">Home</button>
+    <button class="btn ghost" id="copyRep">Copia report</button>
+  </div>
+</section>
+</div>
+
+<script>
+/* =====================================================================
+   BASE DI CONOSCENZA — fonte: massiniindustries.com, mialtecno.com,
+   mftecno.com (ottobre 2026). Integrare con i dati interni.
+   ===================================================================== */
+/* ---------------- ICONE (SVG, stile lineare) ---------------- */
+const IC={play:'<path d="M7 4v16l13-8z"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/>',
+trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',users:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+sparkles:'<path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9zM19 14v6M16 17h6"/>',doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',video:'<rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/>',
+factory:'<path d="M3 21V10l6 4v-4l6 4V3h6v18zM3 21h18"/>',chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>',mobile:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/>',
+link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3l-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/>',
+award:'<circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/>',flame:'<path d="M12 22a7 7 0 0 0 7-7c0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-2 2-5 5-5 8a7 7 0 0 0 7 7z"/>',
+zap:'<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',layers:'<path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5"/>',inbox:'<path d="M3 13h5l2 3h4l2-3h5M5 5h14l2 8v6H3v-6z"/>',
+scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/>',
+coins:'<circle cx="9" cy="9" r="6"/><path d="M15.5 9.5a6 6 0 1 1-6 6"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',send:'<path d="m22 2-7 20-4-9-9-4zM22 2 11 13"/>',
+snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>',dumbbell:'<path d="M6 6v12M18 6v12M3 9v6M21 9v6M6 12h12"/>',eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+unlock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',film:'<rect x="3" y="7" width="18" height="14" rx="2"/><path d="m3 7 3-4h12l-3 4M9 11v6l5-3z"/>',
+check:'<path d="m5 12 5 5L20 7"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',alert:'<path d="M12 3 2 21h20z"/><path d="M12 10v5M12 18h.01"/>',minus:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+ruler:'<path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/>',briefcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+scale:'<path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/>',map:'<path d="m9 4-6 3v13l6-3 6 3 6-3V4l-6 3zM9 4v13M15 7v13"/>',pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+swords:'<path d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/>',up:'<path d="M12 19V5M5 12l7-7 7 7"/>',left:'<path d="M19 12H5M12 19l-7-7 7-7"/>',
+sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+package:'<path d="m12 3 9 5v8l-9 5-9-5V8z"/><path d="m3 8 9 5 9-5M12 13v8"/>',wheat:'<path d="M12 21V6M12 8c-2-1-3-3-3-5 2 0 3 2 3 5zM12 8c2-1 3-3 3-5-2 0-3 2-3 5zM12 13c-2-1-4-2-4-5 2 0 4 2 4 5zM12 13c2-1 4-2 4-5-2 0-4 2-4 5zM12 18c-2-1-4-2-4-5 2 0 4 2 4 5zM12 18c2-1 4-2 4-5-2 0-4 2-4 5z"/>',
+wrench:'<path d="M15 6a4 4 0 0 0 5 5l-9 9a2.1 2.1 0 0 1-3-3l9-9a4 4 0 0 1-2-2z"/>',crown:'<path d="m3 7 4 4 5-6 5 6 4-4-2 12H5z"/>',rocket:'<path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2M9 15l-3-3c1-4 4-8 12-9-1 8-5 11-9 12z"/><circle cx="15" cy="9" r="1.5"/>',
+landmark:'<path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M2 10l10-6 10 6z"/>',cart:'<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l3 12h11l2-8H6"/>',
+hardhat:'<path d="M3 18h18v-2a9 9 0 0 0-18 0zM10 7V4h4v3"/>',compass:'<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+flask:'<path d="M9 3h6M10 3v6L4 19a1.5 1.5 0 0 0 1.3 2h13.4a1.5 1.5 0 0 0 1.3-2L14 9V3M7 15h10"/>',chart:'<path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/>',
+heart:'<path d="M12 20s-8-4.5-8-10a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.5-8 10-8 10z"/>',trend:'<path d="m3 17 6-6 4 4 8-8M15 7h6v6"/>',
+help:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"/>',paw:'<circle cx="12" cy="16" r="3.5"/><circle cx="6" cy="10" r="1.8"/><circle cx="10" cy="6" r="1.8"/><circle cx="14" cy="6" r="1.8"/><circle cx="18" cy="10" r="1.8"/>',
+broom:'<path d="M19 3 11 11M8 10l6 6-3 5-8-8z"/>',tag:'<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/>',plug:'<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0zM12 17v5"/>',
+leaf:'<path d="M5 19c0-9 5-14 15-15-1 10-6 15-15 15zM5 19l7-7"/>',fish:'<path d="M3 12c3-5 9-6 13-3l5-3v12l-5-3c-4 3-10 2-13-3z"/><circle cx="8" cy="11" r=".8" fill="currentColor"/>',
+hourglass:'<path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/>',moon:'<path d="M20 14A8 8 0 1 1 10 4a6.5 6.5 0 0 0 10 10z"/>',
+thermo:'<path d="M14 14V4a2 2 0 0 0-4 0v10a4 4 0 1 0 4 0z"/>',pin:'<path d="M12 21s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+can:'<ellipse cx="12" cy="5" rx="7" ry="2.5"/><path d="M5 5v14c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V5"/>',bottle:'<path d="M10 2h4v4l2 3v12H8V9l2-3z"/>',
+brick:'<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 12h18M9 5v7M15 12v7"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>'};
+const ic=(n,cls="")=>`<svg class="ico ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]||""}</svg>`;
+const COMPANY = `Massini Industries (Tordandrea di Assisi, PG): gruppo che progetta, produce internamente e installa linee "dal materiale sfuso al pallet". Due marchi complementari: MIAL (oltre 50 anni; trasporto materiali sfusi, impianti pet food e mangimifici) e MF TECNO (oltre 20 anni; pesatura, confezionamento, pallettizzazione, avvolgimento, fine linea). Installazioni in oltre 70 paesi, uffici in Brasile e USA, rete di agenti globale. Certificazioni: ISO 9001:2015, EN 1090 e requisiti ISO di saldatura, direttiva MID, Modello 231. Argomento chiave: un unico interlocutore per tutta la linea, macchine progettate per dialogare tra loro (meno fermi, dati di processo centralizzati, controllo del flusso).
+SERVIZI: call center multilingue che pianifica interventi o dà supporto in tempo reale; teleassistenza con monitoraggio remoto (IT, EN, FR, ES, DE); magazzino ricambi, ricerca del pezzo anche senza numero di serie, spedizioni in tutto il mondo; installazione e messa in servizio, riparazioni d'emergenza, formazione del personale, manutenzione preventiva.
+SETTORI: pet food, mangimi, acquacoltura, alimentare, cereali e sementi, chimica e fertilizzanti, combustibili e pellet di legno, minerali e inerti, lettiera per gatti, zootecnia.`;
+
+const KB = [
+ {id:"bag", brand:"MF TECNO", name:"Insaccatrici bocca aperta", kw:{it:"insaccatrice automatica sacchi",en:"automatic open mouth bagging machine",pt:"ensacadeira automática boca aberta",es:"ensacadora automática boca abierta",fr:"ensacheuse automatique sac gueule ouverte",de:"Absackmaschine offene Säcke"},
+  sintesi:"Insaccatrici automatiche per sacchi preformati a bocca aperta, da 200 a 1.200 sacchi/ora.",
+  modelli:["IABA 600 — polveri e granuli, sacchi con o senza soffietto, fino a 10 sacchi/min","IABA 600 D — doppia stazione di riempimento, fino a 25 sacchi/min","IABA 800 S — granuli, fino a 15 sacchi/min","IABA 1000 — granuli, fino a 20 sacchi/min","UNIVERSAL 1200 — ampia gamma di formati, fino a 20 sacchi/min","SBS 1200 — moto intermittente «step by step», sacchi a fondo quadro (lettiera, carbone), fino a 20 sacchi/min","Versioni per piccoli formati e semiautomatiche","Abbinabili a pesatrici elettroniche, alimentatori, sistemi di chiusura, big-bag"],
+  forza:["Progettate sul problema del singolo prodotto e sul materiale del sacco","Affidabili e facili da usare","Integrabili con pallettizzatore e avvolgitore MF TECNO e con il trasporto MIAL"],
+  limiti:["Sul sito non sono indicati formati in kg, precisione di pesatura e tipi di chiusura: da verificare con l'ufficio tecnico"]},
+ {id:"ffs", brand:"MF TECNO", name:"FFS film tubolare — MF TUBE", kw:{it:"macchina ffs film tubolare",en:"FFS bagging machine tubular film",pt:"ensacadeira FFS filme tubular",es:"ensacadora FFS film tubular",fr:"ensacheuse FFS film tubulaire",de:"FFS Absackanlage Schlauchfolie"},
+  sintesi:"Formatrice tubolare che forma, riempie e salda il sacco da bobina di film tubolare.",
+  modelli:["MF TUBE — fino a 33 sacchi/min (2.000 sacchi/ora) secondo il prodotto","Sacchi da 320×550 a 480×900 mm, a cuscino o con soffietto"],
+  forza:["Acciaio inox AISI 304/L, adatta anche a prodotti chimici aggressivi; cablaggio stagno per il lavaggio","Compatta e modulare","Microforatura della bobina per far uscire l'aria; saldatura a 45° sugli angoli","PLC con touch screen, autodiagnosi e teleassistenza; conforme Industria 4.0"],
+  limiti:["Peso di riempimento e tipo di film non indicati sul sito: da verificare"]},
+ {id:"vffs", brand:"MF TECNO", name:"Confezionatrici verticali VFFS", kw:{it:"confezionatrice verticale",en:"vertical form fill seal machine",pt:"empacotadora vertical",es:"envasadora vertical",fr:"ensacheuse verticale",de:"vertikale Schlauchbeutelmaschine"},
+  sintesi:"Confezionatrici verticali per piccoli, medi e grandi formati da bobina piana, più flow pack.",
+  modelli:["MF 52 — piccoli e medi formati, produzioni medie e alte, fino a 80 confezioni/min","Versioni per medi e grandi formati","Flow pack","MF TRIO LINE — confezionatrice verticale + pallettizzatore + avvolgitore in un'unica soluzione, in pronta consegna"],
+  forza:["Adatta ad alimentare, pet food in piccolo formato, lettiera","TRIO LINE: linea completa con consegna rapida"],
+  limiti:["Specifiche dei formati grandi non pubblicate: da verificare"]},
+ {id:"pal", brand:"MF TECNO", name:"Pallettizzatori", kw:{it:"pallettizzatore robot sacchi",en:"robotic bag palletizer",pt:"paletizador robótico sacos",es:"paletizador robotizado sacos",fr:"palettiseur robot sacs",de:"Roboter Palettierer Säcke"},
+  sintesi:"Gamma dai modelli compatti ai grandi sistemi, per sacchi, scatole e fardelli.",
+  modelli:["MF PRC 1000 (6 colonne) — robotizzato con carico dall'alto, fino a 1.200 cicli/h","PSM 1500/S — a spinta, fino a 1.200 cicli/h","IRB 460 — robot antropomorfo, fino a 900 cicli/h, adatto a spazi ristretti","MF PCA SMART PRO — cartesiano, fino a 800 cicli/h","MF PCA 700 / 700 TWIN — cartesiano telescopico, fino a 700 cicli/h","MF PCA SMART — cartesiano, fino a 500 cicli/h"],
+  forza:["Molto personalizzabili e programmabili","Accessori: movimentazione pallet, pick & place"],
+  limiti:["Il carico massimo in kg non è pubblicato: da verificare"]},
+ {id:"wrap", brand:"MF TECNO", name:"Fine linea e avvolgitori", kw:{it:"avvolgipallet automatico",en:"automatic pallet wrapper",pt:"envolvedora de paletes automática",es:"envolvedora de palets automática",fr:"banderoleuse automatique",de:"automatischer Palettenwickler"},
+  sintesi:"Automazione del fine linea dopo il confezionamento.",
+  modelli:["MF WRAP 35 — avvolgipallet automatico a tavola rotante, fino a 35 pallet/h","Cartonatrici","Fardellatrici","Pick & place","Riempimento big-bag"],
+  forza:["Chiudono la linea con un solo fornitore dal sacco al pallet filmato"],
+  limiti:["Incappucciatrici non presenti a catalogo sul sito"]},
+ {id:"conv", brand:"MIAL", name:"Trasporto sfusi", kw:{it:"trasportatore tubolare a catena",en:"tubular chain conveyor",pt:"transportador tubular de corrente",es:"transportador tubular de cadena",fr:"convoyeur tubulaire à chaîne",de:"Rohrkettenförderer"},
+  sintesi:"Sistemi per trasportare granuli e polveri (alimentare, mangimi, chimico).",
+  modelli:["Trasportatore tubolare a catena — un solo motore, risparmio energetico dichiarato oltre il 50% rispetto ad altri sistemi; chiuso, senza polvere; movimento lento che rispetta il prodotto; ispezioni in inox, poca manutenzione","Nastro con bandebord","Elevatori a tazze e a tazze basculanti","Trasportatore a catena Redler","Coclee tubolari e a cassa aperta, estrattori a coclea","Spirale flessibile (45°, 60°, 90°, 125°)","Trasporto pneumatico","Trasportatore a palette"],
+  forza:["Pulizia e assenza di polvere (sicurezza, igiene, perdite di prodotto)","Efficienza energetica del tubolare a catena","Integrazione con l'insacco MF TECNO"],
+  limiti:["Portate in t/h dei singoli trasportatori non pubblicate: da verificare"]},
+ {id:"feed", brand:"MIAL", name:"Mangimifici", kw:{it:"impianto mangimificio chiavi in mano",en:"turnkey feed mill plant",pt:"fábrica de ração chave na mão",es:"planta de piensos llave en mano",fr:"usine d'aliments clé en main",de:"Mischfutterwerk schlüsselfertig"},
+  sintesi:"Mangimifici su misura da 1 a 60 t/h, per farina, pellet ed estrusi, anche modulari.",
+  modelli:["Impianti su misura da 1 a 60 t/h","Mangimificio modulare (es. 3 t/h, 5 t/h) installabile senza opere edili","Componenti: silos (anche in vetroresina), bilance di dosaggio, molini a martelli, miscelatori, dosaggio, raffreddatori, prepulitore vibrante, vagli, svuotamento big-bag"],
+  forza:["Chiavi in mano: ricevimento, stoccaggio, produzione, movimentazione, confezionamento","Le versioni modulari riducono tempi e costi di cantiere","Bilance conformi alla direttiva MID"],
+  limiti:["Linee di estrusione ed essiccazione non descritte nel dettaglio sul sito: da verificare"]},
+ {id:"pet", brand:"MIAL + MF TECNO", name:"Impianti pet food", kw:{it:"impianto produzione pet food",en:"pet food production plant",pt:"fábrica de pet food",es:"planta de producción pet food",fr:"usine petfood",de:"Tiernahrung Produktionsanlage"},
+  sintesi:"Impianti completi per pet food: dal ricevimento delle materie prime al pallet finito.",
+  modelli:["Ricevimento e stoccaggio (silos), trasporto, bilance di dosaggio, molino a martelli per pet food, miscelatori, dosaggio, raffreddatori, prepulitore, vagli, svuotamento big-bag","Confezionamento in piccoli e grandi formati, pallettizzazione e avvolgimento MF TECNO"],
+  forza:["Un unico fornitore e un'unica responsabilità per tutto l'impianto","Macchine che dialogano tra loro: meno fermi e dati di processo centralizzati"],
+  limiti:["Capacità tipiche degli impianti pet food non pubblicate: da verificare"]},
+ {id:"retro", brand:"MASSINI", name:"Retrofit linea esistente", kw:{it:"ammodernamento linea confezionamento",en:"packaging line retrofit",pt:"modernização linha de ensaque",es:"modernización línea de envasado",fr:"modernisation ligne d'ensachage",de:"Modernisierung Absacklinie"},
+  sintesi:"Sostituzione o integrazione di singole macchine in una linea esistente, anche di altri marchi.",
+  modelli:["Inserimento di insaccatrice, FFS, pallettizzatore o trasporto in una linea esistente","Teleassistenza e formazione sulle nuove macchine"],
+  forza:["Gamma ampia per sostituire un singolo collo di bottiglia","Ricambi reperibili anche senza numero di serie"],
+  limiti:["Il retrofit non è presentato come servizio a sé sul sito: condizioni e garanzie da verificare"]}
+];
+
+/* ---------------- AVATAR ---------------- */
+const SKINS=["#f6d5b8","#e9bb97","#d29a72","#a8704c","#74472c"];
+const HAIRC=["#231812","#4e321d","#8a5a2b","#c99a5b","#9ca3ab","#e8e8e8"];
+const BGS=["#2c3e5c","#3e2f5c","#245247","#5c4329","#5c2d3e","#24495c","#3d4a24"];
+const OUTC={suit:"#26303f",shirt:"#d7e1ee",polo:"#2f6fb3",work:"#1f3a5f",lab:"#eef2f6",knit:"#7a3b4a"};
+function avatar(a,mood=55,size=64){
+  const sk=SKINS[a.skin], hc=HAIRC[a.hc], bg=BGS[a.bg%BGS.length], oc=a.oc||OUTC[a.out];
+  const dk=shade(sk,-22);
+  let back="", front="", out="";
+  if(a.hs==="long") back=`<path d="M35 52 Q33 22 60 22 Q87 22 85 52 L89 96 Q76 92 72 78 L48 78 Q44 92 31 96Z" fill="${hc}"/>`;
+  if(a.hs==="bob") back=`<path d="M35 54 Q33 22 60 22 Q87 22 85 54 L86 76 Q78 79 74 72 L46 72 Q42 79 34 76Z" fill="${hc}"/>`;
+  if(a.hs==="pony") back=`<path d="M77 38 Q99 48 90 86 Q85 68 75 54Z" fill="${hc}"/>`;
+  const fringe=`<path d="M39 50 Q37 24 60 24 Q83 24 81 50 Q73 33 56 33 Q45 37 39 50Z" fill="${hc}"/>`;
+  front={short:`<path d="M39 50 Q37 25 60 25 Q83 25 81 50 Q79 35 60 34 Q41 35 39 50Z" fill="${hc}"/>`,
+    side:`<path d="M39 52 Q35 23 62 24 Q85 26 81 50 Q76 37 58 35 Q49 40 39 52Z" fill="${hc}"/>`,
+    bald:`<path d="M39 58 Q37 46 42 43 L43 58Z M81 58 Q83 46 78 43 L77 58Z" fill="${hc}"/>`,
+    curly:[[40,40,7],[46,32,8],[55,27,8],[65,27,8],[74,32,8],[80,40,7]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${hc}"/>`).join(""),
+    long:fringe, bob:fringe, pony:fringe, bun:fringe+`<circle cx="60" cy="21" r="9" fill="${hc}"/>`}[a.hs]||"";
+  const body=`<path d="M12 124 Q14 92 60 88 Q106 92 108 124Z" fill="${oc}"/>`;
+  if(a.out==="suit") out=`<path d="M49 89 L60 108 L71 89Z" fill="#f4f6fa"/><path d="M58 93 L62 93 L64 110 L60 116 L56 110Z" fill="${a.tie||'#b8323a'}"/><path d="M49 89 L57 112 M71 89 L63 112" stroke="#11161f" stroke-width="2" fill="none"/>`;
+  if(a.out==="shirt"||a.out==="polo"||a.out==="knit") out=`<path d="M49 88 L55 99 L60 91 L65 99 L71 88Z" fill="${a.out==="shirt"?"#fff":shade(oc,18)}"/>${a.out==="polo"?'<path d="M60 92 L60 104" stroke="#0005" stroke-width="2"/>':""}`;
+  if(a.out==="work") out=`<path d="M26 124 L33 96 L48 90 L52 124Z M94 124 L87 96 L72 90 L68 124Z" fill="#f2c218"/><path d="M29 110 L51 110 M91 110 L69 110" stroke="#dfe5ec" stroke-width="3"/>`;
+  if(a.out==="lab") out=`<path d="M50 88 L60 104 L70 88Z" fill="#7aa6d6"/><path d="M50 88 L58 114 L55 124 M70 88 L62 114 L65 124" stroke="#aab4c0" stroke-width="2" fill="none"/>`;
+  const m = mood<35?0:mood<65?1:2;
+  const brows=[`<path d="M45 44 L54 47.5 M66 47.5 L75 44" stroke="${shade(hc,-10)}" stroke-width="2.6" stroke-linecap="round"/>`,
+               `<path d="M45 45.5 L54 45.5 M66 45.5 L75 45.5" stroke="${shade(hc,-10)}" stroke-width="2.6" stroke-linecap="round"/>`,
+               `<path d="M45 44.5 Q49.5 41.5 54 44 M66 44 Q70.5 41.5 75 44.5" stroke="${shade(hc,-10)}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`][m];
+  const mouth=[`<path d="M52 71.5 Q60 65.5 68 71.5" stroke="#6b2b25" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+               `<path d="M53 69 L67 69" stroke="#6b2b25" stroke-width="2.4" stroke-linecap="round"/>`,
+               `<path d="M51 67 Q60 76 69 67 Z" fill="#7a2c26"/><path d="M53 67.5 L67 67.5" stroke="#fff" stroke-width="2"/>`][m];
+  const cheeks= m===2?`<circle cx="46" cy="62" r="4" fill="#ff7b7b" opacity=".25"/><circle cx="74" cy="62" r="4" fill="#ff7b7b" opacity=".25"/>`:"";
+  const beard={beard:`<path d="M39 58 Q40 82 60 82 Q80 82 81 58 Q78 72 66 73 Q60 70 54 73 Q42 72 39 58Z" fill="${hc}"/>`,
+    mous:`<path d="M52 65 Q60 61 68 65 Q60 67 52 65Z" fill="${hc}"/>`,
+    stubble:`<path d="M40 60 Q41 81 60 81 Q79 81 80 60 Q77 74 60 75 Q43 74 40 60Z" fill="${hc}" opacity=".35"/>`}[a.bd]||"";
+  const glasses=a.gl?`<g fill="none" stroke="#141a24" stroke-width="2.2"><rect x="43.5" y="47.5" width="14" height="10.5" rx="4"/><rect x="62.5" y="47.5" width="14" height="10.5" rx="4"/><path d="M57.5 52 L62.5 52 M43.5 51 L39 49 M76.5 51 L81 49"/></g>`:"";
+  const hat=a.hat?`<path d="M36 41 Q36 17 60 17 Q84 17 84 41Z" fill="#f2c218"/><path d="M58 17 L62 17 L62 41 L58 41Z" fill="#dcae0f"/><rect x="32" y="38" width="56" height="6" rx="3" fill="#dcae0f"/>`:"";
+  return `<svg class="av" viewBox="0 0 120 120" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" fill="${bg}"/><circle cx="60" cy="140" r="70" fill="#ffffff08"/>
+  ${back}${body}${out}
+  <path d="M51 68 L51 88 Q60 95 69 88 L69 68Z" fill="${dk}"/>
+  <circle cx="39" cy="55" r="5" fill="${sk}"/><circle cx="81" cy="55" r="5" fill="${sk}"/>
+  <ellipse cx="60" cy="53" rx="21.5" ry="24.5" fill="${sk}"/>
+  ${a.hat?"":front}${cheeks}${brows}
+  <circle class="eye" cx="50.5" cy="53" r="2.4" fill="#1b2230"/><circle class="eye" cx="69.5" cy="53" r="2.4" fill="#1b2230"/>
+  <path d="M60 55 Q57 62 60.5 63" stroke="${shade(sk,-35)}" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+  ${beard}${mouth}${glasses}${hat}</svg>`;
+}
+function shade(hex,p){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255; const f=v=>Math.max(0,Math.min(255,Math.round(v+p*2.55))); return "#"+[f(r),f(g),f(b)].map(v=>v.toString(16).padStart(2,"0")).join(""); }
+function randomAvatar(g){
+  const fem=g==="f";
+  return {skin:rI(5),hc:fem?rI(4):rI(6),hs:pick(fem?["long","bob","pony","bun","curly"]:["short","side","bald","curly","short"]),gl:Math.random()<.35,bd:fem?"":pick(["","","beard","mous","stubble"]),out:pick(["suit","shirt","polo","work","lab","knit"]),bg:rI(7),hat:false};
+}
+const rI=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rI(a.length)];
+
+/* ---------------- CLIENTI TIPO ---------------- */
+const PERSONAS = [
+  {id:"dir",g:"m",name:"Ing. Paolo Ferretti",role:"Direttore di stabilimento",co:"produttore pet food, 80.000 t/anno",reg:"Emilia-Romagna",prod:"pet",
+   desc:"Tecnico e pragmatico: vuole numeri su cadenze, fermi e OEE.",bio:"Ingegnere meccanico, 52 anni. Ha avuto brutte esperienze con un fornitore che non rispondeva in caso di guasto. Parla per dati e diffida delle promesse commerciali.",
+   av:{skin:0,hc:4,hs:"side",gl:true,out:"shirt",bg:0}},
+  {id:"buy",g:"f",name:"Dott.ssa Laura Bianchi",role:"Responsabile acquisti",co:"gruppo mangimistico con 4 stabilimenti",reg:"Veneto",prod:"bag",
+   desc:"Negoziatrice dura con tre preventivi sul tavolo.",bio:"Buyer esperta, valutata sul risparmio. Usa i preventivi dei concorrenti come leva, chiede pagamenti, penali e garanzie. Cortese ma fredda.",
+   av:{skin:0,hc:1,hs:"bun",gl:true,out:"suit",bg:1,tie:"#26303f"}},
+  {id:"own",g:"m",name:"Giuseppe Russo",role:"Titolare",co:"mangimificio familiare, 30 dipendenti",reg:"Campania",prod:"feed",
+   desc:"Decide di pancia, teme l'investimento.",bio:"Seconda generazione. Ha paura di indebitarsi, prima di decidere sente il socio. Apprezza concretezza e rapporto umano, detesta il gergo.",
+   av:{skin:1,hc:4,hs:"bald",bd:"mous",out:"polo",bg:3}},
+  {id:"cfo",g:"m",name:"Marco De Santis",role:"CFO",co:"gruppo food internazionale",reg:"Lombardia",prod:"vffs",
+   desc:"Ragiona solo in ROI, payback, leasing e incentivi.",bio:"La tecnica non gli interessa: vuole payback, impatto sul cash flow, leasing, incentivi fiscali e rischio di progetto.",
+   av:{skin:0,hc:0,hs:"short",out:"suit",bg:5,tie:"#2d5fa8"}},
+  {id:"tec",g:"m",name:"Andrea Colombo",role:"Responsabile manutenzione",co:"molino e mangimificio",reg:"Piemonte",prod:"conv",
+   desc:"Scettico: teme macchine complicate e ricambi lenti.",bio:"In reparto da 20 anni, ha macchine di quattro marchi. Vuole schemi, ricambi pronti, teleassistenza. Non firma, ma può bloccare la decisione.",
+   av:{skin:1,hc:1,hs:"short",bd:"stubble",out:"work",hat:true,bg:2}},
+  {id:"int",g:"m",name:"Carlos Mendes",role:"Plant manager",co:"grande mangimificio",reg:"Mato Grosso, Brasile",prod:"feed",foreign:"pt",
+   desc:"Assistenza locale, consegne, cambio, referenze.",bio:"Preoccupato per tecnici nel suo fuso orario, dazi, cambio e referenze in Sud America.",
+   av:{skin:3,hc:0,hs:"curly",bd:"beard",out:"shirt",bg:2}},
+  {id:"lit",g:"f",name:"Sabrina Galli",role:"Titolare",co:"produttore di lettiera per gatti",reg:"Toscana",prod:"bag",
+   desc:"La GDO le chiede formati nuovi in tempi stretti.",bio:"Ha fatto crescere l'azienda con la GDO. Le serve un sacco a fondo quadro che stia bene a scaffale e cambi formato rapidi. Teme fermi in alta stagione.",
+   av:{skin:0,hc:3,hs:"long",out:"knit",bg:4}},
+  {id:"pel",g:"m",name:"Franz Unterberger",role:"Direttore di produzione",co:"produttore di pellet di legno",reg:"Alto Adige",prod:"ffs",
+   desc:"Lavoro stagionale: tutto deve girare da settembre a febbraio.",bio:"Preciso e diretto. Confronta tutto con i fornitori tedeschi. Gli servono sacchi da 15 kg ad alta cadenza nei mesi di punta e zero polvere.",
+   av:{skin:0,hc:3,hs:"short",bd:"beard",out:"work",bg:6}},
+  {id:"che",g:"f",name:"Ing. Valeria Conti",role:"Responsabile HSE e qualità",co:"produttore di fertilizzanti",reg:"Puglia",prod:"ffs",
+   desc:"Sicurezza, ATEX, polveri e corrosione prima di tutto.",bio:"Chiede marcature, materiali resistenti a prodotti aggressivi, lavaggio, emissioni di polvere e documentazione. Un dubbio sulla sicurezza le basta per dire no.",
+   av:{skin:1,hc:0,hs:"pony",gl:true,out:"lab",bg:2}},
+  {id:"coop",g:"m",name:"Luigi Benedetti",role:"Presidente",co:"cooperativa zootecnica, 200 soci",reg:"Marche",prod:"feed",
+   desc:"Deve convincere il consiglio; conta su un bando.",bio:"Ex allevatore, ragiona per consenso. Deve portare il progetto a consiglio e soci, vuole capire se rientra in un bando regionale. Teme brutte figure.",
+   av:{skin:2,hc:5,hs:"bald",bd:"mous",out:"knit",bg:3,oc:"#4b5a3a"}},
+  {id:"epc",g:"m",name:"Stefano Lombardi",role:"Project manager",co:"system integrator / contractor EPC",reg:"Milano",prod:"pal",
+   desc:"Compra per un suo progetto: margini, interfacce, penali.",bio:"Gestisce la commessa di un cliente finale. Vuole prezzo per rivendere, interfacce con il suo sistema, documentazione, date certe e penali a cascata. Non vuole che Massini parli col suo cliente.",
+   av:{skin:1,hc:0,hs:"side",gl:true,out:"suit",bg:0,tie:"#6b4bb0"}},
+  {id:"str",g:"f",name:"Giulia Ferri",role:"Fondatrice",co:"start-up di pet food premium",reg:"Lazio",prod:"vffs",
+   desc:"Piccoli volumi, grandi ambizioni, poca cassa.",bio:"Ha raccolto un round seed e vende online. Vuole una linea che cresca con lei, ha poca cassa: chiede leasing, noleggio, usato o pronta consegna.",
+   av:{skin:0,hc:0,hs:"long",out:"polo",bg:4,oc:"#1f8a70"}},
+  {id:"mnc",g:"f",name:"Hannah Keller",role:"Global category buyer",co:"multinazionale pet food, procurement centrale",reg:"Germania",prod:"pal",foreign:"de",
+   desc:"Gara formale, scorecard fornitori, pagamenti a 120 giorni.",bio:"Gestisce il capex di più stabilimenti europei con gara formale. Chiede compliance, ESG, sicurezza informatica delle macchine connesse, pagamenti e penali. La relazione personale conta poco.",
+   av:{skin:0,hc:3,hs:"bob",out:"suit",bg:1,tie:"#26303f"}},
+  {id:"aqua",g:"m",name:"Kostas Papadakis",role:"Amministratore delegato",co:"mangimi per acquacoltura",reg:"Grecia",prod:"conv",foreign:"el",
+   desc:"Pellet estrusi fragili: non vuole rotture né polveri.",bio:"I suoi pellet estrusi per pesci si rompono nel trasporto e generano scarti. Ha poca fiducia nei fornitori lontani e chiede tempi di intervento garantiti.",
+   av:{skin:2,hc:0,hs:"curly",bd:"beard",out:"shirt",bg:5}},
+  {id:"ret",g:"m",name:"Davide Ruggiero",role:"Responsabile di produzione",co:"produttore di snack e cereali soffiati, linee ad alta velocità",reg:"Lombardia",prod:"vffs",
+   desc:"Ritmi alti: ogni fermo costa caro, vuole certezze sui tempi.",bio:"Gestisce due linee che lavorano su tre turni. Un fermo di un'ora gli costa più di una macchina nuova. Chiede cadenze reali, tempi di cambio formato e chi risponde di notte.",
+   av:{skin:0,hc:1,hs:"short",bd:"stubble",out:"polo",bg:6,oc:"#b5452f"}},
+  {id:"gra",g:"f",name:"Mouna El Idrissi",role:"Direttore di stabilimento",co:"mangimificio per avicoli con export in Nord Africa",reg:"Casablanca, Marocco",prod:"feed",foreign:"fr",
+   desc:"Parla di ritorno sugli investimenti e di clima: caldo e polveri.",bio:"Dirige un impianto che esporta in tre Paesi. Le serve un impianto che regga il caldo e umidità elevata, con assistenza in francese o inglese e ricambi che arrivino in fretta in Africa.",
+   av:{skin:3,hc:0,hs:"bun",gl:true,out:"lab",bg:1}},
+  {id:"exp",g:"f",name:"Elisa Marchetti",role:"Export manager",co:"gruppo mangimi con filiali all'estero",reg:"Emilia-Romagna",prod:"pal",
+   desc:"Cerca un fornitore unico per tutte le filiali, con lo stesso standard.",bio:"Coordina sei filiali in quattro Paesi. Vuole standard uguali ovunque, documentazione in più lingue, teleassistenza e un referente unico. Diffida dei fornitori che la rimbalzano ai distributori locali.",
+   av:{skin:1,hc:4,hs:"pony",out:"suit",bg:2,tie:"#2d5fa8"}},
+  {id:"sow",g:"m",name:"Tomasz Nowak",role:"Titolare",co:"produttore di sementi da prato e mangimi per cavalli",reg:"Wielkopolska, Polonia",prod:"conv",foreign:"pl",
+   desc:"Piccolo imprenditore: budget limitato, ma molto attento al prezzo per tonnellata.",bio:"Azienda familiare che ha cresciuto da poco. Confronta ogni offerta con un fornitore turco e vuole capire il costo per tonnellata e i tempi di pagamento. Parla un inglese funzionale e ha poca pazienza con il gergo.",
+   av:{skin:0,hc:5,hs:"short",bd:"mous",out:"work",bg:4}}
+];
+
+/* ---------------- LINGUE E MERCATI ---------------- */
+const LANGS=[
+  {id:"it",f:"🇮🇹",n:"Italiano",llm:"italiano",ph:"Scrivi in italiano…"},
+  {id:"en",f:"🇬🇧",n:"English",llm:"inglese (business English)",ph:"Write in English…",main:1},
+  {id:"pt",f:"🇧🇷",n:"Português",llm:"portoghese brasiliano",ph:"Escreva em português…",main:1},
+  {id:"es",f:"🇪🇸",n:"Español",llm:"spagnolo",ph:"Escribe en español…"},
+  {id:"fr",f:"🇫🇷",n:"Français",llm:"francese",ph:"Écrivez en français…"},
+  {id:"de",f:"🇩🇪",n:"Deutsch",llm:"tedesco",ph:"Schreiben Sie auf Deutsch…"}
+];
+const MARKETS={it:["Lombardia","Veneto","Emilia-Romagna","Umbria","Campania","Sicilia","Puglia","Piemonte"],
+  en:["Texas, USA","Iowa, USA","Georgia, USA","Ontario, Canada","Yorkshire, Regno Unito","Irlanda","Sudafrica","Nigeria"],
+  pt:["Mato Grosso, Brasile","Paraná, Brasile","Santa Catarina, Brasile","Goiás, Brasile","Rio Grande do Sul, Brasile","Portogallo"],
+  es:["Catalogna, Spagna","Andalusia, Spagna","Messico","Argentina","Cile","Colombia"],
+  fr:["Bretagna, Francia","Alvernia, Francia","Belgio","Marocco","Costa d'Avorio"],
+  de:["Baviera, Germania","Bassa Sassonia, Germania","Austria","Svizzera"]};
+const NAMES={it:{m:["Marco Rinaldi","Davide Fabbri","Roberto Gallo","Antonio Greco","Matteo Ricci","Fabio Leone"],f:["Elena Moretti","Chiara Esposito","Francesca Marini","Silvia Barbieri","Paola Caruso","Marta Villa"]},
+  en:{m:["Mike Johnson","David Thompson","Ryan Walsh","James O'Connor","Kevin Brooks"],f:["Sarah Miller","Emily Carter","Rachel Adams","Laura Bennett","Megan Clark"]},
+  pt:{m:["João Silva","Rafael Oliveira","Marcelo Souza","Tiago Pereira","Rodrigo Almeida"],f:["Fernanda Costa","Juliana Rocha","Camila Ribeiro","Patrícia Lima","Ana Carvalho"]},
+  es:{m:["Javier García","Alejandro Ruiz","Diego Morales","Carlos Navarro"],f:["Lucía Fernández","María López","Sofía Herrera","Carmen Ortega"]},
+  fr:{m:["Julien Martin","Karim Benali","Thomas Lefèvre","Nicolas Moreau"],f:["Claire Dubois","Sophie Laurent","Amélie Girard","Nadia Haddad"]},
+  de:{m:["Thomas Weber","Markus Huber","Stefan Becker","Jan Hoffmann"],f:["Anna Schneider","Katrin Wolf","Julia Fischer","Sabine Braun"]}};
+function localize(p,lang){
+  if(lang==="it"||p.foreign||p.gen) return {...p};
+  const nm=pick(NAMES[lang][p.g]);
+  return {...p,name:(p.name.startsWith("Ing.")?(lang==="en"?"Eng. ":lang==="pt"?"Eng. ":""):"")+nm,reg:pick(MARKETS[lang]),localized:true,orig:p.name};
+}
+
+/* ---------------- GENERATORE ---------------- */
+const GEN={
+  roles:[["Titolare","decide da solo"],["Amministratore delegato","decide ma ascolta il CdA"],["Direttore di stabilimento","forte influenza tecnica"],["Responsabile acquisti","valutato sul risparmio"],["Responsabile manutenzione","può bloccare la decisione"],["CFO","guarda solo i numeri"],["Responsabile qualità e HSE","priorità sicurezza"],["Direttore tecnico","esperto di processo"]],
+  sectors:[["pet food","pet"],["mangimi zootecnici","feed"],["lettiera per gatti","bag"],["pellet di legno","ffs"],["cereali e sementi","bag"],["fertilizzanti","ffs"],["farine e alimentare","vffs"],["minerali e inerti","bag"],["mangimi per acquacoltura","conv"],["mangimi per cavalli","feed"],["zucchero e sale","vffs"],["sementi da prato","pal"]],
+  sizes:["piccola azienda familiare (15 dipendenti)","PMI in crescita (60 dipendenti)","azienda media (180 dipendenti)","gruppo con più stabilimenti (600 dipendenti)","filiale di una multinazionale"],
+  traits:["analitico, vuole dati e documenti","diffidente, ha avuto brutte esperienze","sbrigativo, ha poco tempo","cordiale ma indeciso","aggressivo nella negoziazione","tradizionalista, «si è sempre fatto così»","entusiasta dell'innovazione ma con poco budget","molto attento alla sicurezza degli operatori","orgoglioso, non vuole sentirsi dire che sbaglia","logorroico, divaga e racconta aneddoti"],
+  triggers:["la linea ha 20 anni e si ferma spesso","i volumi crescono del 30% e la linea non regge","sta costruendo un nuovo stabilimento","ha problemi di polvere e sicurezza","non trova operatori e deve automatizzare","un cliente della GDO chiede formati nuovi","vuole sfruttare un incentivo fiscale in scadenza","un'ispezione ha rilevato problemi in reparto"],
+  current:["nessuno: oggi fa quasi tutto a mano","un concorrente italiano","un concorrente tedesco di fascia alta","un fornitore turco o cinese a basso costo","macchine usate comprate all'asta","un vecchio fornitore che è fallito"]
+};
+function generatePersona(lang){
+  const g=pick(["m","m","f"]), [role,rn]=pick(GEN.roles), [sec,prod]=pick(GEN.sectors), size=pick(GEN.sizes), reg=pick(MARKETS[lang]);
+  const tr=pick(GEN.traits), trig=pick(GEN.triggers), cur=pick(GEN.current), name=pick(NAMES[lang][g]);
+  return {id:"gen-"+Date.now(),gen:true,g,name,role,co:`${sec}, ${size}`,reg,prod,
+    desc:`${cap(tr)}. ${cap(trig)}.`,
+    bio:`${role} (${rn}). Carattere: ${tr}. Motivo del contatto: ${trig}. Fornitore attuale: ${cur}.`,
+    facts:{Ruolo:role,Settore:sec,Dimensione:size,Area:reg,Carattere:tr,Motivo:trig,"Fornitore attuale":cur},
+    av:randomAvatar(g)};
+}
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+
+/* ---------------- CONTATTO ---------------- */
+const SOURCES=[
+  {id:"sem",i:ic("search"),l:"Google Ads (SEM)",t:"h",tl:"Caldo",d:"Ha cliccato un annuncio e compilato il form",
+   p:"Due giorni fa hai cercato su Google «{kw}», hai cliccato un annuncio di Massini e compilato il form di contatto chiedendo informazioni. Stai confrontando più fornitori trovati online. Il venditore ti ricontatta ora.",
+   card:{Fonte:"Google Ads · campagna Search",Keyword:"«{kw}»",Landing:"pagina prodotto {prod}",Ricevuto:"2 giorni fa",Messaggio:"«Vorrei informazioni e un'idea dei costi»"}},
+  {id:"seo",i:ic("doc"),l:"Ricerca organica (SEO)",t:"w",tl:"Tiepido",d:"Ha letto un articolo e scaricato una guida",
+   p:"Hai letto un articolo sul sito Massini trovato cercando «{kw}» e hai lasciato l'email per scaricare una guida tecnica. Sei in fase di informazione: non hai ancora un progetto definito né un budget. Il venditore ti ricontatta.",
+   card:{Fonte:"Ricerca organica Google",Keyword:"«{kw}»",Azione:"download guida tecnica",Ricevuto:"1 settimana fa",Messaggio:"—"}},
+  {id:"social",i:ic("mobile"),l:"Social (LinkedIn / Instagram)",t:"c",tl:"Freddo",d:"Ha cliccato un post sponsorizzato",
+   p:"Hai cliccato un post sponsorizzato di Massini su LinkedIn e lasciato i dati nel modulo. Eri curioso, non hai un bisogno chiaro e ricordi a malapena di averlo fatto. Il venditore ti ricontatta.",
+   card:{Fonte:"LinkedIn Lead Gen Ads",Contenuto:"video «dal sfuso al pallet»",Ricevuto:"3 giorni fa",Messaggio:"—"}},
+  {id:"cold",i:ic("phone"),l:"Contatto diretto (outbound)",t:"c",tl:"Freddo",d:"Il commerciale chiama a freddo",cold:true,
+   p:"Non hai chiesto tu di essere contattato: il venditore ti contatta a freddo. Sei occupato e all'inizio diffidente; il venditore deve guadagnarsi la tua attenzione nei primi secondi, altrimenti chiudi.",
+   card:{Fonte:"Lista prospect del commerciale",Storico:"nessun contatto precedente"}},
+  {id:"ref",i:ic("link"),l:"Passaparola",t:"h",tl:"Caldo",d:"Segnalato da un cliente Massini",
+   p:"Un collega di un'altra azienda, cliente Massini, ti ha fatto il nome del venditore. Sei ben predisposto ma vuoi capire se la soluzione vale anche per te.",
+   card:{Fonte:"Referenza di un cliente esistente",Ricevuto:"ieri"}},
+  {id:"agent",i:ic("globe"),l:"Agente / distributore",t:"w",tl:"Tiepido",d:"Presentato dall'agente locale",
+   p:"Ti ha messo in contatto l'agente locale di Massini nel tuo Paese; hai già visto un catalogo ma vuoi parlare con l'azienda.",
+   card:{Fonte:"Agente di zona",Materiale:"catalogo già inviato"}},
+  {id:"cust",i:ic("star"),l:"Cliente esistente",t:"h",tl:"Caldo",d:"Ha già una macchina del gruppo",
+   p:"Hai già una macchina del gruppo Massini installata da qualche anno. Il venditore ti propone un ampliamento o una nuova macchina; il tuo giudizio dipende da come è andata l'assistenza finora.",
+   card:{Fonte:"Base clienti",Installato:"macchina del gruppo da 4 anni"}}
+];
+const CHANNELS=[
+  {id:"phone",i:ic("phone"),l:"Telefono",p:"La conversazione è una telefonata: frasi parlate e brevi."},
+  {id:"video",i:ic("video"),l:"Videocall",p:"La conversazione è una videochiamata già fissata."},
+  {id:"visit",i:ic("factory"),l:"Visita",p:"Il venditore è in visita da te in azienda, di persona."},
+  {id:"showroom",i:ic("star"),l:"Showroom Massini",p:"La conversazione avviene nello showroom Massini a Tordandrea di Assisi: sei in visita, vedi le macchine in funzione e parli di persona con il venditore."},
+  {id:"chat",i:ic("chat"),l:"Email/WhatsApp",p:"La conversazione avviene per messaggi scritti (email o WhatsApp): scrivi come in un messaggio, a volte in modo stringato."}
+];
+
+/* ---------------- DIFFICOLTÀ (slider 0-100) ---------------- */
+const SL=[
+  {k:"att",l:"Atteggiamento",lo:"Cordiale",hi:"Ostile",s:["Cordiale","Neutro","Ostile"],
+   d:["Sei ben disposto e collaborativo.","Sei professionale e riservato: non regali nulla.","Sei irritato e sulla difensiva: interrompi, sei sarcastico, metti alla prova il venditore."]},
+  {k:"brand",l:"Sfiducia verso Massini",lo:"Ci stima",hi:"Brutta esperienza",s:["Ci stima","Non ci conosce","Brutta esperienza"],
+   d:["Hai sentito parlare bene di Massini, MIAL e MF TECNO.","Non conosci Massini, MIAL né MF TECNO: chiedi chi sono e perché fidarti.","Anni fa hai avuto un problema con una macchina del gruppo (assistenza lenta): lo tiri fuori."]},
+  {k:"comp",l:"Pressione concorrenza",lo:"Nessuna",hi:"Incumbent −20%",s:["Nessuna","Un preventivo","Incumbent −20%"],
+   d:["Non hai altre offerte.","Hai un preventivo di un concorrente e lo usi come confronto.","Il tuo fornitore attuale ti offre una soluzione analoga al 20% in meno e sei tentato di restare con lui."]},
+  {k:"budget",l:"Vincoli di budget",lo:"Disponibile",hi:"Congelato",s:["Disponibile","Stretto","Congelato"],
+   d:["Il budget c'è.","Il budget è stretto: ogni euro va giustificato.","Il budget ufficiale è congelato: serve un ottimo motivo (ROI, incentivi, leasing) per sbloccarlo."]},
+  {k:"urg",l:"Mancanza di urgenza",lo:"Urgente",hi:"Nessuna fretta",s:["Urgente","Normale","Nessuna fretta"],
+   d:["Hai un problema urgente da risolvere entro pochi mesi.","Hai un progetto ma senza scadenze rigide.","Non hai fretta: «stiamo solo guardando»."]},
+  {k:"dec",l:"Complessità decisionale",lo:"Decide lui",hi:"Serve il CdA",s:["Decide lui","Influenza","Serve il CdA"],
+   d:["Decidi tu.","Influenzi la decisione ma non firmi: il venditore deve capire chi decide.","Deve approvare il CdA o la proprietà: tendi a rimandare a loro."]},
+  {k:"tech",l:"Competenza tecnica",lo:"Bassa",hi:"Esperto",s:["Bassa","Media","Esperto"],
+   d:["Non sei un tecnico: il gergo ti confonde.","Hai una buona cultura tecnica.","Sei molto esperto: chiedi cadenze, materiali, consumi e smascheri subito numeri inventati o promesse non verificabili."]},
+  {k:"ins",l:"Insistenza sulle obiezioni",lo:"Bassa",hi:"Alta",s:["Bassa","Media","Alta"],
+   d:["Se la risposta è ragionevole, lasci cadere l'obiezione.","Insisti una volta se la risposta è debole.","Insisti più volte e torni sulle obiezioni già affrontate."],
+   disc:{l:"Reticenza",lo:"Aperto",hi:"Chiuso",s:["Aperto","Cauto","Chiuso"],d:["Rispondi volentieri anche a domande ampie.","Rispondi solo a domande precise e pertinenti.","Con domande generiche rispondi a monosillabi; ti irriti se si parla subito di budget o di chi decide."]}},
+  {k:"time",l:"Pressione del tempo",lo:"Tempo libero",hi:"5 minuti",s:["Libero","15 minuti","5 minuti"],
+   d:["Hai tempo per parlare.","Hai circa 15 minuti: se il venditore si dilunga glielo fai notare.","Hai solo 5 minuti tra due riunioni: sei telegrafico e chiudi presto."]}
+];
+const PRESETS={"Facile":10,"Realistico":45,"Difficile":70,"Osso duro":92};
+const HIDDEN=["in realtà il socio o il proprietario vuole restare con il fornitore attuale per amicizia","in realtà temi di perdere il posto se il progetto va male","in realtà la banca non vi ha ancora concesso il finanziamento","in realtà state valutando di vendere o trasferire lo stabilimento","in realtà il responsabile della manutenzione è contrario e lo avete ascoltato","in realtà avete già quasi deciso per un concorrente e cercate solo conferme"];
+
+/* ---------------- OBIEZIONI ---------------- */
+const DEFAULT_OBJ=[
+  {t:"Il prezzo è troppo alto: un concorrente ci offre una macchina simile a molto meno.",cat:"Prezzo"},
+  {t:"Lavoriamo già con un altro fornitore e ci troviamo bene: perché cambiare?",cat:"Status quo"},
+  {t:"Ora non è il momento: il budget investimenti è congelato fino all'anno prossimo.",cat:"Tempistica"},
+  {t:"I vostri tempi di consegna sono troppo lunghi.",cat:"Consegna"},
+  {t:"Se la macchina si ferma, quanto ci mettete a intervenire? Non avete tecnici vicino a noi.",cat:"Assistenza"},
+  {t:"I ricambi arrivano in tempi lunghi e costano troppo.",cat:"Assistenza"},
+  {t:"Non sono sicuro che si integri con il nostro impianto esistente.",cat:"Rischio tecnico"},
+  {t:"Avete referenze di clienti come noi che possiamo visitare?",cat:"Fiducia"},
+  {t:"Il ritorno sull'investimento non mi è chiaro: in quanto tempo si ripaga?",cat:"ROI"},
+  {t:"Devo parlarne con la proprietà / il CdA, vi faccio sapere.",cat:"Decisione"},
+  {t:"I nostri operatori non sono formati per macchine così automatizzate.",cat:"Persone"},
+  {t:"Le prestazioni dichiarate (cadenze, precisione di pesatura) le garantite per contratto?",cat:"Garanzie"},
+  {t:"Avete tre marchi diversi (Massini, MIAL, MF TECNO): con chi parlo davvero?",cat:"Fiducia"},
+  {t:"Preferisco specialisti diversi: chi fa tutto non è il migliore in niente.",cat:"Fiducia"},
+  {t:"Le macchine connesse in teleassistenza sono un rischio di sicurezza informatica.",cat:"Rischio tecnico"},
+  {t:"Mandatemi un preventivo via email, poi vedo io.",cat:"Disimpegno"}
+];
+const short=t=>{const w=t.replace(/[«»:]/g,"").split(" ");return w.slice(0,5).join(" ")+(w.length>5?"…":"");};
+
+/* ---------------- MEDDPICC ---------------- */
+const MED=[
+ {k:"M",l:"Metrics",it:"Metriche",d:"Quale risultato misurabile cerca? (€, fermi, sacchi/ora, scarti)",ic:ic("ruler")},
+ {k:"E",l:"Economic buyer",it:"Chi paga",d:"Chi controlla il budget e firma?",ic:ic("briefcase")},
+ {k:"DC",l:"Decision criteria",it:"Criteri",d:"Su cosa si decide: prezzo, affidabilità, assistenza, tempi",ic:ic("scale")},
+ {k:"DP",l:"Decision process",it:"Processo",d:"Passaggi, persone e tempi della decisione",ic:ic("map")},
+ {k:"PP",l:"Paper process",it:"Iter contrattuale",d:"Legale, acquisti, gara, pagamenti, firma",ic:ic("pen")},
+ {k:"IP",l:"Identify pain",it:"Dolore",d:"Il problema vero e quanto costa non risolverlo",ic:ic("flame")},
+ {k:"CH",l:"Champion",it:"Sponsor interno",d:"Chi dentro l'azienda ti sostiene e ha influenza",ic:ic("shield")},
+ {k:"CO",l:"Competition",it:"Concorrenza",d:"Chi altro è in gioco, anche «non fare nulla»",ic:ic("swords")}
+];
+const MEDK=MED.map(m=>m.k);
+const VERDICTS=[
+ {id:"qualificato",i:ic("check"),l:"Qualificato",d:"Deal reale: avanza nella pipeline"},
+ {id:"dubbia",i:ic("minus"),l:"Da nutrire",d:"Mancano elementi: serve altro lavoro"},
+ {id:"da_scartare",i:ic("x"),l:"Disqualificato",d:"Non è un deal: esci con stile"}
+];
+const REALDESC={
+ qualificato:"QUALIFICABILE: il deal è reale. Tutti gli elementi esistono e sono coerenti: dolore concreto e quantificabile, budget previsto, decisore raggiungibile, processo chiaro, almeno un champion potenziale.",
+ dubbia:"DUBBIA: il deal è incerto. Almeno 3 elementi sono deboli o mancanti (es. nessun champion, decisore irraggiungibile, processo vago, budget non confermato, dolore non quantificato).",
+ da_scartare:"DA SCARTARE: non è un deal reale. Almeno 2 elementi sono bloccanti (es. nessun budget vero, nessun dolore reale, fornitore già scelto, nessun accesso al decisore, solo curiosità o benchmark)."
+};
+
+/* ---------------- ICONE PERSONAGGIO ---------------- */
+const FLAG_RX=[[/Brasil/,"🇧🇷"],[/Portogallo/,"🇵🇹"],[/Germania|Baviera|Sassonia/,"🇩🇪"],[/Austria/,"🇦🇹"],[/Svizzera/,"🇨🇭"],[/Polonia|Wielkopolska/,"🇵🇱"],[/Grecia/,"🇬🇷"],[/Marocco|Casablanca/,"🇲🇦"],[/USA|Stati Uniti/,"🇺🇸"],[/Canada/,"🇨🇦"],[/Regno Unito|Yorkshire/,"🇬🇧"],[/Irlanda/,"🇮🇪"],[/Sudafrica/,"🇿🇦"],[/Nigeria/,"🇳🇬"],[/Spagna|Catalogna|Andalusia/,"🇪🇸"],[/Messico/,"🇲🇽"],[/Argentina/,"🇦🇷"],[/Cile/,"🇨🇱"],[/Colombia/,"🇨🇴"],[/Francia|Bretagna|Alvernia/,"🇫🇷"],[/Belgio/,"🇧🇪"],[/Costa d'Avorio/,"🇨🇮"]];
+const PRODIC={pet:"paw",bag:"package",feed:"wheat",vffs:"can",conv:"link",pal:"brick",ffs:"bottle",wrap:"film",retro:"wrench"};
+const ROLEIC=[["Titolare","crown"],["Fondat","rocket"],["Presidente","landmark"],["Amministratore","briefcase"],["CFO","coins"],["acquisti","cart"],["buyer","cart"],["manutenzione","wrench"],["HSE","hardhat"],["Export","globe"],["Project","compass"],["produzione","gear"],["stabilimento","factory"],["Plant","factory"],["tecnico","flask"]];
+const TRAITS={
+ dir:["chart|Vuole numeri e dati","alert|Diffida delle promesse"],buy:["tag|Punta sul prezzo","swords|Negoziatrice dura"],
+ own:["heart|Decide di pancia","users|Conta il rapporto umano"],cfo:["trend|Ragiona in ROI","landmark|Leasing e incentivi"],
+ tec:["wrench|Ricambi e assistenza","help|Scettico"],int:["globe|Cliente estero","clock|Fuso orario"],
+ lit:["paw|Lettiera e GDO","zap|Cambi formato rapidi"],pel:["snow|Lavoro stagionale","broom|Zero polvere"],
+ che:["flask|Prodotti aggressivi","award|Certificazioni"],coop:["users|Serve il consenso","doc|Conta su un bando"],
+ epc:["plug|Interfacce e documenti","scale|Penali"],str:["coins|Poca cassa","send|Pronta consegna"],
+ mnc:["doc|Gara formale","leaf|ESG e compliance"],aqua:["fish|Prodotto fragile","hourglass|Tempi garantiti"],
+ ret:["zap|Alta velocità","moon|Tre turni"],gra:["thermo|Caldo e umidità","package|Export"],
+ exp:["compass|Standard uniforme","chat|Documenti multilingua"],sow:["scale|Prezzo per tonnellata","wheat|Sementi e cavalli"]
+};
+function flagOf(p){ const hit=FLAG_RX.find(([rx])=>rx.test(p.reg||"")); return hit?hit[1]:"🇮🇹"; }
+function personaIcons(p){
+  const a=[[ic("pin"),p.reg]];
+  const k=(typeof KB!=="undefined"&&KB.find(x=>x.id===p.prod));
+  a.push([ic(PRODIC[p.prod]||"package"),k?k.name:"Prodotto"]);
+  const r=ROLEIC.find(([x])=>(p.role||"").includes(x)); if(r) a.push([ic(r[1]),p.role]);
+  (TRAITS[p.id]||[]).forEach(t=>{const [i,d]=t.split("|");a.push([ic(i),d]);});
+  return a;
+}
+const icsHTML=(p,full)=>full
+  ? `<div class="icl">${personaIcons(p).map(([i,t])=>`<span>${i} ${esc(t)}</span>`).join("")}</div>`
+  : `<div class="ics">${personaIcons(p).filter(([,t])=>t!==p.role).map(([i,t])=>`<span title="${esc(t)}">${i}<em>${esc(t)}</em></span>`).join("")}</div>`;
+
+/* ---------------- MISSIONI DEL GIORNO ---------------- */
+const QUESTS=[
+ {id:"q1",t:"Qualifica un lead da Google Ads in inglese",cfg:{mode:"disc",src:"sem",lang:"en"},ok:c=>c.mode==="disc"&&c.src==="sem"&&c.lang==="en"&&c.success},
+ {id:"q2",t:"Chiudi un deal in portoghese con difficoltà ≥ 60",cfg:{mode:"close",lang:"pt",diff:68},ok:c=>c.mode==="close"&&c.lang==="pt"&&c.diff>=60&&c.success},
+ {id:"q3",t:"Rompi il ghiaccio: contatto a freddo andato a buon fine",cfg:{src:"cold"},ok:c=>c.src==="cold"&&c.success},
+ {id:"q4",t:"Scopri tutti gli 8 elementi MEDDPICC",cfg:{mode:"disc"},ok:c=>c.mode==="disc"&&c.cov>=16},
+ {id:"q5",t:"Vinci o qualifica senza chiedere aiuto al coach",cfg:{},ok:c=>c.success&&!c.hints},
+ {id:"q6",t:"Individua e disqualifica un deal da scartare",cfg:{mode:"disc",diff:75},ok:c=>c.mode==="disc"&&c.disqOk},
+ {id:"q7",t:"Qualifica un cliente estero con difficoltà ≥ 50",cfg:{mode:"disc",lang:"pt",diff:58},ok:c=>c.mode==="disc"&&c.lang!=="it"&&c.diff>=50&&c.success},
+ {id:"q8",t:"Porta a casa 3 stelle con un cliente",cfg:{},ok:c=>c.st>=3}
+];
+const dkey=x=>x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+const todayKey=()=>dkey(new Date());
+function questOfDay(){ const k=todayKey(); let h=0; for(const ch of k) h=(h*31+ch.charCodeAt(0))%997; return QUESTS[h%QUESTS.length]; }
+function dayStreak(days){ const set=new Set(days||[]); if(!set.size) return 0; const d=new Date(); if(!set.has(dkey(d))) d.setDate(d.getDate()-1); let n=0; while(set.has(dkey(d))){n++;d.setDate(d.getDate()-1);} return n; }
+
+/* ---------------- GAMIFICATION ---------------- */
+const LEVELS=[0,100,250,450,750,1150,1650,2300,3100,4100,5400];
+const TITLES=["Tirocinante","Junior","Commerciale","Commerciale senior","Area manager","Key account","Top performer","Export manager","Sales director","Closer leggendario","Hall of Fame"];
+const BADGES=[
+  {id:"first",i:ic("film"),n:"Primo ciak",d:"Completa la prima trattativa"},
+  {id:"win",i:ic("check"),n:"Prima chiusura",d:"Vinci il primo deal"},
+  {id:"hard",i:ic("dumbbell"),n:"Osso duro",d:"Vinci con difficoltà ≥ 70"},
+  {id:"detective",i:ic("eye"),n:"Detective",d:"Scopri l'obiezione nascosta"},
+  {id:"cold",i:ic("snow"),n:"Rompighiaccio",d:"Vinci un contatto a freddo"},
+  {id:"poly",i:ic("globe"),n:"Poliglotta",d:"Vinci in 2 lingue diverse"},
+  {id:"export",i:ic("send"),n:"Export",d:"Vinci in inglese o portoghese"},
+  {id:"precise",i:ic("target"),n:"Scheda a memoria",d:"Nessun errore sul prodotto e conoscenza ≥ 8"},
+  {id:"solo",i:ic("unlock"),n:"Senza rete",d:"Vinci senza chiedere al coach"},
+  {id:"blitz",i:ic("zap"),n:"Blitz",d:"Vinci con pressione del tempo ≥ 67"},
+  {id:"streak",i:ic("flame"),n:"Serie di 3",d:"3 deal vinti di fila"},
+  {id:"three",i:ic("star"),n:"Tre stelle",d:"Fai 85+ con un cliente"},
+  {id:"collector",i:ic("layers"),n:"Portafoglio",d:"Vinci con 5 clienti diversi"},
+  {id:"inbound",i:ic("inbox"),n:"Lead converter",d:"Converti un lead da SEM, SEO e social"},
+  {id:"meddpicc",i:ic("sparkles"),n:"Detective MEDDPICC",d:"Scopri tutti e 8 gli elementi in una discovery"},
+  {id:"disq",i:ic("scissors"),n:"Sa dire no",d:"Disqualifica correttamente un deal da scartare"},
+  {id:"champ",i:ic("shield"),n:"Cacciatore di champion",d:"Fai emergere il champion con dettagli concreti"},
+  {id:"money",i:ic("coins"),n:"Follow the money",d:"Metriche e economic buyer completi"},
+  {id:"disc3",i:ic("search"),n:"Qualificatore",d:"3 discovery riuscite"},
+  {id:"quest",i:ic("award"),n:"Missione compiuta",d:"Completa la missione del giorno"},
+  {id:"days3",i:ic("calendar"),n:"Costanza",d:"Allenati 3 giorni di fila"}
+];
+function lvlOf(xp){ let l=0; while(l<LEVELS.length-1 && xp>=LEVELS[l+1]) l++; return l; }
+
+/* ---------------- STATO ---------------- */
+const S={mode:"close",card:null,med:{},real:"",verdict:"",nextStep:"",lastMed:null,persona:null,base:null,product:"bag",src:"sem",ch:"phone",lang:"it",fb:"it",diff:{},hid:false,preset:"Realistico",custom:[],selected:new Set(),msgs:[],mood:30,busy:false,done:false,hidden:"",hints:0,ot:{},hidFound:false};
+SL.forEach(s=>S.diff[s.k]=45);
+let sample=null,lastReport="";
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem("sg_"+k);return v?JSON.parse(v):d;}catch(e){return d;}},set(k,v){try{localStorage.setItem("sg_"+k,JSON.stringify(v));}catch(e){}}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const kb=()=>KB.find(k=>k.id===S.product);
+const L=()=>LANGS.find(l=>l.id===S.lang);
+const SRC=()=>SOURCES.find(s=>s.id===S.src);
+const bucket=v=>v<34?0:v<67?1:2;
+const G=()=>{ const g=store.get("game",{xp:0,badges:[],clients:{},streak:0,langWins:[],srcWins:[],winIds:[]}); g.days=g.days||[]; g.questDone=g.questDone||{}; g.discWins=g.discWins||0; return g; };
+
+/* ---------------- HOME ---------------- */
+function renderTop(){
+  const g=G(), l=lvlOf(g.xp), lo=LEVELS[l], hi=LEVELS[l+1]||lo+1, pct=Math.min(100,(g.xp-lo)/(hi-lo)*100);
+  $("pLvl").textContent=l+1; $("pTitle").textContent=TITLES[l]; $("pXp").style.width=pct+"%";
+  return {g,l,pct,hi};
+}
+function renderHome(){
+  const {g,l,pct,hi}=renderTop(), h=store.get("hist",[]);
+  $("hTitle").textContent=`Livello ${l+1} · ${TITLES[l]}`; $("hName").textContent=$("repName").value||"commerciale";
+  $("hXp").style.width=pct+"%"; $("hNext").textContent=l<LEVELS.length-1?`${g.xp} XP · ancora ${hi-g.xp} XP per diventare ${TITLES[l+1]}`:`${g.xp} XP · livello massimo`;
+  $("stN").textContent=h.length; $("stW").textContent=h.filter(x=>x.esito==="Vinto").length; $("stS").textContent=dayStreak(g.days); renderQuest();
+  $("stA").textContent=h.length?Math.round(h.reduce((a,x)=>a+x.score,0)/h.length):"—";
+  const earned=g.badges.map(id=>BADGES.find(b=>b.id===id)).filter(Boolean).reverse(), locked=BADGES.filter(b=>!g.badges.includes(b.id));
+  const shown=showAllB?[...earned,...locked]:[...earned.slice(0,4),...locked].slice(0,6); // compatto: ultimi sbloccati + prossimi obiettivi
+  $("badges").innerHTML=shown.map(b=>`<div class="bdg ${g.badges.includes(b.id)?'':'off'}" title="${esc(b.d)}"><span class="i">${b.i}</span><b>${b.n}</b><div style="font-size:12px;color:var(--mut);margin-top:2px">${b.d}</div></div>`).join("");
+  $("bAll").textContent=showAllB?"Comprimi":"Vedi tutti";
+  $("bCount").textContent=`${g.badges.length}/${BADGES.length}`;
+  $("gallery").innerHTML=PERSONAS.map(p=>{const c=g.clients[p.id]||{};return `<div class="gc" data-id="${p.id}">${avatar(p.av,c.best>=70?80:c.best?55:50,72)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span>${icsHTML(p)}${stars(c.stars||0)}${c.best?`<span style="margin-top:2px">record ${c.best}</span>`:""}</div>`;}).join("");
+  $("gallery").querySelectorAll(".gc").forEach(el=>el.onclick=()=>{setPersona(PERSONAS.find(p=>p.id===el.dataset.id));openSetup(["persona"]);});
+  $("hist").innerHTML=!h.length?'<p class="muted" style="margin:0">Nessun allenamento ancora: inizia la prima trattativa!</p>':
+    h.slice(-10).reverse().map(x=>`<div class="hist"><span>${x.date} · ${ic(x.mode==="disc"?"search":"target")} ${x.flag||""} <b>${esc(x.persona)}</b> <span class="muted">${esc(x.src||"")} · diff. ${x.diff??"—"}</span></span><span><b>${x.score}</b> · ${esc(x.label||x.esito)}${x.xp?` · <span style="color:var(--xp)">+${x.xp} XP</span>`:""}</span></div>`).join("");
+}
+let showAllB=false;
+$("bAll").onclick=()=>{showAllB=!showAllB;renderHome();};
+$("setBtn").onclick=()=>$("setModal").classList.remove("hidden");
+$("setOk").onclick=()=>$("setModal").classList.add("hidden");
+const stars=n=>n?`<div class="stars" title="${n}/3 stelle">${[1,2,3].map(i=>`<span class="${i<=n?'on':''}">${i<=n?'★':'☆'}</span>`).join("")}</div>`:"";
+$("hNew").onclick=()=>{ if(!S.persona) setPersona(PERSONAS[0]); openSetup(); };
+$("hRandom").onclick=()=>surprise();
+$("goHome").onclick=()=>{ if(!$("chat").classList.contains("hidden") && S.msgs.length && !S.done && !confirmLeave()) return; show("home"); };
+function confirmLeave(){ return true; }
+$("repName").oninput=e=>{store.set("rep",e.target.value);$("hName").textContent=e.target.value||"commerciale";};
+
+/* ---------------- SETUP ---------------- */
+function openSetup(picked=[]){ S.picked=new Set(picked); $("setup").className=picked.map(k=>"p-"+k).join(" "); show("setup"); renderSetup(); goStep(0); }
+/* percorso guidato: un passo alla volta; quello che non scegli viene estratto a caso */
+const WZ=["Allenamento e cliente","Contatto e canale","Lingua e prodotto","Difficoltà","Obiezioni e contesto"];
+const PICK_IDS=[["modes","mode"],["carousel","persona"],["sources","src"],["channels","ch"],["langs","lang"],["products","product"],["presets","diff"],["sliders","diff"],["hidSw","diff"],["objList","obj"],["allObj","obj"],["noneObj","obj"],["rndObj","obj"],["addObj","obj"]];
+let wz=0;
+const markPick=e=>{ for(const [id,k] of PICK_IDS) if(e.target.closest("#"+id)){ S.picked.add(k); $("setup").classList.add("p-"+k); } };
+$("setup").addEventListener("click",markPick,true); $("setup").addEventListener("input",markPick,true);
+function randomizeStep(n){
+  const got=[], un=k=>!S.picked.has(k);
+  if(n===0){ if(un("mode")){ S.mode=pick(["close","disc"]); got.push(S.mode==="disc"?"Discovery":"Chiusura"); } if(un("persona")){ setPersona(pick(PERSONAS)); got.push(S.persona.name); } }
+  if(n===1){ if(un("src")){ S.src=pick(SOURCES).id; got.push(SRC().l); } if(un("ch")){ S.ch=pick(CHANNELS).id; got.push(CHANNELS.find(c=>c.id===S.ch).l); } }
+  if(n===2){ if(un("lang")){ S.lang=Math.random()<.5?"it":pick(LANGS).id; if(S.base&&!S.base.gen) S.persona=localize(S.base,S.lang); got.push(L().n); } if(un("product")){ S.product=pick(KB).id; got.push(kb().name); } }
+  if(n===3&&un("diff")){ const k=pick(Object.keys(PRESETS)), v=PRESETS[k]; S.preset=k; SL.forEach(s=>S.diff[s.k]=Math.max(0,Math.min(100,v+rI(17)-8))); S.hid=v>=60; got.push("difficoltà "+k); }
+  if(n===4&&un("obj")&&S.mode!=="disc"){ rndObjs(3+rI(2)); got.push(S.selected.size+" obiezioni"); }
+  ({0:["mode","persona"],1:["src","ch"],2:["lang","product"],3:["diff"],4:["obj"]})[n].forEach(k=>{S.picked.add(k);$("setup").classList.add("p-"+k);}); renderSetup();
+  if(got.length) toast(ic("dice"),"Scelto a caso: "+got.join(", "));
+}
+function goStep(n){
+  wz=n; document.querySelectorAll("#setup .wstep").forEach(e=>e.classList.toggle("hidden",+e.dataset.s!==n));
+  $("wzBar").style.width=((n+1)/WZ.length*100)+"%"; $("wzLab").textContent=`Passo ${n+1} di ${WZ.length} · ${WZ[n]}`;
+  const last=n===WZ.length-1; $("wzNext").classList.toggle("hidden",last); $("start").classList.toggle("hidden",!last);
+  window.scrollTo(0,0);
+}
+$("wzNext").onclick=()=>{ randomizeStep(wz); goStep(wz+1); };
+$("sBack").onclick=()=>wz?goStep(wz-1):show("home");
+function setPersona(p){ S.base=p; S.persona=localize(p,S.lang); S.product=p.prod; renderSetup(); }
+function renderSetup(){ renderMode(); renderCarousel(); renderPdet(); renderSources(); renderLangs(); renderProducts(); renderDiff(); renderObjs(); renderDock(); }
+function renderCarousel(){
+  const g=G();
+  $("carousel").innerHTML=`<button class="pc special" id="cRnd"><span class="i">${ic("dice")}</span><b>Cliente a caso</b><span>tra i ${PERSONAS.length} tipo</span></button><button class="pc special" id="cGen"><span class="i">${ic("sparkles")}</span><b>Genera nuovo</b><span>caratteristiche miste</span></button>`+
+    PERSONAS.map(p=>{const lp=S.base?.id===p.id?S.persona:localize(p,S.lang); if(S.base?.id!==p.id && lp.localized) lp.name=p.name; return `<button class="pc ${S.base?.id===p.id?'sel':''}" data-id="${p.id}">${avatar(p.av,55,64)}<b>${esc(S.base?.id===p.id?S.persona.name:p.name)}</b><span>${esc(p.role)}</span>${stars(g.clients[p.id]?.stars||0)}</button>`;}).join("");
+  $("carousel").querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>setPersona(PERSONAS.find(p=>p.id===b.dataset.id)));
+  $("cRnd").onclick=()=>{ setPersona(pick(PERSONAS)); scrollSel(); };
+  $("cGen").onclick=()=>setPersona(generatePersona(S.lang));
+}
+function scrollSel(){ const el=$("carousel").querySelector(".sel"); el&&el.scrollIntoView({behavior:"smooth",inline:"center",block:"nearest"}); }
+function renderPdet(){
+  const p=S.persona;
+  if(!p){ $("pdet").innerHTML='<p class="muted" style="margin:0">Scegli un cliente dalla lista, pescane uno a caso o generane uno nuovo.</p>'; return; }
+  $("pdet").innerHTML=`<div class="pdet">${avatar(p.av,55,104)}<div class="info"><div class="nm">${p.gen?ic("sparkles")+" ":""}${esc(p.name)}</div><div class="rl">${esc(p.role)} · ${esc(p.co)} · ${esc(p.reg)}</div>${icsHTML(p,true)}
+    ${p.facts?`<div class="kv">${Object.entries(p.facts).map(([k,v])=>`<span>${k}</span><span>${esc(v)}</span>`).join("")}</div>`:`<p>${esc(p.bio)}</p>`}
+    ${p.localized?`<p class="muted" style="margin-top:6px">Versione per il mercato ${L().n} del profilo «${esc(p.orig)}».</p>`:""}
+    ${p.gen?`<div class="row" style="margin-top:10px"><button class="btn ghost sm" id="regen">${ic("refresh")} Rigenera</button><button class="btn ghost sm" id="reav">${ic("user")} Nuovo volto</button></div>`:""}</div></div>`;
+  if(p.gen){ $("regen").onclick=()=>setPersona(generatePersona(S.lang)); $("reav").onclick=()=>{S.persona.av=randomAvatar(S.persona.g);renderPdet();renderDock();}; }
+}
+function renderSources(){
+  $("sources").innerHTML=SOURCES.map(s=>`<button class="so ${S.src===s.id?'sel':''}" data-id="${s.id}"><span class="i">${s.i}</span><b>${s.l}<span class="tmp ${s.t}">${s.tl}</span></b><span>${s.d}</span></button>`).join("");
+  $("sources").querySelectorAll(".so").forEach(b=>b.onclick=()=>{S.src=b.dataset.id;renderSources();renderDock();});
+  $("channels").innerHTML=CHANNELS.map(c=>`<button class="${S.ch===c.id?'on':''}" data-id="${c.id}">${c.i} ${c.l}</button>`).join("");
+  $("channels").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.ch=b.dataset.id;renderSources();});
+}
+function renderLangs(){
+  $("langs").innerHTML=LANGS.map(l=>`<button class="lg ${S.lang===l.id?'sel':''}" data-id="${l.id}"><span class="f">${l.f}</span><span>${l.n}${l.main?'<small>mercato chiave</small>':''}</span></button>`).join("");
+  $("langs").querySelectorAll(".lg").forEach(b=>b.onclick=()=>{S.lang=b.dataset.id; if(S.base) S.persona=S.base.gen?S.persona:localize(S.base,S.lang); renderSetup();});
+  $("fbLang").innerHTML=`<button class="${S.fb==="it"?'on':''}" data-v="it">🇮🇹 Italiano</button><button class="${S.fb==="conv"?'on':''}" data-v="conv">${L().f} Lingua trattativa</button>`;
+  $("fbLang").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.fb=b.dataset.v;renderLangs();});
+}
+function renderProducts(){
+  $("products").innerHTML=KB.map(k=>`<button class="chip ${S.product===k.id?'sel':''}" data-id="${k.id}">${k.name}<small>${k.brand}</small></button>`).join("");
+  $("products").querySelectorAll(".chip").forEach(b=>b.onclick=()=>{S.product=b.dataset.id;renderProducts();renderDock();});
+  $("kbSetup").innerHTML=kbHTML(kb());
+}
+function kbHTML(k){
+  return `<div class="br">${k.brand}</div><h4>${k.name}</h4><div class="muted">${k.sintesi}</div>
+  <div class="s">Modelli e dati</div><ul>${k.modelli.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  <div class="s">Punti di forza</div><ul>${k.forza.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  <div class="s">Attenzione — da non promettere</div><ul class="lim">${k.limiti.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+  <div class="s">Servizi del gruppo</div><ul><li>Call center multilingue, teleassistenza (IT/EN/FR/ES/DE)</li><li>Ricambi a magazzino, ricerca anche senza matricola, spedizioni worldwide</li><li>Installazione, avviamento, formazione, manutenzione preventiva, emergenze</li><li>Produzione interna; ISO 9001:2015, EN 1090, MID; uffici in Brasile e USA; 70+ paesi</li></ul>`;
+}
+const SLx=()=>SL.map(s=>S.mode==="disc"&&s.disc?{...s,...s.disc}:s);
+function diffScore(){ const avg=SL.reduce((a,s)=>a+S.diff[s.k],0)/SL.length; return Math.min(100,Math.round(avg+(S.hid&&S.mode!=="disc"?8:0))); }
+const mult=()=>(0.6+diffScore()/100).toFixed(1);
+function renderDiff(){
+  $("presets").innerHTML=Object.keys(PRESETS).map(n=>`<button class="chip ${S.preset===n?'sel':''}" data-n="${n}">${n}</button>`).join("")+`<button class="chip" id="rndDiff">${ic("dice")} A caso</button>`;
+  $("presets").querySelectorAll("[data-n]").forEach(b=>b.onclick=()=>{const v=PRESETS[b.dataset.n];S.preset=b.dataset.n;SL.forEach(s=>S.diff[s.k]=Math.max(0,Math.min(100,v+rI(17)-8)));S.hid=v>=60;renderDiff();renderDock();});
+  $("rndDiff").onclick=()=>{SL.forEach(s=>S.diff[s.k]=rI(101));S.hid=Math.random()<.4;S.preset="";renderDiff();renderDock();};
+  $("sliders").innerHTML=SLx().map(s=>`<div class="sl"><div class="lab"><b>${s.l}</b><span class="v" id="v_${s.k}">${s.s[bucket(S.diff[s.k])]}</span></div><input type="range" min="0" max="100" value="${S.diff[s.k]}" data-k="${s.k}"><div class="ends"><span>${s.lo}</span><span>${s.hi}</span></div></div>`).join("");
+  $("sliders").querySelectorAll("input").forEach(r=>r.oninput=()=>{const k=r.dataset.k;S.diff[k]=+r.value;S.preset="";$("v_"+k).textContent=SLx().find(s=>s.k===k).s[bucket(+r.value)];updGauge();renderDock();$("presets").querySelectorAll(".chip").forEach(c=>c.classList.remove("sel"));});
+  $("hidSw").classList.toggle("on",S.hid);
+  updGauge();
+}
+$("hidSw").onclick=()=>{S.hid=!S.hid;$("hidSw").classList.toggle("on",S.hid);updGauge();renderDock();};
+function updGauge(){ const d=diffScore(); $("gNum").textContent=d; $("gNum").style.color=d<34?"var(--ok)":d<67?"var(--mid)":"var(--ko)"; $("gMul").textContent="×"+mult(); }
+
+function allObjs(){ return [...DEFAULT_OBJ.map(o=>({...o,field:false})),...S.custom.map(o=>({...o,field:true}))]; }
+function renderObjs(){
+  const objs=allObjs();
+  $("objList").innerHTML=objs.map((o,i)=>`<label class="obj"><input type="checkbox" data-i="${i}" ${S.selected.has(o.t)?'checked':''}><div class="t">${esc(o.t)}<small>${o.cat}${o.field?'<span class="badge">dal campo</span>':''}</small></div>${o.field?`<button class="del" data-t="${esc(o.t)}">×</button>`:''}</label>`).join("");
+  $("objList").querySelectorAll("input").forEach(c=>c.onchange=()=>{const t=objs[c.dataset.i].t;c.checked?S.selected.add(t):S.selected.delete(t);store.set("sel",[...S.selected]);renderDock();});
+  $("objList").querySelectorAll(".del").forEach(b=>b.onclick=e=>{e.preventDefault();const t=b.dataset.t;S.custom=S.custom.filter(o=>o.t!==t);S.selected.delete(t);store.set("custom",S.custom);renderObjs();renderDock();});
+}
+function rndObjs(n){ S.selected.clear(); allObjs().sort(()=>Math.random()-.5).slice(0,n).forEach(o=>S.selected.add(o.t)); store.set("sel",[...S.selected]); }
+$("addObj").onclick=()=>{const v=$("newObj").value.trim();if(!v)return;S.custom.push({t:v,cat:"Dal campo"});S.selected.add(v);store.set("custom",S.custom);store.set("sel",[...S.selected]);$("newObj").value="";renderObjs();renderDock();};
+$("newObj").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();$("addObj").click();}};
+$("allObj").onclick=()=>{allObjs().forEach(o=>S.selected.add(o.t));store.set("sel",[...S.selected]);renderObjs();renderDock();};
+$("noneObj").onclick=()=>{S.selected.clear();store.set("sel",[]);renderObjs();renderDock();};
+$("rndObj").onclick=()=>{rndObjs(3);renderObjs();renderDock();};
+$("internal").oninput=e=>store.set("internal",e.target.value);
+
+function renderDock(){
+  const p=S.persona, ok=p&&(S.mode==="disc"||S.selected.size)&&sample;
+  $("dockSum").innerHTML=p?`${avatar(p.av,55,40)}<div><b>${esc(p.name)} · ${L().f} · ${SRC().i}</b><span>${kb().name} · diff. ${diffScore()} · ×${mult()} XP · ${S.mode==="disc"?"Discovery":S.selected.size+" obiezioni"}</span></div>`:`<div><b>Scegli un cliente</b><span>poi configura lo scenario</span></div>`;
+  $("start").disabled=!ok; $("hRandom").disabled=!sample;
+}
+function surprise(){
+  S.lang=Math.random()<.5?"it":pick(["en","pt","en","pt","es","fr","de"]);
+  setPersona(Math.random()<.5?pick(PERSONAS):generatePersona(S.lang));
+  S.src=pick(SOURCES).id; S.ch=pick(CHANNELS).id; S.mode=pick(["close","disc"]);
+  SL.forEach(s=>S.diff[s.k]=rI(101)); S.hid=Math.random()<.4; S.preset="";
+  rndObjs(3+rI(2));
+  startChat();
+}
+
+/* ---------------- PROMPT ---------------- */
+function kbText(k){ return `${k.brand} — ${k.name}: ${k.sintesi}\nModelli e dati: ${k.modelli.join("; ")}\nPunti di forza: ${k.forza.join("; ")}\nDati NON pubblicati / da verificare: ${k.limiti.join("; ")}`; }
+function diffText(){ return SLx().map(s=>`${s.d[bucket(S.diff[s.k])]} (intensità ${S.diff[s.k]}/100)`).join("\n- "); }
+function maxTurns(){ const v=S.diff.time; return v<20?0:Math.round(20-(v-20)/80*15); }
+function repTurns(){ return S.msgs.filter(m=>m.r==="s").length; }
+const fill=s=>s.replace("{kw}",kb().kw[S.lang]||kb().kw.it).replace("{prod}",kb().name);
+function scenario(){
+  if(S.mode==="disc") return scenarioDisc();
+  const p=S.persona, internal=$("internal").value.trim(), extra=$("extra").value.trim(), mt=maxTurns(), src=SRC(), ch=CHANNELS.find(c=>c.id===S.ch);
+  return `SCENARIO DI ROLE-PLAY PER ALLENAMENTO COMMERCIALE.
+
+AZIENDA DEL VENDITORE:
+${COMPANY}
+
+PRODOTTO IN DISCUSSIONE:
+${kbText(kb())}
+${internal?`\nDATI INTERNI DEL VENDITORE (tu non li conosci in anticipo, ma sono veri): ${internal}\n`:""}
+TU SEI IL CLIENTE: ${p.name}, ${p.role} — ${p.co} (${p.reg}).
+Profilo: ${p.bio}
+
+LINGUA: parla ESCLUSIVAMENTE in ${L().llm}${S.lang==="it"?"":", in modo naturale per un professionista del tuo Paese"}. Se il venditore scrive in un'altra lingua, fallo notare e continua nella tua.
+ORIGINE DEL CONTATTO: ${fill(src.p)}
+CANALE: ${ch.p}
+
+COME TI COMPORTI:
+- ${diffText()}
+${S.hidden?`- La tua obiezione nascosta: ${S.hidden}. Non dirla mai spontaneamente; ammettila solo se il venditore, con domande aperte e mirate, ci arriva vicino. Quando la ammetti aggiungi il tag [NASCOSTA].\n`:""}${extra?`- Contesto aggiuntivo: ${extra}\n`:""}
+OBIEZIONI DA SOLLEVARE (una alla volta, con parole tue nella tua lingua, in modo coerente con il tuo settore):
+${[...S.selected].map((t,i)=>`${i+1}. ${t}`).join("\n")}
+
+REGOLE:
+- Parla SOLO come il cliente, risposte brevi (1-4 frasi), come in una vera conversazione.
+- Non aiutare il venditore, non dargli consigli, non uscire mai dal personaggio.
+- Fai domande tecniche realistiche coerenti con la tua competenza. Se il venditore cita dati diversi da quelli sopra o promette cose «da verificare», insospettisciti in proporzione alla tua competenza.
+- Se il venditore fa buone domande di scoperta, rivela dettagli realistici (volumi, problemi, scadenze, prodotto, formati).
+- Risposte generiche, pressioni o gergo ti raffreddano; numeri corretti, prove, referenze, empatia e ascolto ti avvicinano.
+- Accetta un passo successivo concreto (visita, demo, test con il tuo prodotto, offerta definitiva, firma) SOLO se il venditore ha gestito davvero bene le obiezioni. Puoi chiudere la conversazione se ti irrita.
+${mt?`- Tempo limitato: dopo circa ${mt} interventi del venditore devi chiudere la conversazione in ogni caso.\n`:""}
+TAG (in fondo a OGNI risposta, ognuno su una riga, mai tradotti):
+[MOOD:n] con n 0-100 = tua propensione attuale all'acquisto.
+[OBJ:n] quando in questa risposta sollevi l'obiezione numero n della lista.
+[OK:n] quando il venditore ti ha convinto sull'obiezione n.
+[FINE:VINTO] o [FINE:PERSO] se la trattativa si chiude.`;
+}
+const transcript=()=>S.msgs.map(m=>`${m.r==="c"?"CLIENTE":"VENDITORE"}: ${m.t}`).join("\n");
+
+/* ---------------- CHAT ---------------- */
+function addRow(r,t){
+  const row=document.createElement("div"); row.className="mr "+r;
+  if(r==="c") row.innerHTML=avatar(S.persona.av,S.mood,30);
+  const d=document.createElement("div"); d.className="msg"; d.textContent=t; row.appendChild(d);
+  $("log").appendChild(row); $("log").scrollTop=$("log").scrollHeight; return d;
+}
+function addSys(cls,html){ const d=document.createElement("div"); d.className=cls; d.innerHTML=html; $("log").appendChild(d); $("log").scrollTop=$("log").scrollHeight; return d; }
+function setMood(n){
+  const old=S.mood; S.mood=Math.max(0,Math.min(100,n)); $("mood").style.width=Math.max(4,S.mood)+"%";
+  $("cAv").innerHTML=avatar(S.persona.av,S.mood,52);
+  const dlt=S.mood-old; if(Math.abs(dlt)>=8 && S.msgs.length) reaction(dlt>0?pick(["😊","👍","💡","🤝"]):pick(["😤","🥶","🙄","😒"]));
+  if(dlt && S.msgs.length){ $("dWrap").innerHTML=`<span class="delta" style="color:${dlt>0?'var(--ok)':'var(--ko)'}">${dlt>0?'+':''}${dlt}</span>`; }
+}
+const clean=t=>t.replace(/\[(MOOD|OBJ|OK|FINE|MED)[^\]]*\]/gi,"").replace(/\[NASCOSTA\]/gi,"").trim();
+function updTurns(){ const mt=maxTurns(); $("turns").innerHTML=mt?`${ic("clock")} ${repTurns()}/${mt}`:`${ic("chat")} ${repTurns()}`; }
+function renderTrack(){
+  if(S.mode==="disc") return renderMed();
+  $("otrack").classList.remove("med");
+  $("otrack").innerHTML=[...S.selected].map((t,i)=>`<span class="ot ${S.ot[i+1]||''}" title="${esc(t)}">${S.ot[i+1]==="done"?"✓ ":S.ot[i+1]==="raised"?"⚑ ":""}${esc(short(t))}</span>`).join("")+
+    (S.hidden?`<span class="ot hid ${S.hidFound?'done':''}">${ic("eye")} ${S.hidFound?"Nascosta scoperta":"Nascosta: ?"}</span>`:"");
+}
+async function clientTurn(opening){
+  S.busy=true; lock(true);
+  const row=addRow("c",""); row.innerHTML='<span class="dots"><i></i><i></i><i></i></span>'; $("cAv").classList.add("talk");
+  const mt=maxTurns(), last=mt&&repTurns()>=mt, src=SRC();
+  const open = src.cold ? `La conversazione inizia ora: il venditore ti contatta a freddo (${CHANNELS.find(c=>c.id===S.ch).l}). Rispondi come chi non sa chi sia (es. "Pronto?" o un messaggio breve), nella tua lingua.`
+    : `La conversazione inizia ora: il venditore ti ha appena contattato o raggiunto. Apri tu con una frase realistica, coerente con il tuo atteggiamento e con l'origine del contatto.`;
+  const prompt=`${scenario()}\n\n${opening?open:`CONVERSAZIONE FINORA:\n${transcript()}\n\n${last?"Il tuo tempo è FINITO: chiudi ora la conversazione in modo realistico e aggiungi [FINE:VINTO] o [FINE:PERSO].":"Rispondi ora all'ultimo messaggio del VENDITORE, restando nel personaggio."}`}`;
+  try{
+    const r=await sample(prompt,{cache:false,onText:({text})=>{const c=clean(text); if(c) row.textContent=c; $("log").scrollTop=$("log").scrollHeight;}});
+    const raw=r.text||"";
+    const m=raw.match(/\[MOOD:\s*(\d+)\]/i); if(m) setMood(+m[1]);
+    [...raw.matchAll(/\[OBJ:\s*(\d+)\]/gi)].forEach(x=>{ if(S.ot[x[1]]!=="done") S.ot[x[1]]="raised"; });
+    [...raw.matchAll(/\[OK:\s*(\d+)\]/gi)].forEach(x=>S.ot[x[1]]="done");
+    if(S.mode==="disc") [...raw.matchAll(/\[MED:\s*(DC|DP|PP|IP|CH|CO|M|E)\s*:\s*([12])\]/gi)].forEach(x=>medReveal(x[1].toUpperCase(),+x[2]));
+    if(/\[NASCOSTA\]/i.test(raw) && !S.hidFound){ S.hidFound=true; toast(ic("eye"),"Obiezione nascosta scoperta!"); }
+    renderTrack();
+    const txt=clean(raw)||"…"; row.textContent=txt; S.msgs.push({r:"c",t:txt});
+    const f=raw.match(/\[FINE:\s*(\w+)\]/i);
+    if(f){ S.done=true; const win=f[1].toUpperCase()==="VINTO";
+      addSys("sys", S.mode==="disc"
+        ? (win?"Il cliente ha accettato un prossimo passo. Premi «Chiudi e valuta» e dai il tuo verdetto.":"Il cliente ha chiuso la conversazione. Premi «Chiudi e valuta» e dai il tuo verdetto.")
+        : (win?"Il cliente ha accettato il passo successivo. Premi «Chiudi e valuta».":"Il cliente ha chiuso la trattativa. Premi «Chiudi e valuta».")); }
+  }catch(e){
+    row.parentElement.remove(); addSys("sys",e.code==="rate_limited"?"Troppe richieste ravvicinate: attendi qualche secondo e riprova.":"Errore dell'AI: "+esc(e.message||"riprova."));
+    if(!opening){ const ls=S.msgs.pop(); $("input").value=ls?.t||""; [...$("log").querySelectorAll(".mr.s")].pop()?.remove(); }
+  }
+  S.busy=false; lock(false); updTurns(); $("cAv").classList.remove("talk");
+}
+function lock(b){ $("showBtn").disabled=b||S.done; $("send").disabled=b||S.done; $("input").disabled=b||S.done; $("hintBtn").disabled=b||S.done; if(!b&&!S.done) $("input").focus(); }
+$("send").onclick=()=>{const v=$("input").value.trim(); if(!v||S.busy||S.done) return; $("input").value=""; addRow("s",v); S.msgs.push({r:"s",t:v}); updTurns(); clientTurn(false);};
+$("input").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("send").click();}};
+$("kbBtn").onclick=()=>$("kbPanel").classList.toggle("hidden");
+// invito precompilato: il venditore può modificarlo prima di inviarlo
+$("showBtn").onclick=()=>{ if(S.busy||S.done) return; $("input").value=`Le propongo di venire a trovarci nel nostro showroom a Tordandrea di Assisi: vedrebbe ${kb().name.toLowerCase()} in funzione con un prodotto simile al vostro e parlerebbe direttamente con i nostri tecnici. Le andrebbe bene una mattina della prossima settimana?`; $("input").focus(); };
+$("hintBtn").onclick=async()=>{
+  if(S.busy) return; S.busy=true; lock(true);
+  const box=addSys("hint",'<span class="typing">Il coach sta pensando…</span>');
+  try{
+    const miss=MED.filter(m=>(S.med[m.k]||0)<2).map(m=>m.it+" ("+m.k+")").join(", ");
+    const r=await sample(`Sei un coach di vendita B2B esperto di macchinari industriali. Un venditore di Massini Industries si allena con questo cliente simulato: ${S.persona.name}, ${S.persona.role}, ${S.persona.co} (${S.persona.reg}). La trattativa è in ${L().llm}.
+PRODOTTO (usa SOLO questi dati):
+${kbText(kb())}
+${$("internal").value.trim()?"Dati interni: "+$("internal").value.trim():""}
+CONVERSAZIONE:
+${transcript()}
+
+${S.mode==="disc"
+  ? `MODALITÀ DISCOVERY MEDDPICC: l'obiettivo del venditore è qualificare, non vendere. Elementi ancora da scoprire: ${miss||"nessuno, può dare il verdetto"}. Suggerisci UNA domanda aperta da fare ora, in ${L().llm}, tra virgolette, per far emergere il più importante tra quelli mancanti; aggiungi una riga in italiano che spiega perché. Massimo 3 righe. Non suggerire di dare prezzi né di fare il pitch. Niente preamboli.`
+  : `Dai al VENDITORE un suggerimento per la prossima mossa in 3 righe al massimo: in italiano, quale obiezione o bisogno c'è dietro l'ultima frase del cliente; poi una risposta pronta da usare IN ${L().llm.toUpperCase()} (tra virgolette, max 2 frasi) che usi i punti di forza reali del prodotto. Se serve un dato non disponibile, suggerisci di impegnarsi a verificarlo. Niente preamboli.`}`,{cache:false,modelTier:"quick",onText:({text})=>{box.textContent="Coach: "+text;}});
+    box.textContent="Coach: "+r.text.trim(); S.hints++;
+  }catch(e){ box.textContent="Suggerimento non disponibile ora."; }
+  S.busy=false; lock(false);
+};
+async function startChat(){
+  const disc=S.mode==="disc";
+  if(!S.persona||!sample||(!disc&&!S.selected.size)) return;
+  S.msgs=[]; S.done=false; S.hints=0; S.ot={}; S.hidFound=false; S.hidden=(!disc&&S.hid)?pick(HIDDEN):"";
+  S.med={}; S.card=null; S.verdict=""; S.nextStep=""; S.lastMed=null; S.real=disc?pickReal():"";
+  $("moodLbl").textContent=disc?"Fiducia del cliente":"Propensione all'acquisto";
+  const src=SRC(); S.mood=Math.round(48-S.diff.att*.25-S.diff.brand*.12-(src.t==="c"?10:src.t==="w"?4:0));
+  $("log").innerHTML=""; $("cName").textContent=S.persona.name; $("cRole").textContent=`${L().f} ${S.persona.role} · ${S.persona.co} · ${S.persona.reg}`;
+  setMood(S.mood); $("dWrap").innerHTML="";
+  $("kbPanel").innerHTML=kbHTML(kb()); $("kbPanel").classList.add("hidden");
+  $("input").placeholder=L().ph;
+  show("chat"); updTurns(); renderTrack();
+  const card=src.card, kw=kb().kw[S.lang]||kb().kw.it;
+  addSys("lead",`<b>${src.i} ${src.l}</b> <span class="tmp ${src.t}">${src.tl}</span> · ${CHANNELS.find(c=>c.id===S.ch).i} ${CHANNELS.find(c=>c.id===S.ch).l}<div class="kv">${Object.entries(card).map(([k,v])=>`<span>${k}</span><span>${esc(v.replace("{kw}",kw).replace("{prod}",kb().name))}</span>`).join("")}<span>Azienda</span><span>${esc(S.persona.co)} · ${esc(S.persona.reg)}</span><span>Obiettivo</span><span>${disc?"qualificare il lead con MEDDPICC: scopri gli 8 elementi e decidi se è un deal reale":"ottenere un impegno concreto (visita, demo, test, ordine)"}</span></div>`);
+  addSys("sys",`Difficoltà ${diffScore()}/100 · ×${mult()} XP · lingua: ${L().n}${S.hidden?" · "+ic("eye")+" c'è un'obiezione nascosta":""}`);
+  if(disc){
+    const w=addSys("sys",'<span class="dots"><i></i><i></i><i></i></span> Preparo lo scenario del cliente…'); lock(true);
+    const ok=await genCard(); w.remove(); lock(false);
+    if(!ok){ toast(ic("alert"),"Scenario non generato: riprova"); openSetup(); return; }
+  }
+  clientTurn(true);
+}
+$("start").onclick=startChat;
+$("quitBtn").onclick=()=>{show("home");};
+$("endBtn").onclick=()=>{ if(S.busy) return; if(repTurns()<2){ addSys("sys","Scambia almeno un paio di battute prima di chiedere la valutazione."); return; } S.mode==="disc"?openVerdict():evaluate(); };
+
+/* ---------------- VALUTAZIONE ---------------- */
+async function evaluate(){
+  show("report"); window.scrollTo(0,0);
+  $("rBody").innerHTML=`<div class="card" style="text-align:center;padding:40px">${avatar(S.persona.av,S.mood,88).replace('class="av"','class="av" style="margin:0 auto 14px"')}<span class="typing">Il coach sta analizzando la trattativa…</span></div>`;
+  const objs=[...S.selected], fbl=S.fb==="it"?"italiano":L().llm;
+  const prompt=`Sei un direttore commerciale esperto di vendita B2B di macchinari industriali. Valuta in modo onesto e severo come il VENDITORE di Massini Industries ha gestito questa trattativa simulata.
+
+CLIENTE: ${S.persona.name}, ${S.persona.role}, ${S.persona.co} (${S.persona.reg}). ${S.persona.bio}
+ORIGINE DEL CONTATTO: ${SRC().l} (${SRC().tl}). CANALE: ${CHANNELS.find(c=>c.id===S.ch).l}. LINGUA: ${L().llm} (valuta anche la padronanza della lingua da parte del venditore).
+DIFFICOLTÀ ${diffScore()}/100: ${SL.map(s=>`${s.l} ${S.diff[s.k]}`).join("; ")}.
+${S.hidden?`OBIEZIONE NASCOSTA: ${S.hidden}.`:""}
+Suggerimenti chiesti al coach: ${S.hints}.
+
+DATI DI RIFERIMENTO (verifica che il venditore non abbia detto cose sbagliate o promesso cose non verificate):
+${kbText(kb())}
+${COMPANY}
+${$("internal").value.trim()?"DATI INTERNI: "+$("internal").value.trim():""}
+
+OBIEZIONI PREVISTE:
+${objs.map((t,i)=>`${i+1}. ${t}`).join("\n")}
+
+CONVERSAZIONE:
+${transcript()}
+
+Rispondi SOLO con un oggetto JSON, testi in ${fbl}:
+{"score": intero 0-100 (a difficoltà alta un buon lavoro vale di più),
+ "esito": "Vinto" | "Perso" | "In sospeso" (queste tre parole sempre in italiano),
+ "sintesi": "2 frasi",
+ "obiezioni": [{"obiezione": testo breve, "voto": "ok"|"parziale"|"male"|"non emersa", "commento": "1-2 frasi", "risposta_migliore": "risposta modello pronta da usare in ${L().llm}, max 2 frasi, vuota se non emersa"}],
+ "nascosta": ${S.hidden?'{"scoperta": true|false, "commento": "1 frase"}':"null"},
+ "errori_prodotto": [affermazioni sbagliate, inventate o non verificabili, con correzione; vuota se nessuna],
+ "punti_forti": [max 3], "da_migliorare": [max 3, concreti],
+ "tecnica": {"ascolto_domande":0-10,"conoscenza_prodotto":0-10,"valore_vs_prezzo":0-10,"prove_e_numeri":0-10,"chiusura_prossimo_passo":0-10,"lingua":0-10}}
+Includi in "obiezioni" tutte quelle previste nell'ordine dato, più eventuali altre emerse.`;
+  try{ renderReport(await sample.json(prompt,{cache:false,modelTier:"complex"})); }
+  catch(e){ $("rBody").innerHTML=`<div class="err">Valutazione non riuscita (${esc(e.message||e.code||"errore")}).</div><div class="row" style="margin-top:10px"><button class="btn sm" id="retryEval">Riprova</button></div>`; $("retryEval").onclick=evaluate; }
+}
+function award(r,sc,es){
+  const g=G(), win=es==="Vinto", d=diffScore(), t=r.tecnica||{}, errs=r.errori_prodotto||[], hidFound=r.nascosta?.scoperta||S.hidFound;
+  let xp=Math.round(sc*+mult()); const bonus=[];
+  if(win){xp+=25;bonus.push("deal vinto +25");}
+  if(S.hidden&&hidFound){xp+=20;bonus.push("nascosta scoperta +20");}
+  if(!errs.length&&(+t.conoscenza_prodotto||0)>=8){xp+=10;bonus.push("zero errori +10");}
+  if(!S.hints&&win){xp+=10;bonus.push("senza coach +10");}
+  const key=S.base?.gen?S.persona.id:S.base?.id;
+  const st=sc>=85?3:sc>=70?2:sc>=50?1:0;
+  const sv=settle(g,{mode:"close",src:S.src,lang:S.lang,diff:d,success:win,hints:S.hints,st,cov:0,disqOk:false});
+  if(sv.qd){xp+=sv.qx;bonus.push("missione del giorno +50");}
+  const before=lvlOf(g.xp); g.xp+=xp;
+  if(!S.base?.gen){ const c=g.clients[key]||{best:0,stars:0,wins:0}; c.best=Math.max(c.best,sc); c.stars=Math.max(c.stars,st); if(win)c.wins++; g.clients[key]=c; }
+  g.streak=win?(g.streak||0)+1:0;
+  if(win){ if(!g.langWins.includes(S.lang))g.langWins.push(S.lang); if(!g.srcWins.includes(S.src))g.srcWins.push(S.src); if(!g.winIds.includes(key))g.winIds.push(key); }
+  const has=id=>g.badges.includes(id), earn=[];
+  const chk={first:true,win,hard:win&&d>=70,detective:!!(S.hidden&&hidFound),cold:win&&S.src==="cold",poly:g.langWins.length>=2,export:win&&["en","pt"].includes(S.lang),
+    precise:!errs.length&&(+t.conoscenza_prodotto||0)>=8,solo:win&&!S.hints,blitz:win&&S.diff.time>=67,streak:g.streak>=3,three:st===3,collector:g.winIds.length>=5,
+    inbound:["sem","seo","social"].every(s=>g.srcWins.includes(s)),quest:sv.qd,days3:sv.streakDays>=3};
+  BADGES.forEach(b=>{ if(chk[b.id]&&!has(b.id)){ g.badges.push(b.id); earn.push(b);} });
+  store.set("game",g);
+  return {xp,bonus,earn,st,quest:sv.qd?sv.q:null,lvUp:lvlOf(g.xp)>before,lvl:lvlOf(g.xp)};
+}
+function renderReport(r){
+  const sc=Math.round(+r.score||0), es=["Vinto","Perso","In sospeso"].includes(r.esito)?r.esito:"In sospeso", cls=es==="Vinto"?"w":es==="Perso"?"l":"p";
+  const A=award(r,sc,es);
+  const vcls={"ok":"ok","parziale":"mid","male":"ko","non emersa":"na"}, vlab={"ok":"Gestita bene","parziale":"Parziale","male":"Da rifare","non emersa":"Non emersa"};
+  const t=r.tecnica||{}, tk=[["ascolto_domande","Ascolto e domande"],["conoscenza_prodotto","Conoscenza prodotto"],["valore_vs_prezzo","Valore vs prezzo"],["prove_e_numeri","Prove e numeri"],["chiusura_prossimo_passo","Chiusura / prossimo passo"],["lingua","Padronanza "+L().n]];
+  const errs=r.errori_prodotto||[], hid=r.nascosta, C=2*Math.PI*56, col=sc>=70?"#34d399":sc>=45?"#fbbf24":"#f87171";
+  $("rBody").innerHTML=`
+  <div class="card"><div class="rhead">
+    <div class="ring"><svg width="132" height="132"><circle cx="66" cy="66" r="56" stroke="#252b35" stroke-width="12" fill="none"/><circle id="ringC" cx="66" cy="66" r="56" stroke="${col}" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" style="transition:stroke-dashoffset 1.2s"/></svg><div class="c"><div><b id="scN">0</b><br><span>/100</span></div></div></div>
+    <div style="flex:1;min-width:220px">
+      <div class="row">${avatar(S.persona.av,es==="Vinto"?85:es==="Perso"?15:50,44)}<div><b>${esc(S.persona.name)}</b><div class="muted">${L().f} ${SRC().i} ${SRC().l} · diff. ${diffScore()}</div></div></div>
+      <div class="bigstars" style="margin:8px 0">${[1,2,3].map(i=>`<span class="${i<=A.st?'on':''}">★</span>`).join("")}</div>
+      <span class="esito ${cls}">${esc(es)}</span><p style="margin:10px 0 0;color:#cfd7e3">${esc(r.sintesi)}</p>
+    </div></div></div>
+  <div class="xpgain"><span class="p">+${A.xp} XP</span><span class="muted">${Math.round(sc)} punti × ${mult()}${A.bonus.length?" · "+A.bonus.join(" · "):""}</span>${A.lvUp?`<span class="esito w" style="margin-left:auto">Livello ${A.lvl+1}: ${TITLES[A.lvl]}</span>`:""}</div>
+  <div class="card focus"><h3>Da migliorare</h3><ul class="clean">${(r.da_migliorare||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  ${A.earn.length?`<div class="card"><h3>Nuovi badge</h3><div class="badges">${A.earn.map(b=>`<div class="bdg"><span class="i">${b.i}</span><b>${b.n}</b></div>`).join("")}</div></div>`:""}
+  <div class="card"><h3>Tecnica</h3>${tk.map(([k,l])=>`<div class="tb"><span>${l}</span><div class="bar"><i style="width:${(+t[k]||0)*10}%"></i></div><b style="width:28px;text-align:right">${+t[k]||0}</b></div>`).join("")}</div>
+  ${hid?`<div class="card"><h3>Obiezione nascosta <span class="vote ${hid.scoperta?'ok':'ko'}">${hid.scoperta?'Scoperta':'Non scoperta'}</span></h3><div><b>Era:</b> ${esc(S.hidden)}</div><div style="margin-top:6px;color:#cfd7e3;font-size:13.5px">${esc(hid.commento)}</div></div>`:""}
+  <div class="card"><h3>Obiezioni</h3>${(r.obiezioni||[]).map(o=>`<div class="objrow"><div class="h"><b style="font-size:14px">${esc(o.obiezione)}</b><span class="vote ${vcls[o.voto]||'na'}">${vlab[o.voto]||esc(o.voto)}</span></div><div style="color:#cfd7e3;font-size:13.5px">${esc(o.commento)}</div>${o.risposta_migliore?`<div class="better"><b>Prova così:</b> ${esc(o.risposta_migliore)}</div>`:""}</div>`).join("")}</div>
+  <div class="card"><h3>Affermazioni sul prodotto da correggere</h3>${errs.length?`<ul class="clean">${errs.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:'<p class="muted" style="margin:0">Nessun dato sbagliato o inventato ✓</p>'}</div>
+  <div class="card"><h3>Punti forti</h3><ul class="clean">${(r.punti_forti||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+`;
+  requestAnimationFrame(()=>{ $("ringC").style.strokeDashoffset=C*(1-sc/100); let n=0; const iv=setInterval(()=>{n=Math.min(sc,n+Math.ceil(sc/30)||1);$("scN").textContent=n;if(n>=sc)clearInterval(iv);},35); });
+  if(es==="Vinto") confetti();
+  A.earn.forEach((b,i)=>setTimeout(()=>toast(b.i,"Badge sbloccato: "+b.n),900+i*1800));
+  if(A.quest) setTimeout(()=>toast(ic("award"),"Missione del giorno completata! +50 XP"),500);
+  if(A.lvUp) setTimeout(()=>levelUp(A.lvl),1300);
+  renderTop();
+  const h=store.get("hist",[]); h.push({mode:"close",date:new Date().toLocaleDateString("it-IT"),rep:$("repName").value,persona:S.persona.name,flag:L().f,src:SRC().l,diff:diffScore(),score:sc,esito:es,xp:A.xp}); store.set("hist",h.slice(-60));
+  lastReport=`SALES GYM — ${$("repName").value||"Commerciale"} vs ${S.persona.name} (${S.persona.role}, ${S.persona.co}, ${S.persona.reg})\n${kb().name} · ${SRC().l} · ${L().n} · difficoltà ${diffScore()}/100\nPunteggio: ${sc}/100 — ${es} — +${A.xp} XP\n${r.sintesi||""}\n\nOBIEZIONI\n${(r.obiezioni||[]).map(o=>`- ${o.obiezione}: ${vlab[o.voto]||o.voto}. ${o.commento||""}${o.risposta_migliore?"\n  Prova così: "+o.risposta_migliore:""}`).join("\n")}${hid?`\n\nOBIEZIONE NASCOSTA (${hid.scoperta?"scoperta":"non scoperta"}): ${S.hidden}`:""}\n\nERRORI SUL PRODOTTO\n${errs.length?errs.map(x=>"- "+x).join("\n"):"- nessuno"}\n\nPUNTI FORTI\n${(r.punti_forti||[]).map(x=>"- "+x).join("\n")}\n\nDA MIGLIORARE\n${(r.da_migliorare||[]).map(x=>"- "+x).join("\n")}\n\nTRASCRIZIONE\n${transcript()}`;
+}
+$("copyRep").onclick=async()=>{try{await navigator.clipboard.writeText(lastReport);$("copyRep").textContent="Copiato ✓";}catch(e){$("copyRep").textContent="Copia non riuscita";}setTimeout(()=>$("copyRep").textContent="Copia report",1800);};
+$("again").onclick=startChat;
+$("newSet").onclick=()=>openSetup();
+$("toHome").onclick=()=>show("home");
+
+/* ---------------- MODALITÀ E DISCOVERY MEDDPICC ---------------- */
+function renderMode(){
+  const M=[{id:"close",i:ic("target"),t:"Chiusura",d:"Gestisci le obiezioni e ottieni un impegno concreto"},{id:"disc",i:ic("search"),t:"Discovery MEDDPICC",d:"Solo qualifica: scopri gli 8 elementi e decidi se il deal è reale"}];
+  $("modes").innerHTML=M.map(m=>`<button class="mode ${S.mode===m.id?'sel':''}" data-m="${m.id}"><span class="i">${m.i}</span><b>${m.t}</b><span class="d">${m.d}</span></button>`).join("");
+  $("modes").querySelectorAll(".mode").forEach(b=>b.onclick=()=>{ if(S.mode!==b.dataset.m){ S.mode=b.dataset.m; renderSetup(); } });
+  const disc=S.mode==="disc";
+  $("objSec").classList.toggle("hidden",disc);
+  $("hidSw").classList.toggle("hidden",disc);
+  $("discInfo").classList.toggle("hidden",!disc);
+  if(disc) $("discInfo").innerHTML=`<h2 class="sec"><span class="n">6</span>Gli 8 elementi MEDDPICC</h2><div class="card"><div class="mgrid">${MED.map(m=>`<div class="mg"><b>${m.ic} ${m.l}</b><span>${m.d}</span></div>`).join("")}</div><p class="muted" style="margin:12px 0 0">Il cliente non compra oggi: nasconde una scheda segreta e rivela ogni elemento solo se fai le domande giuste. Alla fine dai il tuo verdetto e scopri com'era davvero il deal.</p></div>`;
+}
+function pickReal(){ const d=diffScore()/100, r=Math.random(), pd=.08+.3*d; return r<pd?"da_scartare":r<pd+.3?"dubbia":"qualificato"; }
+function cardText(){ return MED.map(m=>`- ${m.l} (${m.k}) [difficoltà a scoprirlo ${S.card?.[m.k]?.d||2}/3]: ${S.card?.[m.k]?.t||"non definito"}`).join("\n"); }
+function scenarioDisc(){
+  const p=S.persona, internal=$("internal").value.trim(), extra=$("extra").value.trim(), mt=maxTurns(), src=SRC(), ch=CHANNELS.find(c=>c.id===S.ch);
+  const realTxt={qualificato:"deal reale e qualificabile",dubbia:"deal dubbio, con elementi deboli",da_scartare:"non è un vero deal"}[S.real];
+  return `SCENARIO DI ROLE-PLAY: DISCOVERY CALL DI QUALIFICAZIONE (metodo MEDDPICC). Il venditore deve capire se esiste un deal reale; oggi NON si chiude nulla.
+
+AZIENDA DEL VENDITORE:
+${COMPANY}
+
+PRODOTTO DI CUI SI PARLA:
+${kbText(kb())}
+${internal?`\nDATI INTERNI DEL VENDITORE: ${internal}\n`:""}
+TU SEI IL CLIENTE: ${p.name}, ${p.role} — ${p.co} (${p.reg}).
+Profilo: ${p.bio}
+
+LINGUA: parla ESCLUSIVAMENTE in ${L().llm}${S.lang==="it"?"":", in modo naturale per un professionista del tuo Paese"}. Se il venditore scrive in un'altra lingua, fallo notare e continua nella tua.
+ORIGINE DEL CONTATTO: ${fill(src.p)}
+CANALE: ${ch.p}
+
+LA TUA SITUAZIONE REALE (scheda segreta: il venditore NON la conosce; ogni elemento va rivelato solo se se lo guadagna):
+${cardText()}
+REALTÀ DEL DEAL: ${realTxt}${S.card?.sintesi?" — "+S.card.sintesi:""}
+
+COME TI COMPORTI:
+- ${diffText()}
+${extra?`- Contesto aggiuntivo: ${extra}\n`:""}
+REGOLE DI RIVELAZIONE:
+- Rivela un elemento SOLO se il venditore ti fa domande aperte, pertinenti e specifiche su quel tema. Domande chiuse o generiche ottengono risposte brevi e vaghe.
+- Più la difficoltà dell'elemento è alta (3), più sei cauto: serve fiducia costruita, domande ripetute o un buon approfondimento prima di rivelarlo.
+- Rivelazione PARZIALE (livello 1): accenni, senza cifre né nomi. COMPLETA (livello 2): dettagli concreti (cifre, nomi, date, passaggi).
+- Se il venditore parte subito col pitch, parla di prezzo o preme per un preventivo, ti chiudi e rispondi in modo evasivo.
+- Non anticipare elementi su cui non sei interrogato. Non inventare dati diversi dalla scheda; puoi omettere o dire «non lo so» solo se coerente con il tuo ruolo.
+- Non chiedere offerte e non firmare nulla. Se il venditore propone un prossimo passo sensato (incontro con il decisore, visita tecnica, test), accettalo SOLO se la qualificazione è stata fatta bene e la realtà del deal lo giustifica; altrimenti rimanda o rifiuta in modo realistico.
+- Parla SOLO come il cliente, risposte brevi (1-4 frasi). Non aiutare il venditore, non uscire mai dal personaggio.
+${mt?`- Tempo limitato: dopo circa ${mt} interventi del venditore devi chiudere la conversazione.\n`:""}
+TAG (in fondo a OGNI risposta, ognuno su una riga, mai tradotti):
+[MOOD:n] n 0-100 = quanto ti fidi e vuoi continuare.
+[MED:K:L] ogni volta che in questa risposta riveli l'elemento K (M, E, DC, DP, PP, IP, CH, CO) al livello L (1 parziale, 2 completo). Più tag possibili nella stessa risposta.
+[FINE:VINTO] se accetti un prossimo passo concreto e la call si chiude; [FINE:PERSO] se chiudi la conversazione senza accordo.`;
+}
+async function genCard(){
+  const p=S.persona, src=SRC();
+  const prompt=`Genera la «scheda segreta» MEDDPICC di un cliente simulato per un allenamento di vendita B2B del gruppo Massini (macchine per confezionamento, fine linea, trasporto sfusi, impianti pet food e mangimifici).
+
+CLIENTE: ${p.name}, ${p.role}, ${p.co} (${p.reg}). ${p.bio}
+PRODOTTO DI INTERESSE: ${kb().name} — ${kb().sintesi}
+ORIGINE DEL CONTATTO: ${src.l} (${src.tl}). CANALE: ${CHANNELS.find(c=>c.id===S.ch).l}.
+DIFFICOLTÀ (0-100): ${SLx().map(s=>`${s.l} ${S.diff[s.k]}`).join("; ")}.
+
+REALTÀ DEL DEAL DA RISPETTARE — ${REALDESC[S.real]}
+${$("extra").value.trim()?"Contesto aggiuntivo: "+$("extra").value.trim():""}
+
+Rispondi SOLO con un oggetto JSON in italiano:
+{"M":{"t":"...","d":1},"E":{"t":"...","d":1},"DC":{...},"DP":{...},"PP":{...},"IP":{...},"CH":{...},"CO":{...},"sintesi":"1 frase sulla realtà del deal"}
+- "t" = la verità su quell'elemento in 1-2 frasi, con dati concreti plausibili per il settore (€, cadenze, tonnellate, date, nomi propri di persone e di concorrenti verosimili).
+- "d" = difficoltà di farlo emergere con domande (1 facile, 2 media, 3 difficile).
+- M metriche (risultato misurabile che cerca), E economic buyer (nome, ruolo, quanto è raggiungibile), DC criteri di decisione, DP processo decisionale (passaggi, persone, tempi), PP iter contrattuale (acquisti, legale, gara, pagamenti), IP dolore (esplicito e sottostante), CH champion (nome e forza, oppure assente), CO concorrenza (anche «non fare nulla»).`;
+  try{
+    const c=await sample.json(prompt,{cache:false});
+    MEDK.forEach(k=>{ if(!c||!c[k]||!c[k].t) throw new Error("scheda incompleta"); c[k].d=Math.max(1,Math.min(3,+c[k].d||2)); });
+    S.card=c; return true;
+  }catch(e){ return false; }
+}
+function medReveal(k,l){
+  const old=S.med[k]||0; if(l<=old) return;
+  S.med[k]=l; S.lastMed=k; renderTrack();
+  const m=MED.find(x=>x.k===k);
+  reaction(l===2?"🎯":"👀");
+  if(l===2) toast(m.ic,"Scoperto: "+m.it);
+  if(MEDK.every(x=>S.med[x]===2)){ confetti(); toast(ic("sparkles"),"Tutti e 8 gli elementi scoperti!"); }
+}
+function renderMed(){
+  const done=MEDK.reduce((a,k)=>a+(S.med[k]||0),0);
+  $("otrack").classList.add("med");
+  $("otrack").innerHTML=MED.map(m=>{const v=S.med[m.k]||0; return `<span class="mc l${v}${S.lastMed===m.k?' pop':''}" title="${esc(m.l+' — '+m.d)}"><b>${m.k}</b><i>${v===2?'✓':v===1?'½':'?'}</i><small>${m.it}</small></span>`;}).join("")+`<span class="mprog">${done}/16</span>`;
+  S.lastMed=null;
+}
+function openVerdict(){
+  $("vOpts").innerHTML=VERDICTS.map(v=>`<button class="vopt" data-v="${v.id}"><span class="i">${v.i}</span><span><b>${v.l}</b><small>${v.d}</small></span></button>`).join("");
+  $("vOpts").querySelectorAll(".vopt").forEach(b=>b.onclick=()=>{ S.verdict=b.dataset.v; S.nextStep=$("vNext").value.trim(); $("verdictModal").classList.add("hidden"); evaluateDisc(); });
+  $("verdictModal").classList.remove("hidden");
+}
+$("vCancel").onclick=()=>$("verdictModal").classList.add("hidden");
+
+async function evaluateDisc(){
+  show("report"); window.scrollTo(0,0);
+  $("rBody").innerHTML=`<div class="card" style="text-align:center;padding:40px">${avatar(S.persona.av,S.mood,88).replace('class="av"','class="av" style="margin:0 auto 14px"')}<span class="dots"><i></i><i></i><i></i></span><br><span class="muted">Il coach sta analizzando la discovery…</span></div>`;
+  const fbl=S.fb==="it"?"italiano":L().llm;
+  const prompt=`Sei un coach di vendita B2B esperto del metodo MEDDPICC. Valuta in modo onesto e severo la DISCOVERY CALL del VENDITORE di Massini Industries.
+
+CLIENTE: ${S.persona.name}, ${S.persona.role}, ${S.persona.co} (${S.persona.reg}). ${S.persona.bio}
+ORIGINE DEL CONTATTO: ${SRC().l} (${SRC().tl}). CANALE: ${CHANNELS.find(c=>c.id===S.ch).l}. LINGUA: ${L().llm} (valuta anche la padronanza della lingua del venditore).
+DIFFICOLTÀ ${diffScore()}/100: ${SLx().map(s=>`${s.l} ${S.diff[s.k]}`).join("; ")}.
+
+SCHEDA SEGRETA DEL CLIENTE (la verità):
+${cardText()}
+REALTÀ DEL DEAL: ${S.real} — ${S.card?.sintesi||""}
+
+VERDETTO DEL VENDITORE: ${S.verdict}. PROSSIMO PASSO PROPOSTO: ${S.nextStep||"(nessuno indicato)"}.
+Tracker live degli elementi rivelati durante la chiamata (elemento:livello): ${MEDK.map(k=>k+":"+(S.med[k]||0)).join(" ")}.
+Suggerimenti chiesti al coach: ${S.hints}.
+
+CONVERSAZIONE:
+${transcript()}
+
+Giudica ogni elemento in base a ciò che il cliente ha REALMENTE detto nella conversazione (livello 0 non emerso, 1 parziale, 2 completo con dettagli concreti).
+Rispondi SOLO con un oggetto JSON, testi in ${fbl}:
+{"score": intero 0-100 (a difficoltà alta un buon lavoro vale di più; penalizza pitch prematuro, domande chiuse, segnali ignorati),
+ "sintesi": "2 frasi",
+ "elementi": [{"k":"M","livello":0,"voto":0,"evidenza":"dettaglio emerso, oppure 'non emerso'","domanda_migliore":"una domanda aperta in ${L().llm} per scoprirlo meglio (vuota se già completo)"}, ... uno per elemento nell'ordine M,E,DC,DP,PP,IP,CH,CO; livello 0|1|2, voto 0-10],
+ "verdetto_ok": true|false (il verdetto del venditore coincide con la realtà del deal, o è comunque difendibile con ciò che ha scoperto),
+ "commento_verdetto": "1-2 frasi",
+ "prossimo_passo_ok": true|false, "commento_passo": "1 frase",
+ "forecast": "Commit"|"Best case"|"Pipeline"|"Escludere",
+ "domande_ottime": [max 3 domande del venditore ben fatte, citate],
+ "errori": [max 3 errori di metodo concreti],
+ "punti_forti": [max 3], "da_migliorare": [max 3, concreti],
+ "tecnica": {"ascolto":0-10,"domande_aperte":0-10,"struttura":0-10,"controllo_conversazione":0-10,"lingua":0-10}}`;
+  try{ renderDisc(await sample.json(prompt,{cache:false,modelTier:"complex"})); }
+  catch(e){ $("rBody").innerHTML=`<div class="err">Valutazione non riuscita (${esc(e.message||e.code||"errore")}).</div><div class="row" style="margin-top:10px"><button class="btn sm" id="retryEval">Riprova</button></div>`; $("retryEval").onclick=evaluateDisc; }
+}
+function settle(g,ctx){
+  const tk=todayKey(); if(!g.days.includes(tk)) g.days.push(tk); g.days=g.days.slice(-60);
+  const q=questOfDay(); let qx=0,qd=false;
+  if(!g.questDone[tk] && q.ok(ctx)){ g.questDone[tk]=q.id; qx=50; qd=true; }
+  const keep={}; Object.keys(g.questDone).sort().slice(-20).forEach(k=>keep[k]=g.questDone[k]); g.questDone=keep;
+  return {qx,qd,q,streakDays:dayStreak(g.days)};
+}
+function awardDisc(r,sc){
+  const g=G(), d=diffScore(), el=r.elementi||[], lv={};
+  MEDK.forEach(k=>{ const e=el.find(x=>x.k===k); lv[k]=Math.max(0,Math.min(2,Math.round(+e?.livello||0))); });
+  const cov=MEDK.reduce((a,k)=>a+lv[k],0);
+  const verdOk=!!r.verdetto_ok, disqOk=verdOk&&S.real==="da_scartare"&&S.verdict==="da_scartare", success=verdOk&&sc>=60;
+  let xp=Math.round(sc*+mult()); const bonus=[];
+  if(success){xp+=25;bonus.push("missione riuscita +25");}
+  if(verdOk){xp+=20;bonus.push("verdetto giusto +20");}
+  if(cov===16){xp+=25;bonus.push("8/8 elementi +25");}
+  if(disqOk){xp+=15;bonus.push("occhio clinico +15");}
+  if(!S.hints&&success){xp+=10;bonus.push("senza coach +10");}
+  const key=S.base?.gen?S.persona.id:S.base?.id, st=sc>=85?3:sc>=70?2:sc>=50?1:0;
+  const sv=settle(g,{mode:"disc",src:S.src,lang:S.lang,diff:d,success,hints:S.hints,st,cov,disqOk});
+  if(sv.qd){xp+=sv.qx;bonus.push("missione del giorno +50");}
+  const before=lvlOf(g.xp); g.xp+=xp;
+  if(!S.base?.gen){ const c=g.clients[key]||{best:0,stars:0,wins:0}; c.best=Math.max(c.best,sc); c.stars=Math.max(c.stars,st); if(success)c.wins++; g.clients[key]=c; }
+  g.streak=success?(g.streak||0)+1:0;
+  if(success){ g.discWins=(g.discWins||0)+1; if(!g.langWins.includes(S.lang))g.langWins.push(S.lang); if(!g.srcWins.includes(S.src))g.srcWins.push(S.src); if(!g.winIds.includes(key))g.winIds.push(key); }
+  const has=id=>g.badges.includes(id), earn=[];
+  const chk={first:true,win:success,hard:success&&d>=70,cold:success&&S.src==="cold",poly:g.langWins.length>=2,export:success&&["en","pt"].includes(S.lang),solo:success&&!S.hints,blitz:success&&S.diff.time>=67,streak:g.streak>=3,three:st===3,collector:g.winIds.length>=5,
+    inbound:["sem","seo","social"].every(s=>g.srcWins.includes(s)),meddpicc:cov===16,disq:disqOk,champ:lv.CH===2,money:lv.M===2&&lv.E===2,disc3:g.discWins>=3,quest:sv.qd,days3:sv.streakDays>=3};
+  BADGES.forEach(b=>{ if(chk[b.id]&&!has(b.id)){ g.badges.push(b.id); earn.push(b);} });
+  store.set("game",g);
+  return {xp,bonus,earn,st,cov,lv,success,disqOk,verdOk,quest:sv.qd?sv.q:null,lvUp:lvlOf(g.xp)>before,lvl:lvlOf(g.xp)};
+}
+function renderDisc(r){
+  const sc=Math.max(0,Math.min(100,Math.round(+r.score||0))), A=awardDisc(r,sc), t=r.tecnica||{};
+  const els=MED.map(m=>{ const e=(r.elementi||[]).find(x=>x.k===m.k)||{}; return {...m,lv:A.lv[m.k],voto:Math.max(0,Math.min(10,+e.voto||0)),ev:e.evidenza||"non emerso",dq:e.domanda_migliore||""}; });
+  const tk=[["ascolto","Ascolto"],["domande_aperte","Domande aperte"],["struttura","Struttura"],["controllo_conversazione","Controllo della conversazione"],["lingua","Padronanza "+L().n]];
+  const real=VERDICTS.find(v=>v.id===S.real)||VERDICTS[1], mine=VERDICTS.find(v=>v.id===S.verdict)||VERDICTS[1];
+  const cls=A.success?"w":A.verdOk?"p":"l", es=A.success?"Missione riuscita":A.verdOk?"Verdetto giusto, qualifica da rafforzare":"Da rivedere";
+  const C=2*Math.PI*56, col=sc>=70?"#34d399":sc>=45?"#fbbf24":"#f87171";
+  let n=0; const rv=()=>`class="card rv" style="animation-delay:${(n++)*.07}s"`;
+  $("rBody").innerHTML=`
+  <div ${rv()}><div class="rhead">
+    <div class="ring"><svg width="132" height="132"><circle cx="66" cy="66" r="56" stroke="#252b35" stroke-width="12" fill="none"/><circle id="ringC" cx="66" cy="66" r="56" stroke="${col}" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C}" style="transition:stroke-dashoffset 1.2s"/></svg><div class="c"><div><b id="scN">0</b><br><span>/100</span></div></div></div>
+    <div style="flex:1;min-width:220px">
+      <div class="row">${avatar(S.persona.av,A.success?85:A.verdOk?55:20,44)}<div><b>${esc(S.persona.name)}</b><div class="muted">Discovery · ${L().f} ${SRC().i} ${SRC().l} · diff. ${diffScore()}</div></div></div>
+      <div class="bigstars" style="margin:8px 0">${[1,2,3].map(i=>`<span class="${i<=A.st?'on':''}">★</span>`).join("")}</div>
+      <span class="esito ${cls}">${es}</span><p style="margin:10px 0 0;color:#cfd7e3">${esc(r.sintesi)}</p>
+    </div></div></div>
+  <div class="xpgain rv" style="animation-delay:${(n++)*.07}s"><span class="p">+${A.xp} XP</span><span class="muted">${sc} punti × ${mult()}${A.bonus.length?" · "+A.bonus.join(" · "):""}</span></div>
+  <div class="card rv focus" style="animation-delay:${(n++)*.07}s"><h3>Da migliorare</h3><ul class="clean">${(r.da_migliorare||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  ${A.earn.length?`<div ${rv()}><h3>Nuovi badge</h3><div class="badges">${A.earn.map(b=>`<div class="bdg"><span class="i">${b.i}</span><b>${b.n}</b></div>`).join("")}</div></div>`:""}
+  <div ${rv()}><h3>Verdetto</h3>
+    <div class="row" style="gap:18px"><div><div class="muted">Il tuo verdetto</div><b style="font-size:16px">${mine.i} ${mine.l}</b></div><div style="font-size:22px;color:${A.verdOk?"var(--ok)":"var(--mid)"}">${ic(A.verdOk?"check":"alert")}</div><div><div class="muted">Realtà del deal</div><b style="font-size:16px">${real.i} ${real.l}</b></div></div>
+    <p style="margin:10px 0 0;color:#cfd7e3;font-size:13.5px">${esc(r.commento_verdetto)}</p>
+    ${S.card?.sintesi?`<p class="muted" style="margin:8px 0 0">Com'era davvero: ${esc(S.card.sintesi)}</p>`:""}
+    <p class="muted" style="margin:8px 0 0">Previsione consigliata: <b style="color:var(--tx)">${esc(r.forecast||"—")}</b> · Prossimo passo: ${esc(S.nextStep||"non indicato")} ${r.prossimo_passo_ok?"✓":"✗"} — ${esc(r.commento_passo||"")}</p></div>
+  <div ${rv()}><h3>MEDDPICC <span>${A.cov}/16</span></h3>${els.map(e=>`<div class="mel l${e.lv}"><div class="h"><div class="lt">${e.k}</div><div style="flex:1"><b style="font-size:14px">${e.ic} ${e.l}</b> <span class="muted">· ${e.it} · voto ${e.voto}/10</span></div><span class="vote ${e.lv===2?'ok':e.lv===1?'mid':'ko'}">${e.lv===2?"Completo":e.lv===1?"Parziale":"Non emerso"}</span></div>
+    <div style="margin-top:6px;color:#cfd7e3;font-size:13.5px">${esc(e.ev)}</div>
+    ${e.dq&&e.lv<2?`<div class="better"><b>Domanda migliore:</b> ${esc(e.dq)}</div>`:""}
+    <details><summary>Cosa nascondeva il cliente</summary><div style="margin-top:6px;font-size:13.5px">${esc(S.card?.[e.k]?.t||"—")}</div></details></div>`).join("")}</div>
+  <div ${rv()}><h3>Tecnica</h3>${tk.map(([k,l])=>`<div class="tb"><span>${l}</span><div class="bar"><i style="width:${(+t[k]||0)*10}%"></i></div><b style="width:28px;text-align:right">${+t[k]||0}</b></div>`).join("")}</div>
+  <div ${rv()}><h3>Domande ottime</h3>${(r.domande_ottime||[]).length?`<ul class="clean">${r.domande_ottime.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:'<p class="muted" style="margin:0">Nessuna domanda davvero incisiva: prova con domande aperte («come», «cosa succede se», «chi altro»).</p>'}</div>
+  <div ${rv()}><h3>Errori di metodo</h3>${(r.errori||[]).length?`<ul class="clean">${r.errori.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:'<p class="muted" style="margin:0">Nessun errore di metodo rilevante ✓</p>'}</div>
+  <div ${rv()}><h3>Punti forti</h3><ul class="clean">${(r.punti_forti||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+`;
+  requestAnimationFrame(()=>{ $("ringC").style.strokeDashoffset=C*(1-sc/100); let k=0; const iv=setInterval(()=>{k=Math.min(sc,k+(Math.ceil(sc/30)||1));$("scN").textContent=k;if(k>=sc)clearInterval(iv);},35); });
+  if(A.success) confetti();
+  A.earn.forEach((b,i)=>setTimeout(()=>toast(b.i,"Badge sbloccato: "+b.n),900+i*1800));
+  if(A.quest) setTimeout(()=>toast(ic("award"),"Missione del giorno completata! +50 XP"),500);
+  if(A.lvUp) setTimeout(()=>levelUp(A.lvl),1300);
+  renderTop();
+  const h=store.get("hist",[]); h.push({mode:"disc",date:new Date().toLocaleDateString("it-IT"),rep:$("repName").value,persona:S.persona.name,flag:L().f,src:SRC().l,diff:diffScore(),score:sc,esito:A.success?"Vinto":A.verdOk?"In sospeso":"Perso",label:es,xp:A.xp}); store.set("hist",h.slice(-60));
+  lastReport=`SALES GYM · DISCOVERY MEDDPICC — ${$("repName").value||"Commerciale"} vs ${S.persona.name} (${S.persona.role}, ${S.persona.co}, ${S.persona.reg})\n${kb().name} · ${SRC().l} · ${L().n} · difficoltà ${diffScore()}/100\nPunteggio: ${sc}/100 — ${es} — +${A.xp} XP\n${r.sintesi||""}\n\nVERDETTO: ${mine.l} (realtà: ${real.l}) — ${r.commento_verdetto||""}\nPrevisione: ${r.forecast||"—"} · Prossimo passo: ${S.nextStep||"non indicato"}\n\nMEDDPICC (${A.cov}/16)\n${els.map(e=>`- ${e.l}: ${e.lv===2?"completo":e.lv===1?"parziale":"non emerso"} (${e.voto}/10). ${e.ev}${e.dq&&e.lv<2?"\n  Domanda migliore: "+e.dq:""}`).join("\n")}\n\nDOMANDE OTTIME\n${(r.domande_ottime||[]).map(x=>"- "+x).join("\n")||"- nessuna"}\n\nERRORI DI METODO\n${(r.errori||[]).map(x=>"- "+x).join("\n")||"- nessuno"}\n\nPUNTI FORTI\n${(r.punti_forti||[]).map(x=>"- "+x).join("\n")}\n\nDA MIGLIORARE\n${(r.da_migliorare||[]).map(x=>"- "+x).join("\n")}\n\nTRASCRIZIONE\n${transcript()}`;
+}
+
+/* ---------------- MISSIONE DEL GIORNO ---------------- */
+function renderQuest(){
+  const g=G(), q=questOfDay(), done=g.questDone[todayKey()]===q.id;
+  $("questCard").classList.toggle("done",done);
+  $("questCard").innerHTML=`<div class="qi">${ic(done?"award":"target")}</div><div class="qt"><small>Missione del giorno · +50 XP</small><b>${esc(q.t)}</b></div>${done?'<span class="esito w">Completata ✓</span>':'<button class="btn sm" id="qGo">Accetta</button>'}`;
+  if(!done) $("qGo").onclick=()=>acceptQuest(q);
+}
+function acceptQuest(q){
+  const c=q.cfg||{};
+  if(c.mode) S.mode=c.mode;
+  if(c.lang) S.lang=c.lang;
+  if(c.src) S.src=c.src;
+  setPersona(S.base&&!S.base.gen?S.base:pick(PERSONAS));
+  if(c.diff){ SL.forEach(s=>S.diff[s.k]=Math.max(0,Math.min(100,c.diff+rI(15)-7))); S.preset=""; }
+  openSetup(["mode","src","lang","diff"].filter(k=>c[k]!==undefined));
+}
+
+/* ---------------- FX ---------------- */
+function levelUp(l){ $("lvN").textContent="Livello "+(l+1); $("lvT").textContent=TITLES[l]; $("lvlModal").classList.remove("hidden"); confetti(); }
+$("lvOk").onclick=()=>$("lvlModal").classList.add("hidden");
+function reaction(e){ const h=document.querySelector(".ch"); if(!h||$("chat").classList.contains("hidden")) return; const s=document.createElement("span"); s.className="react"; s.textContent=e; s.style.left=(18+rI(46))+"px"; h.appendChild(s); setTimeout(()=>s.remove(),1500); }
+function toast(i,txt){ const d=document.createElement("div"); d.className="toast"; d.innerHTML=`<span class="i">${i}</span><b>${esc(txt)}</b>`; document.body.appendChild(d); setTimeout(()=>d.remove(),2600); }
+function confetti(){
+  const c=$("confetti"), x=c.getContext("2d"); c.width=innerWidth; c.height=innerHeight;
+  const cols=["#f5a524","#2dd4bf","#a78bfa","#34d399","#f87171","#ffd08a"];
+  const P=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:4+Math.random()*6,c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4}));
+  let f=0; (function step(){ x.clearRect(0,0,c.width,c.height); P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<160) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
+}
+function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); if(id==="home") renderHome(); }
+
+/* ---------------- DEMO: risposte simulate, nessuna AI collegata ---------------- */
+function demoSample(){
+  const D={won:false};
+  const wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const stream=async(text,o)=>{ await wait(500+rI(500)); if(o&&o.onText&&!document.hidden) for(let i=6;i<text.length;i+=6){ o.onText({text:text.slice(0,i)}); await wait(18); } return {text}; };
+  const lastRep=()=>([...S.msgs].reverse().find(m=>m.r==="s")||{t:""}).t;
+  const quality=t=>(t.length>70)+(/\?/.test(t))+(/numer|dat[io]|%|€|referenz|garanzi|visit|demo|test|prova|assistenz|ricamb|fermi|risparm/i.test(t));
+  const objs=()=>[...S.selected];
+  const client=(prompt)=>{
+    const opening=!/CONVERSAZIONE FINORA/.test(prompt), mt=maxTurns(), n=repTurns();
+    if(opening){ D.won=false; return SRC().cold?"Pronto? Chi parla? Guardi, ho cinque minuti al massimo.":`Buongiorno. Sì, ricordo il contatto. Mi dica pure, ma vado di fretta: cosa mi proponete di concreto? [MOOD:${S.mood}]`; }
+    const t=lastRep(), q=quality(t); let mood=S.mood, out=[];
+    if(/showroom/i.test(t)){ // invito allo showroom: accetta solo se il cliente è abbastanza convinto
+      const ready=mood>=50||objs().every((o,i)=>S.ot[i+1]==="done");
+      if(ready){ D.won=true; return `Volentieri: vedere le macchine dal vivo mi aiuta a decidere. Martedì mattina va bene, porto anche il responsabile di produzione. [FINE:VINTO] [MOOD:${Math.min(100,mood+15)}]`; }
+      mood-=3; out.push("Lo showroom è un bel posto, ma prima di muovermi voglio capire se ne vale la pena.");
+    }
+    if(S.mode==="disc"){
+      const k=MEDK.find(k=>(S.med[k]||0)<2);
+      if(k && /\?/.test(t)){ const lv=q>=2?2:1; mood+=lv*4; out.push((lv===2?"Le spiego bene. ":"In parte sì. ")+(S.card?.[k]?.t||"")+` [MED:${k}:${lv}]`); }
+      else if(k) { mood-=4; out.push("Non ho capito bene dove vuole arrivare. Mi faccia una domanda precisa."); }
+      if(!MEDK.some(k=>(S.med[k]||0)<1) || (mt&&n>=mt) || n>=10){ D.won=mood>=45; out.push(D.won?"Va bene, ci risentiamo la prossima settimana con il direttore. [FINE:VINTO]":"Per ora ci fermiamo qui, grazie. [FINE:PERSO]"); }
+    } else {
+      const list=objs(); let open=list.findIndex((o,i)=>S.ot[i+1]==="raised"), next=list.findIndex((o,i)=>!S.ot[i+1]), fresh=open<0;
+      if(open>=0 && q>=2){ mood+=12; out.push(pick(["Questo è un argomento serio, lo ammetto.","Ok, con questi numeri il discorso cambia.","Mi sta convincendo, su questo punto."])+` [OK:${open+1}]`); open=-1; }
+      else if(open>=0){ mood-=6; out.push(pick(["Sì, ma non mi ha risposto davvero.","Belle parole, ma a me servono fatti.","Questo lo dicono tutti i fornitori."])); }
+      else if(fresh&&q<=0){ mood-=5; out.push("Mi dica qualcosa di concreto, per favore."); }
+      if(open<0 && next>=0){ out.push(list[next]+` [OBJ:${next+1}]`); }
+      else if(open<0 && S.hidden && !S.hidFound && /\?/.test(t)){ mood+=6; out.push("Glielo dico in confidenza: "+S.hidden.replace(/^in realtà /,"")+". [NASCOSTA]"); }
+      else if(open<0 && (next<0) && (!S.hidden||S.hidFound)){ D.won=mood>=50; out.push(D.won?"D'accordo: fissiamo una visita in stabilimento per vedere una macchina in funzione. [FINE:VINTO]":"Ci penso e le faccio sapere. [FINE:PERSO]"); }
+      if(mt&&n>=mt&&!/FINE/.test(out.join(" "))){ D.won=mood>=55; out.push(D.won?"Ok, mi mandi una proposta. [FINE:VINTO]":"Devo chiudere qui, mi scusi. [FINE:PERSO]"); }
+    }
+    return out.join(" ")+` [MOOD:${Math.max(0,Math.min(100,Math.round(mood)))}]`;
+  };
+  const coach=()=>{ const k=kb(), o=objs().find((x,i)=>S.ot[i+1]==="raised");
+    return S.mode==="disc"
+      ? `Chiedi cosa costa oggi il problema: «Quanto vi costa in un anno un fermo linea come quello di cui parlava?» Così fai emergere metriche e dolore insieme.`
+      : `${o?"Dietro c'è l'obiezione: «"+short(o)+"».":"Il cliente sta valutando se fidarsi."} Rispondi con un fatto: «${k.forza[0]}. Le propongo di vederlo dal vivo da un nostro cliente.»`; };
+  const card=()=>{ const p=S.persona, r=S.real;
+    return {M:{t:"Vuole ridurre i fermi linea del 30% e passare da 900 a 1.200 sacchi/ora entro un anno.",d:1},
+      E:{t:`Firma il direttore generale; ${p.name} prepara il dossier ma non ha l'ultima parola.`,d:2},
+      DC:{t:"Conta più l'assistenza in 24 ore e i ricambi a magazzino del prezzo di listino.",d:1},
+      DP:{t:"Visita in stabilimento, poi offerta tecnica, poi consiglio di amministrazione a fine trimestre.",d:2},
+      PP:{t:"Gli acquisti chiedono tre preventivi e pagamento 30/60/10 con collaudo finale.",d:3},
+      IP:{t:"La linea attuale si ferma due volte a settimana: ogni fermo costa circa 4.000 €.",d:1},
+      CH:{t:r==="da_scartare"?"Nessun vero sponsor interno: il progetto non ha un padrino.":"Il responsabile di produzione spinge per cambiare ed è ascoltato dal DG.",d:2},
+      CO:{t:"È in gioco un concorrente tedesco più economico, oppure rimandare tutto di un anno.",d:2},
+      sintesi:r==="qualificato"?"Deal reale: dolore misurabile, budget e sponsor interno.":r==="dubbia"?"Interesse vero ma budget e tempi ancora incerti.":"Curiosità senza budget né decisore: da scartare."}; };
+  const evalClose=()=>{ const list=objs(), done=list.filter((o,i)=>S.ot[i+1]==="done").length, sc=Math.max(15,Math.min(95,Math.round(30+done/Math.max(1,list.length)*40+(S.mood-40)*.5+(D.won?10:0))));
+    const v=x=>Math.max(2,Math.min(10,Math.round(x)));
+    return {score:sc,esito:D.won?"Vinto":S.done?"Perso":"In sospeso",sintesi:"Valutazione di prova generata in modalità demo, senza AI: serve a vedere come si presenta il report.",
+      tecnica:{ascolto_domande:v(sc/10),conoscenza_prodotto:v(sc/10+1),valore_vs_prezzo:v(sc/10-1),prove_e_numeri:v(sc/11),chiusura_prossimo_passo:v(D.won?8:4),lingua:8},
+      obiezioni:list.map((o,i)=>({obiezione:o,voto:S.ot[i+1]==="done"?"ok":S.ot[i+1]==="raised"?"parziale":"non emersa",commento:S.ot[i+1]==="done"?"Hai risposto con argomenti concreti.":S.ot[i+1]==="raised"?"Risposta generica: mancavano numeri o prove.":"Non è emersa nella conversazione.",risposta_migliore:S.ot[i+1]==="done"?"":"Riconosci il dubbio, poi porta un dato: "+kb().forza[0]+"."})),
+      nascosta:S.hidden?{scoperta:S.hidFound,commento:S.hidFound?"Bene: con le domande giuste l'hai fatta emergere.":"Servivano domande aperte sul processo decisionale."}:null,
+      errori_prodotto:[],punti_forti:["Tono professionale e cortese","Hai tenuto la conversazione sul problema del cliente"],
+      da_migliorare:["Porta più numeri: tempi, risparmi, referenze visitabili","Chiudi sempre con un prossimo passo concreto e datato"]}; };
+  const evalDisc=()=>{ const cov=MEDK.reduce((a,k)=>a+(S.med[k]||0),0), sc=Math.max(15,Math.min(95,Math.round(25+cov*3.5+(S.verdict===S.real?15:0))));
+    return {score:sc,sintesi:"Valutazione di prova generata in modalità demo, senza AI.",
+      elementi:MED.map(m=>({k:m.k,voto:[2,5,9][S.med[m.k]||0],evidenza:S.med[m.k]?S.card?.[m.k]?.t:"non emerso",domanda_migliore:"Chi altro, oltre a lei, deve dire sì a questo progetto?"})),
+      tecnica:{ascolto:7,domande_aperte:Math.min(10,3+cov/2|0),struttura:6,controllo_conversazione:6,lingua:8},
+      commento_verdetto:S.verdict===S.real?"Verdetto coerente con quello che hai scoperto.":"Il verdetto non corrisponde alla realtà del deal: mancavano elementi chiave.",
+      forecast:S.real==="qualificato"?"Commit":S.real==="dubbia"?"Pipeline":"Omit",prossimo_passo_ok:!!S.nextStep,commento_passo:S.nextStep?"Passo concreto.":"Manca un prossimo passo.",
+      domande_ottime:["Quanto vi costa oggi un fermo linea?"],errori:[],punti_forti:["Buone domande aperte"],da_migliorare:["Scava su economic buyer e iter contrattuale"]}; };
+  const f=async(prompt,o)=>stream(/^Sei un coach/.test(prompt)?coach():client(prompt),o);
+  f.json=async()=>{ await wait(900); return S.mode==="disc"?(S.card?evalDisc():card()):evalClose(); };
+  return f;
+}
+
+/* ---------------- INIT ---------------- */
+S.custom=store.get("custom",[]);
+const sel=store.get("sel",null);
+if(sel&&sel.length) sel.forEach(t=>S.selected.add(t)); else DEFAULT_OBJ.slice(0,4).forEach(o=>S.selected.add(o.t));
+$("repName").value=store.get("rep",""); $("internal").value=store.get("internal","");
+document.querySelectorAll("[data-ic]").forEach(e=>e.insertAdjacentHTML("afterbegin",ic(e.dataset.ic)+(e.textContent.trim()?" ":"")));
+renderHome(); renderDock();
+if(!store.get("rep","")) $("setModal").classList.remove("hidden"); // nome chiesto una volta sola
+(async()=>{
+  try{ sample=await window.claude?.use?.("sample"); }catch(e){ sample=null; }
+  $("aiStatus").textContent="AI pronta";
+  if(!sample){ sample=demoSample(); $("goHome").querySelector("b").insertAdjacentHTML("afterend",'<span class="demo-pill">DEMO</span>'); $("aiStatus").textContent="Modalità demo: risposte simulate, nessuna AI collegata."; } // shortcut: senza AI la demo usa risposte preimpostate, solo in italiano
+  renderDock();
+})();
+</script>
+<footer style="text-align:center;color:var(--mut);font-size:12px;padding:0 16px 96px">Sales Gym · sviluppata da <b style="color:var(--mut2)">Mario Mele</b></footer>
+</body>
+</html>
