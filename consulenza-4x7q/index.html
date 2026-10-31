@@ -156,6 +156,8 @@ textarea.out{min-height:220px;font-size:13px;font-family:ui-monospace,Menlo,Cons
 .save.sede{background:var(--sede);color:var(--on-sede)}.save.smart{background:var(--smart);color:var(--on-smart)}
 .tag{font-size:11px;font-weight:600;background:var(--bg);border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--muted)}
 .tags{display:flex;gap:4px;flex-wrap:wrap}
+.item.exp{border-left:6px solid var(--ink)}.pill.cat{background:var(--bg);color:var(--ink);border:1px solid var(--line)}.pill.bill{background:var(--sede-soft);color:var(--sede)}
+.stats.exp .stat b{font-size:19px}
 .gbox{border-radius:12px;padding:10px 12px;font-weight:600;font-size:15px;display:flex;flex-direction:column;gap:8px}
 .gbox.ok{background:var(--ok-soft);color:var(--ok)}.gbox.warn{background:var(--smart-soft);color:var(--ink)}.gbox.err{background:var(--err-soft);color:var(--ink)}.gbox.wait{background:var(--bg);color:var(--muted)}
 .gbox button{align-self:flex-start}
@@ -180,7 +182,8 @@ var tEl=document.createElement('div');tEl.className='toast';tEl.setAttribute('ro
 
 /* ---------- date e orari ---------- */
 var DEFAULT_TAGS=['Audit','Riunione','Affiancamento marketing','Sales','Produzione','Sito web','Report','Formazione'];
-function normState(){var s=state.settings;if(!s.tagsInit){s.tags=(s.tags&&s.tags.length)?s.tags:DEFAULT_TAGS.slice();s.tagsInit=true}s.tags=s.tags||[];s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){[{name:'Massini Bastia',lat:43.05281,lng:12.54444},{name:'Massini Tordandrea',lat:43.03847,lng:12.56242}].forEach(function(d){if(!s.sites.some(function(x){return x.name===d.name}))s.sites.push(d)});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
+var DEFAULT_CATS=['Software','Token AI','Viaggi','Formazione','Hardware','Altro'];
+function normState(){var s=state.settings;state.expenses=state.expenses||[];if(!s.catsInit){s.cats=(s.cats&&s.cats.length)?s.cats:DEFAULT_CATS.slice();s.catsInit=true}s.cats=s.cats||[];if(!s.tagsInit){s.tags=(s.tags&&s.tags.length)?s.tags:DEFAULT_TAGS.slice();s.tagsInit=true}s.tags=s.tags||[];s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){[{name:'Massini Bastia',lat:43.05281,lng:12.54444},{name:'Massini Tordandrea',lat:43.03847,lng:12.56242}].forEach(function(d){if(!s.sites.some(function(x){return x.name===d.name}))s.sites.push(d)});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
 function saveQuiet(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
@@ -232,6 +235,8 @@ normState();
 ui.view=initialView();
 ui.mode=state.mode||'clock';
 ui.q=newQ();
+ui.page=state.page||'giornate';
+ui.e=newE();
 
 function toast(msg,ms){
   tEl.textContent=msg;tEl.hidden=false;
@@ -282,6 +287,78 @@ function tagChips(sel,action){
   return '<div class="presets">'+all.map(function(t){return '<button type="button" class="chip" data-a="'+action+'" data-v="'+esc(t)+'" aria-pressed="'+(sel.indexOf(t)>=0)+'">'+esc(t)+'</button>'}).join('')+'</div>';
 }
 function toggleTag(list,t){var i=list.indexOf(t);if(i>=0)list.splice(i,1);else list.push(t)}
+var EUR=new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'});
+function eur(n){return EUR.format(n||0)}
+function parseAmt(s){var t=String(s||'').replace(/[\s€]/g,'').replace(/\.(?=\d{3}(\D|$))/g,'').replace(',','.');var n=parseFloat(t);return isFinite(n)?Math.round(n*100)/100:NaN}
+function newE(){return {date:todayIso(),amount:'',cat:(state.settings.cats[0]||''),desc:'',bill:false}}
+function catChips(cur,action){
+  var all=state.settings.cats.slice();if(cur&&all.indexOf(cur)<0)all.push(cur);
+  return '<div class="presets">'+all.map(function(c){return '<button type="button" class="chip" data-a="'+action+'" data-v="'+esc(c)+'" aria-pressed="'+(c===cur)+'">'+esc(c)+'</button>'}).join('')+'</div>';
+}
+function sumExp(list){var t=0,b=0;list.forEach(function(x){t+=x.amount;if(x.bill)b+=x.amount});return {tot:Math.round(t*100)/100,bill:Math.round(b*100)/100}}
+function expItem(x){
+  var d=parse(x.date);
+  return '<button class="item exp" data-a="eedit" data-id="'+x.id+'"><div class="dnum"><b>'+d.getDate()+'</b><span>'+wd(x.date)+'</span></div>'
+   +'<div class="t"><span><span class="pill cat">'+esc(x.cat||'Senza categoria')+'</span>'+(x.bill?' <span class="pill bill">Da fatturare</span>':'')+'</span>'+(x.desc?'<span class="when">'+esc(x.desc)+'</span>':'')+'</div>'
+   +'<div class="h">'+eur(x.amount)+'</div></button>';
+}
+function spesePage(){
+  var e=ui.e,t=todayIso(),y=addDays(t,-1);
+  var form='<section class="card" aria-label="Nuova spesa"><h2>Nuova spesa</h2><div class="qf">'
+   +'<div class="presets"><button type="button" class="chip" data-a="edate" data-v="'+t+'" aria-pressed="'+(e.date===t)+'">Oggi</button><button type="button" class="chip" data-a="edate" data-v="'+y+'" aria-pressed="'+(e.date===y)+'">Ieri</button></div>'
+   +'<div class="two"><div class="field"><label for="e-date">Giorno</label><input id="e-date" type="date" data-e="date" value="'+e.date+'"></div><div class="field"><label for="e-amt">Importo (€)</label><input id="e-amt" type="text" inputmode="decimal" data-e="amount" placeholder="0,00" value="'+esc(e.amount)+'"></div></div>'
+   +'<div class="field"><label>Categoria</label>'+catChips(e.cat,'ecat')+'</div>'
+   +'<div class="field"><label for="e-desc">Descrizione</label><input id="e-desc" type="text" data-e="desc" placeholder="Es. Abbonamento Claude" value="'+esc(e.desc)+'"></div>'
+   +'<div class="presets"><button type="button" class="chip" data-a="ebill" aria-pressed="'+e.bill+'">Da fatturare a Massini</button></div>'
+   +'<button class="save" data-a="esave">Salva spesa</button></div></section>';
+  var list=state.expenses.slice().sort(function(a,b){return a.date<b.date?1:(a.date>b.date?-1:0)});
+  var st=sumExp(list),mk=t.slice(0,7),sm=sumExp(list.filter(function(x){return x.date.indexOf(mk)===0}));
+  var by={};list.forEach(function(x){var c=x.cat||'Senza categoria';by[c]=(by[c]||0)+x.amount});
+  var catRows=Object.keys(by).sort(function(a,b){return by[b]-by[a]}).map(function(c){return '<div class="row"><span>'+esc(c)+'</span><b>'+eur(by[c])+'</b></div>'}).join('');
+  var totals='<section class="card" aria-label="Totale spese"><div class="card-h"><h2>Totale spese</h2><span>'+list.length+(list.length===1?' voce':' voci')+'</span></div>'
+   +'<div class="stats exp"><div class="stat"><b>'+eur(st.tot)+'</b><span>totale</span></div><div class="stat"><b>'+eur(st.bill)+'</b><span>da fatturare</span></div><div class="stat"><b>'+eur(sm.tot)+'</b><span>questo mese</span></div></div>'+catRows
+   +'<div class="actions"><button class="btn alt" data-a="expsummary">Riepilogo e CSV</button></div></section>';
+  var groups='',cur='';
+  list.forEach(function(x){
+    var k=x.date.slice(0,7);
+    if(k!==cur){cur=k;var pp=k.split('-'),ms=sumExp(list.filter(function(y){return y.date.indexOf(k)===0}));groups+='<p class="sub" style="margin-top:6px">'+fmtMonth(+pp[0],+pp[1]-1)+' · '+eur(ms.tot)+'</p>'}
+    groups+=expItem(x);
+  });
+  var listHtml=list.length?'<div class="list">'+groups+'</div>':'<div class="empty">Nessuna spesa registrata.<br>Compila il modulo qui sopra per aggiungere la prima.</div>';
+  return form+totals+listHtml;
+}
+function expenseModal(){
+  var x=ui.xf;
+  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="Modifica spesa"><h2>Modifica spesa</h2>'
+   +'<div class="two"><div class="field"><label for="x-date">Giorno</label><input id="x-date" type="date" data-x="date" value="'+x.date+'"></div><div class="field"><label for="x-amt">Importo (€)</label><input id="x-amt" type="text" inputmode="decimal" data-x="amount" value="'+esc(x.amount)+'"></div></div>'
+   +'<div class="field"><label>Categoria</label>'+catChips(x.cat,'xcat')+'</div>'
+   +'<div class="field"><label for="x-desc">Descrizione</label><input id="x-desc" type="text" data-x="desc" value="'+esc(x.desc)+'"></div>'
+   +'<div class="presets"><button type="button" class="chip" data-a="xbill" aria-pressed="'+x.bill+'">Da fatturare a Massini</button></div>'
+   +'<div class="actions"><button class="btn del" data-a="xdel">'+(ui.confirmDel?'Conferma eliminazione':'Elimina')+'</button><button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="xsave">Salva</button></div></div></div>';
+}
+function expSummaryText(){
+  var list=state.expenses.slice().sort(function(a,b){return a.date<b.date?-1:(a.date>b.date?1:0)}),out=['CONSULENZA MASSINI · Registro spese',''];
+  var months={};list.forEach(function(x){(months[x.date.slice(0,7)]=months[x.date.slice(0,7)]||[]).push(x)});
+  Object.keys(months).sort().forEach(function(k){
+    var pp=k.split('-');out.push(fmtMonth(+pp[0],+pp[1]-1).toUpperCase());
+    months[k].forEach(function(x){out.push(fmtIt(x.date)+' · '+(x.cat||'Senza categoria')+(x.desc?' · '+x.desc:'')+' · '+eur(x.amount)+(x.bill?' · da fatturare':''))});
+    out.push('Totale mese: '+eur(sumExp(months[k]).tot),'');
+  });
+  var st=sumExp(list);out.push('TOTALE: '+eur(st.tot)+' · di cui da fatturare: '+eur(st.bill));
+  return out.join('\n');
+}
+function expCsv(){
+  function q(v){return '"'+String(v).replace(/"/g,'""')+'"'}
+  var rows=[['Data','Categoria','Descrizione','Importo','Da fatturare'].map(q).join(';')];
+  state.expenses.slice().sort(function(a,b){return a.date<b.date?-1:(a.date>b.date?1:0)}).forEach(function(x){rows.push([fmtIt(x.date),x.cat||'',x.desc||'',x.amount.toFixed(2).replace('.',','),x.bill?'sì':'no'].map(q).join(';'))});
+  return '\ufeff'+rows.join('\r\n');
+}
+function expSummaryModal(){
+  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="Riepilogo spese"><h2>Riepilogo spese</h2>'
+   +'<p class="hint">Testo pronto da incollare in una mail o in fattura.</p>'
+   +'<textarea class="out" id="out" readonly aria-label="Riepilogo spese">'+esc(expSummaryText())+'</textarea>'
+   +'<div class="actions"><button class="btn alt" data-a="close">Chiudi</button><button class="btn alt" data-a="csv">Scarica CSV</button><button class="btn" data-a="copy">Copia testo</button></div></div></div>';
+}
 function defaultSite(){
   var s=state.settings.sites;if(!s.length)return '';
   var last=sorted(state.entries.filter(function(e){return e.type==='sede'&&e.site})).pop();
@@ -459,6 +536,7 @@ function settingsModal(){
    +'<div class="two"><div class="field"><label for="s-start">Inizio periodo</label><input id="s-start" type="date" data-s="startDate" value="'+s.startDate+'"></div><div class="field"><label for="s-end">Fine periodo</label><input id="s-end" type="date" data-s="endDate" value="'+s.endDate+'"></div></div>'
    +'<div class="two"><div class="field"><label for="s-ts">Giorni in sede a settimana</label><input id="s-ts" type="number" min="0" max="7" data-s="targetSede" value="'+s.targetSede+'"></div><div class="field"><label for="s-tm">Giorni smart a settimana</label><input id="s-tm" type="number" min="0" max="7" data-s="targetSmart" value="'+s.targetSmart+'"></div></div>'
    +'<div class="field"><label for="s-rate">Tariffa giornaliera in € (facoltativa)</label><input id="s-rate" type="number" min="0" step="1" data-s="rate" value="'+s.rate+'"></div>'
+   +'<div class="field"><label for="s-cats">Categorie delle spese (separate da virgola)</label><textarea id="s-cats" rows="2" data-s="catsText">'+esc(s.catsText||'')+'</textarea></div>'
    +'<div class="field"><label for="s-tags">Tag per “Cosa hai fatto” (separati da virgola)</label><textarea id="s-tags" rows="3" data-s="tagsText">'+esc(s.tagsText||'')+'</textarea></div>'
    +'<p class="hint">La tariffa serve solo a mostrare il valore delle giornate registrate. Lasciala a 0 per nasconderlo.</p>'
    +'<div class="bk"><p class="sub">Sedi per la verifica della posizione</p>'+(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b> <span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>')
@@ -502,14 +580,17 @@ function draw(){
   var s=state.settings;
   var html='<div class="wrap">'
    +'<header class="top"><div><p class="kicker">Dal '+fmtLong(s.startDate)+' al '+fmtLong(s.endDate)+'</p><h1>Consulenza Massini</h1></div>'
-   +'<div class="tools"><button class="ghost" data-a="summary">Riepilogo</button><button class="ghost" data-a="settings">Impostazioni</button></div></header>'
+   +'<div class="tools"><button class="ghost" data-a="'+(ui.page==='spese'?'expsummary':'summary')+'">Riepilogo</button><button class="ghost" data-a="settings">Impostazioni</button></div></header>'
+   +'<div class="tabs" role="tablist"><button role="tab" data-a="setpage" data-v="giornate" aria-selected="'+(ui.page!=='spese')+'">Giornate</button><button role="tab" data-a="setpage" data-v="spese" aria-selected="'+(ui.page==='spese')+'">Spese'+(state.expenses.length?' ('+state.expenses.length+')':'')+'</button></div>'
    +banner
-   +recCard()+recentCard()
+   +(ui.page==='spese'?spesePage():(recCard()+recentCard()
    +'<div class="cards">'+weekCard()+pilotCard()+'</div>'
-   +registro()+monthTable()+'</div>';
+   +registro()+monthTable()))+'</div>';
   if(ui.modal==='form')html+=formModal();
   if(ui.modal==='settings')html+=settingsModal();
   if(ui.modal==='summary')html+=summaryModal();
+  if(ui.modal==='expense')html+=expenseModal();
+  if(ui.modal==='expsummary')html+=expSummaryModal();
   app.innerHTML=html;
 }
 
@@ -521,13 +602,14 @@ function persist(msg){
   toast(ok?msg:'Non riesco a salvare su questo dispositivo',ok?2200:4000);
   draw();
 }
-function downloadCsv(){
+function downloadCsv(kind){
+  var fn=kind==='exp'?'spese-massini.csv':'consulenza-massini.csv';
   try{
-    var blob=new Blob([csvText()],{type:'text/csv;charset=utf-8'});
-    var f=new File([blob],'consulenza-massini.csv',{type:'text/csv'});
+    var blob=new Blob([kind==='exp'?expCsv():csvText()],{type:'text/csv;charset=utf-8'});
+    var f=new File([blob],fn,{type:'text/csv'});
     if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f]}).catch(function(){});return}
     var u=URL.createObjectURL(blob),a=document.createElement('a');
-    a.href=u;a.download='consulenza-massini.csv';document.body.appendChild(a);a.click();a.remove();
+    a.href=u;a.download=fn;document.body.appendChild(a);a.click();a.remove();
     setTimeout(function(){URL.revokeObjectURL(u)},4000);
   }catch(e){toast('Download non disponibile')}
 }
@@ -590,7 +672,7 @@ function onClick(e){
   else if(a==='thismonth'){ui.view=initialView();draw()}
   else if(a==='filter'){ui.filter=el.dataset.v;draw()}
   else if(a==='summary'){ui.modal='summary';draw()}
-  else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.sform.tagsText=state.settings.tags.join(', ');ui.modal='settings';draw()}
+  else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.sform.tagsText=state.settings.tags.join(', ');ui.sform.catsText=state.settings.cats.join(', ');ui.modal='settings';draw()}
   else if(a==='savesettings'){saveSettings()}
   else if(a==='copy'){copyText()}
   else if(a==='setmode'){ui.mode=el.dataset.v;state.mode=ui.mode;try{localStorage.setItem(LS,JSON.stringify(state))}catch(x){}draw()}
@@ -603,7 +685,21 @@ function onClick(e){
   else if(a==='clockin'){var n=new Date();var ts=n.getTime();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:ts,gin:null,gpend:true};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start);locate(ts)}
   else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,tags:[],site:(ac.gin&&ac.gin.site)||defaultSite(),gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;if(g&&g.err){fm.gerr=g.err}else{fm.gout=tagSite(g)}fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
   else if(a==='discard'){if(!ui.confirmDiscard){ui.confirmDiscard=true;draw();return}ui.confirmDiscard=false;state.active=null;persist('Sessione scartata')}
-  else if(a==='csv'){downloadCsv()}
+  else if(a==='csv'){downloadCsv(ui.modal==='expsummary'?'exp':'')}
+  else if(a==='setpage'){ui.page=el.dataset.v;state.page=ui.page;saveQuiet();draw();window.scrollTo(0,0)}
+  else if(a==='edate'){ui.e.date=el.dataset.v;draw()}
+  else if(a==='ecat'){ui.e.cat=el.dataset.v;draw()}
+  else if(a==='ebill'){ui.e.bill=!ui.e.bill;draw()}
+  else if(a==='esave'){saveExpense()}
+  else if(a==='eedit'){var ex=state.expenses.filter(function(z){return z.id===id})[0];if(ex){ui.confirmDel=false;ui.xf={id:ex.id,date:ex.date,amount:String(ex.amount).replace('.',','),cat:ex.cat,desc:ex.desc||'',bill:!!ex.bill};ui.modal='expense';draw()}}
+  else if(a==='xcat'){ui.xf.cat=el.dataset.v;draw()}
+  else if(a==='xbill'){ui.xf.bill=!ui.xf.bill;draw()}
+  else if(a==='xsave'){saveExpEdit()}
+  else if(a==='xdel'){
+    if(!ui.confirmDel){ui.confirmDel=true;draw();return}
+    state.expenses=state.expenses.filter(function(z){return z.id!==ui.xf.id});ui.modal=null;ui.confirmDel=false;persist('Spesa eliminata');
+  }
+  else if(a==='expsummary'){ui.modal='expsummary';draw()}
   else if(a==='siteadd'){addSite()}
   else if(a==='geotest'){geoTest()}
   else if(a==='georetry'){var ac2=state.active;if(!ac2)return;ac2.gpend=true;draw();locate(ac2.ts)}
@@ -664,10 +760,25 @@ function addSite(){
   toast('Cerco la posizione…',8000);
   getPos().then(function(g){if(!g){toast('Posizione non disponibile: controlla il permesso',3500);return}push(g.la,g.lo)});
 }
+function saveExpense(){
+  var e=ui.e,n=parseAmt(e.amount);
+  if(!e.date){toast('Scegli il giorno');return}
+  if(!(n>0)){toast('Inserisci un importo valido');return}
+  state.expenses.push({id:newId(),date:e.date,amount:n,cat:e.cat,desc:e.desc.trim(),bill:!!e.bill});
+  ui.e={date:e.date,amount:'',cat:e.cat,desc:'',bill:false};
+  persist('Spesa salvata: '+eur(n));
+}
+function saveExpEdit(){
+  var x=ui.xf,n=parseAmt(x.amount);
+  if(!x.date){toast('Scegli il giorno');return}
+  if(!(n>0)){toast('Inserisci un importo valido');return}
+  state.expenses=state.expenses.map(function(z){return z.id===x.id?{id:x.id,date:x.date,amount:n,cat:x.cat,desc:x.desc.trim(),bill:!!x.bill}:z});
+  ui.modal=null;persist('Spesa aggiornata');
+}
 function saveSettings(){
   var s=ui.sform;
   if(!s.startDate||!s.endDate||s.endDate<s.startDate){toast('Controlla le date del periodo');return}
-  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],sitesInit:true,tagsInit:true,tags:(function(){var o=[];String(s.tagsText||'').split(/[,;\n]/).forEach(function(t){t=t.trim().slice(0,28);if(t&&o.indexOf(t)<0)o.push(t)});return o})(),radius:Math.max(50,+s.radius||250)};
+  state.settings={startDate:s.startDate,endDate:s.endDate,targetSede:Math.max(0,+s.targetSede||0),targetSmart:Math.max(0,+s.targetSmart||0),rate:Math.max(0,+s.rate||0),sites:s.sites||[],sitesInit:true,catsInit:true,cats:(function(){var o=[];String(s.catsText||'').split(/[,;\n]/).forEach(function(t){t=t.trim().slice(0,28);if(t&&o.indexOf(t)<0)o.push(t)});return o})(),tagsInit:true,tags:(function(){var o=[];String(s.tagsText||'').split(/[,;\n]/).forEach(function(t){t=t.trim().slice(0,28);if(t&&o.indexOf(t)<0)o.push(t)});return o})(),radius:Math.max(50,+s.radius||250)};
   ui.modal=null;persist('Impostazioni salvate');
 }
 function copyText(){
@@ -681,6 +792,8 @@ function onInput(e){
     if(e.type!=='change')return;var file=t.files&&t.files[0];if(!file)return;
     var rd=new FileReader();rd.onload=function(){var ta=document.getElementById('s-bk');if(!ta)return;ta.value=String(rd.result);backupRestore()};rd.readAsText(file);return;
   }
+  if(t.dataset.e){ui.e[t.dataset.e]=t.value;if(t.dataset.e==='date'&&e.type==='change')draw();return}
+  if(t.dataset.x){ui.xf[t.dataset.x]=t.value;return}
   if(t.dataset.q){
     ui.q[t.dataset.q]=t.value;
     if(t.dataset.q==='date'){if(e.type==='change')draw()}
