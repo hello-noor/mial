@@ -196,6 +196,8 @@ tfoot td{font-weight:700;border-bottom:0}
 .fblock{background:var(--surface-2);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .fblock .field input,.fblock .field select,.fblock .field textarea{background:var(--surface)}
 .fblock .sub{margin-top:2px}
+.qrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.qrow input[type=date]{flex:0 0 auto;width:150px;min-width:0;border:1.5px solid transparent;background:var(--surface);border-radius:12px;padding:10px 8px;min-height:44px;font-size:14px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 6px;font-size:15px;white-space:nowrap;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
 .seg button svg{width:20px;height:20px}
@@ -463,8 +465,8 @@ function quickForm(){
   var seg=['sede','smart'].map(function(k){return '<button type="button" class="'+k+'" data-a="qtype" data-v="'+k+'" aria-pressed="'+(q.type===k)+'">'+ICON[k]+TYPE[k]+'</button>'}).join('');
   var pauses=[0,15,30,45,60,90].map(function(p){return '<option value="'+p+'"'+(+q.pause===p?' selected':'')+'>'+(p?p+' min':'Nessuna')+'</option>'}).join('');
   var presets=[['day','Giornata 9–18'],['am','Mattina 9–13'],['pm','Pomeriggio 14–18'],['night','Serata 20–24']].map(function(p){return '<button type="button" class="chip" data-a="qpreset" data-v="'+p[0]+'">'+p[1]+'</button>'}).join('');
-  var quando='<div class="fblock"><p class="sub">Quando</p><div class="presets"><button type="button" class="chip" data-a="qdate" data-v="'+t+'" aria-pressed="'+(q.date===t)+'">Oggi</button><button type="button" class="chip" data-a="qdate" data-v="'+y+'" aria-pressed="'+(q.date===y)+'">Ieri</button></div>'
-   +'<div class="field"><label for="q-date">Giorno</label><input id="q-date" type="date" data-q="date" value="'+q.date+'"></div></div>';
+  var quando='<div class="fblock"><p class="sub">Quando</p><div class="qrow"><div class="presets"><button type="button" class="chip" data-a="qdate" data-v="'+t+'" aria-pressed="'+(q.date===t)+'">Oggi</button><button type="button" class="chip" data-a="qdate" data-v="'+y+'" aria-pressed="'+(q.date===y)+'">Ieri</button></div>'
+   +'<input id="q-date" type="date" data-q="date" aria-label="Giorno" value="'+q.date+'"></div></div>';
   var dove=q.type==='sede'?(siteSelect('q-site','data-q="site"',q.site)?'<div class="fblock"><p class="sub">Dove</p>'+siteSelect('q-site','data-q="site"',q.site)+'</div>':''):'';
   var orario='<div class="fblock"><p class="sub">Orario</p><div class="presets">'+presets+'</div>'
    +'<div class="two"><div class="field"><label for="q-start">Inizio</label><input id="q-start" type="time" data-q="start" value="'+q.start+'"></div><div class="field"><label for="q-end">Fine</label><input id="q-end" type="time" data-q="end" value="'+q.end+'"></div></div>'
