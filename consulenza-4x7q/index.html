@@ -22,7 +22,7 @@
   --bg:#F2F4F8; --surface:#FFFFFF; --ink:#14213D; --muted:#5A6578; --line:#DCE1EA;
   --sede:#2349C8; --sede-soft:#E3E9FB; --on-sede:#FFFFFF;
   --smart:#A8520A; --smart-soft:#FBEBD5; --on-smart:#FFFFFF;
-  --danger:#B3261E; --ok:#1E7A4C;
+  --danger:#B3261E; --ok:#1E7A4C; --ok-soft:#DDF3E6; --err-soft:#FBE0DE;
   --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
   --body:'Figtree','Segoe UI',system-ui,sans-serif;
   color-scheme:light;
@@ -32,14 +32,14 @@
     --bg:#0E1423; --surface:#172033; --ink:#E8ECF5; --muted:#9BA7BC; --line:#28334C;
     --sede:#86A2FF; --sede-soft:#1D2B57; --on-sede:#0E1423;
     --smart:#F4A860; --smart-soft:#4A3318; --on-smart:#1A1006;
-    --danger:#FF8A80; --ok:#6FD3A0; color-scheme:dark;
+    --danger:#FF8A80; --ok:#6FD3A0; --ok-soft:#163A2A; --err-soft:#4A1F1C; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0E1423; --surface:#172033; --ink:#E8ECF5; --muted:#9BA7BC; --line:#28334C;
   --sede:#86A2FF; --sede-soft:#1D2B57; --on-sede:#0E1423;
   --smart:#F4A860; --smart-soft:#4A3318; --on-smart:#1A1006;
-  --danger:#FF8A80; --ok:#6FD3A0; color-scheme:dark;
+  --danger:#FF8A80; --ok:#6FD3A0; --ok-soft:#163A2A; --err-soft:#4A1F1C; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -154,6 +154,9 @@ textarea.out{min-height:220px;font-size:13px;font-family:ui-monospace,Menlo,Cons
 .qf{display:flex;flex-direction:column;gap:12px}
 .save{border:0;border-radius:14px;padding:16px;font-weight:700;font-size:18px;font-family:var(--display);background:var(--ink);color:var(--surface);min-height:56px}
 .save.sede{background:var(--sede);color:var(--on-sede)}.save.smart{background:var(--smart);color:var(--on-smart)}
+.gbox{border-radius:12px;padding:10px 12px;font-weight:600;font-size:15px;display:flex;flex-direction:column;gap:8px}
+.gbox.ok{background:var(--ok-soft);color:var(--ok)}.gbox.warn{background:var(--smart-soft);color:var(--ink)}.gbox.err{background:var(--err-soft);color:var(--ink)}.gbox.wait{background:var(--bg);color:var(--muted)}
+.gbox button{align-self:flex-start}
 .note.geo{font-size:12px}.note.geo.ok{color:var(--ok);font-weight:600}
 .sub{margin:0;font-size:13px;color:var(--muted);font-weight:600}
 .manual{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);flex-wrap:wrap}
@@ -236,25 +239,49 @@ function toast(msg,ms){
 function dist(a,b){var R=6371000,r=Math.PI/180,dl=(b.lat-a.la)*r,dn=(b.lng-a.lo)*r,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.la*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.asin(Math.sqrt(x))}
 function getPos(){
   return new Promise(function(res){
-    if(!navigator.geolocation){res(null);return}
-    navigator.geolocation.getCurrentPosition(function(p){res({la:+p.coords.latitude.toFixed(5),lo:+p.coords.longitude.toFixed(5),ac:Math.round(p.coords.accuracy)})},function(){res(null)},{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+    if(!navigator.geolocation){res({err:'unsupported'});return}
+    navigator.geolocation.getCurrentPosition(function(p){res({la:+p.coords.latitude.toFixed(5),lo:+p.coords.longitude.toFixed(5),ac:Math.round(p.coords.accuracy)})},function(er){res({err:er&&er.code===1?'denied':(er&&er.code===3?'timeout':'unavailable')})},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
   });
 }
+function fmtDist(m){return m>=1000?(m/1000).toFixed(1).replace('.',',')+' km':Math.round(m)+' m'}
 function tagSite(g){
-  if(!g)return g;
+  if(!g||g.err)return g;
   var best=null,bd=1e12,s=state.settings;
   s.sites.forEach(function(x){var d=dist(g,x);if(d<bd){bd=d;best=x}});
+  g.near=best?best.name:'';g.d=best?Math.round(bd):null;
   g.site=(best&&bd<=s.radius+Math.min(g.ac||0,100))?best.name:'';
   return g;
 }
 function geoWord(g){return g.site?esc(g.site)+' ✓':(state.settings.sites.length?'fuori sede':'salvata')}
-function geoFormLine(f){var i=f.gin?geoWord(f.gin):'n.d.',o=f.gpend?'cerco…':(f.gout?geoWord(f.gout):'n.d.');return 'Posizione · entrata: '+i+' · uscita: '+o}
+function geoFormLine(f){var i=f.gin?geoWord(f.gin):'n.d.',o=f.gpend?'cerco…':(f.gout?geoWord(f.gout):(f.gerr?'non disponibile':'n.d.'));return 'Posizione · entrata: '+i+' · uscita: '+o}
 function geoSum(e){if(!e.gin&&!e.gout)return '';return ' · pos. '+(e.gin?(e.gin.site||'fuori sede'):'n.d.')+'/'+(e.gout?(e.gout.site||'fuori sede'):'n.d.')}
+function geoStatus(a){
+  if(a.gpend)return {c:'wait',t:'Cerco la posizione…'};
+  if(a.gin){
+    var g=a.gin;
+    if(g.site)return {c:'ok',t:'✓ In sede: '+esc(g.site)+(g.d!=null?' · a '+fmtDist(g.d):'')};
+    if(state.settings.sites.length&&g.near)return {c:'warn',t:'Fuori sede. La più vicina è '+esc(g.near)+', a '+fmtDist(g.d)};
+    return {c:'warn',t:'Posizione salvata (nessuna sede impostata)'};
+  }
+  var m={denied:'Permesso di posizione negato. Attivalo in Impostazioni di iOS → Privacy → Localizzazione.',timeout:'Posizione non rilevata in tempo.',unavailable:'Posizione non disponibile. Prova all’aperto.',unsupported:'Questo dispositivo non supporta la posizione.'};
+  return {c:'err',t:m[a.gerr]||m.unavailable};
+}
 function activeGeo(a){
   if(a.gpend)return 'Cerco la posizione…';
   if(!a.gin)return 'Posizione non disponibile. Controlla il permesso di posizione.';
   if(a.gin.site)return 'Posizione verificata: '+esc(a.gin.site);
   return state.settings.sites.length?'Fuori dalle sedi salvate':'Posizione salvata';
+}
+function defaultSite(){
+  var s=state.settings.sites;if(!s.length)return '';
+  var last=sorted(state.entries.filter(function(e){return e.type==='sede'&&e.site})).pop();
+  if(last&&s.some(function(x){return x.name===last.site}))return last.site;
+  return s[0].name;
+}
+function siteSelect(id,attr,cur){
+  var s=state.settings.sites;if(!s.length)return '';
+  var opts=s.map(function(x){return '<option value="'+esc(x.name)+'"'+(cur===x.name?' selected':'')+'>'+esc(x.name)+'</option>'}).join('')+'<option value=""'+(cur===''?' selected':'')+'>Altra sede</option>';
+  return '<div class="field"><label for="'+id+'">Sede</label><select id="'+id+'" '+attr+'>'+opts+'</select></div>';
 }
 function defaultsFor(type){
   var last=sorted(state.entries.filter(function(e){return e.type===type})).pop();
@@ -263,12 +290,12 @@ function defaultsFor(type){
 function newQ(type){
   type=type||(sorted(state.entries).pop()||{}).type||'sede';
   var d=defaultsFor(type);
-  return {type:type,date:todayIso(),start:d.start,end:d.end,pause:d.pause,note:''};
+  return {type:type,date:todayIso(),start:d.start,end:d.end,pause:d.pause,note:'',site:defaultSite()};
 }
 function itemHTML(e,withMonth){
   var d=parse(e.date);
   return '<button class="item '+e.type+'" data-a="edit" data-id="'+e.id+'"><div class="dnum"><b>'+d.getDate()+'</b><span>'+wd(e.date)+'</span></div>'
-   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+(e.note?'<span class="note">'+esc(e.note)+'</span>':'')
+   +'<div class="t"><span><span class="pill '+e.type+'">'+TYPE[e.type]+(e.type==='sede'&&e.site?' · '+esc(e.site):'')+'</span></span><span class="when">'+e.start+' – '+e.end+(e.end<e.start?' (+1)':'')+(e.pause?' · pausa '+e.pause+' min':'')+(withMonth?' · '+fmtShortMonth(e.date):'')+'</span>'+(e.note?'<span class="note">'+esc(e.note)+'</span>':'')
    +((e.gin||e.gout)?'<span class="note geo'+(((e.gin&&e.gin.site)||(e.gout&&e.gout.site))?' ok':'')+'">Posizione · entrata: '+(e.gin?geoWord(e.gin):'n.d.')+' · uscita: '+(e.gout?geoWord(e.gout):'n.d.')+'</span>':'')+'</div>'
    +'<div class="h">'+fmtH(mins(e))+'</div></button>';
 }
@@ -277,6 +304,7 @@ function quickForm(){
   var seg=['sede','smart'].map(function(k){return '<button type="button" class="'+k+'" data-a="qtype" data-v="'+k+'" aria-pressed="'+(q.type===k)+'">'+ICON[k]+TYPE[k]+'</button>'}).join('');
   var pauses=[0,15,30,45,60,90].map(function(p){return '<option value="'+p+'"'+(+q.pause===p?' selected':'')+'>'+(p?p+' min':'Nessuna')+'</option>'}).join('');
   return '<div class="qf"><div class="seg">'+seg+'</div>'
+   +(q.type==='sede'?siteSelect('q-site','data-q="site"',q.site):'')
    +'<div class="presets"><button type="button" class="chip" data-a="qdate" data-v="'+t+'" aria-pressed="'+(q.date===t)+'">Oggi</button><button type="button" class="chip" data-a="qdate" data-v="'+y+'" aria-pressed="'+(q.date===y)+'">Ieri</button></div>'
    +'<div class="field"><label for="q-date">Giorno</label><input id="q-date" type="date" data-q="date" value="'+q.date+'"></div>'
    +'<div class="presets"><button type="button" class="chip" data-a="qpreset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="qpreset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="qpreset" data-v="pm">Pomeriggio 14–18</button></div>'
@@ -302,8 +330,8 @@ function clockInner(){
   var a=state.active;
   if(a){
     var long=Date.now()-a.ts>16*3600e3;
-    return '<div style="display:flex;flex-direction:column;gap:12px"><div class="row"><span class="pill '+a.type+'">'+TYPE[a.type]+'</span><span class="hint">Entrata alle <b>'+a.start+'</b>'+(a.date!==todayIso()?' del '+fmtShortMonth(a.date):'')+'</span></div>'
-     +'<div class="timer" id="clock">'+elapsedStr(Date.now()-a.ts)+'</div><p class="hint">'+activeGeo(a)+'</p>'
+    return '<div style="display:flex;flex-direction:column;gap:12px"><div class="row"><span class="pill '+a.type+'">'+TYPE[a.type]+((a.type==='sede'&&a.gin&&a.gin.site)?' · '+esc(a.gin.site):'')+'</span><span class="hint">Entrata alle <b>'+a.start+'</b>'+(a.date!==todayIso()?' del '+fmtShortMonth(a.date):'')+'</span></div>'
+     +'<div class="timer" id="clock">'+elapsedStr(Date.now()-a.ts)+'</div>'+(function(){var gs=geoStatus(a);return '<div class="gbox '+gs.c+'" role="status"><span>'+gs.t+'</span>'+((gs.c==='warn'||gs.c==='err')?'<button class="ghost" data-a="georetry">Riprova posizione</button>':'')+'</div>'})()
      +(long?'<p class="hint">Aperta da molto: se ti sei dimenticato di chiudere, timbra l’uscita e correggi l’orario.</p>':'')
      +'<div class="actions"><button class="btn del" data-a="discard">'+(ui.confirmDiscard?'Conferma: scarta':'Scarta')+'</button><button class="btn" data-a="clockout">Timbra uscita</button></div></div>';
   }
@@ -397,6 +425,7 @@ function formModal(){
    +((f.fromClock||f.gin||f.gout)?'<p class="hint" id="gline">'+geoFormLine(f)+'</p>':'')
    +'<div class="seg">'+seg+'</div>'
    +'<div class="field"><label for="f-date">Giorno</label><input id="f-date" type="date" data-f="date" value="'+f.date+'"></div>'
+   +(f.type==='sede'?siteSelect('f-site','data-f="site"',f.site):'')
    +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button></div>'
    +'<div class="two"><div class="field"><label for="f-start">Inizio</label><input id="f-start" type="time" data-f="start" value="'+f.start+'"></div><div class="field"><label for="f-end">Fine</label><input id="f-end" type="time" data-f="end" value="'+f.end+'"></div></div>'
    +'<div class="two" style="align-items:flex-end"><div class="field"><label for="f-pause">Pausa</label><select id="f-pause" data-f="pause">'+pauses+'</select></div><div class="dur" id="dur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:10px">'+durText(ui.form)+'</div></div>'
@@ -422,6 +451,7 @@ function settingsModal(){
    +'<p class="hint">La tariffa serve solo a mostrare il valore delle giornate registrate. Lasciala a 0 per nasconderlo.</p>'
    +'<div class="bk"><p class="sub">Sedi per la verifica della posizione</p>'+(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b> <span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>')
    +'<div class="field"><label for="s-sname">Nome sede</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div>'
+   +'<button class="btn alt" data-a="geotest">Verifica dove sono adesso</button><p class="hint" id="geotest" role="status"></p>'
    +'<button class="btn alt" data-a="siteadd">Aggiungi sede</button><p class="hint">Senza coordinate usa la tua posizione attuale: premi mentre sei nella sede. Le coordinate si copiano da Google Maps tenendo premuto sul punto.</p>'
    +'<div class="field"><label for="s-rad">Raggio di tolleranza (metri)</label><input id="s-rad" type="number" min="50" max="2000" data-s="radius" value="'+s.radius+'"></div></div>'
    +'<div class="bk"><div class="field"><label for="s-bk">Backup dei dati</label><textarea id="s-bk" rows="3" placeholder="Per ripristinare, incolla qui un backup"></textarea></div><div class="actions"><button class="btn" data-a="bkshare">Condividi backup</button><button class="btn alt" data-a="bkcopy">Copia testo</button></div><div class="actions"><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div><div class="field"><label for="s-bkf">Oppure ripristina da file di backup</label><input id="s-bkf" type="file" accept=".json,.txt,application/json,text/plain"></div><p class="hint">I dati stanno solo su questo telefono. Copia ogni tanto un backup e conservalo nelle note.</p></div>'
@@ -435,7 +465,7 @@ function summaryText(){
     if(!list.length)return;
     var st=stats(list);
     out.push(fmtMonth(+p[0],+p[1]-1).toUpperCase());
-    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+(e.note?' · '+e.note:'')+geoSum(e))});
+    list.forEach(function(e){out.push(fmtIt(e.date)+' '+wd(e.date)+' · '+TYPE[e.type]+(e.site?' ('+e.site+')':'')+' · '+e.start+'–'+e.end+(e.pause?' (pausa '+e.pause+' min)':'')+' · '+fmtH(mins(e))+(e.note?' · '+e.note:'')+geoSum(e))});
     out.push('Totale mese: '+gg(st.sede.days)+' in sede ('+fmtH(st.sede.min)+'), '+gg(st.smart.days)+' smart working ('+fmtH(st.smart.min)+'), '+fmtH(st.min)+' complessive','');
   });
   var t=stats(state.entries);
@@ -444,8 +474,8 @@ function summaryText(){
 }
 function csvText(){
   function q(v){return '"'+String(v).replace(/"/g,'""')+'"'}
-  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Note','Posizione entrata','Posizione uscita'].map(q).join(';')];
-  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.note||'',e.gin?(e.gin.site||'fuori sede'):'',e.gout?(e.gout.site||'fuori sede'):''].map(q).join(';'))});
+  var rows=[['Data','Giorno','Tipo','Inizio','Fine','Pausa (min)','Ore','Sede','Note','Posizione entrata','Posizione uscita'].map(q).join(';')];
+  sorted(state.entries).forEach(function(e){rows.push([fmtIt(e.date),wd(e.date),TYPE[e.type],e.start,e.end,e.pause||0,(mins(e)/60).toFixed(2).replace('.',','),e.site||'',e.note||'',e.gin?(e.gin.site||'fuori sede'):'',e.gout?(e.gout.site||'fuori sede'):''].map(q).join(';'))});
   return '﻿'+rows.join('\r\n');
 }
 function summaryModal(){
@@ -516,10 +546,10 @@ function backupRestore(){
 function newId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function openForm(type,date,entry){
   ui.confirmDel=false;
-  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||'',gin:entry.gin||null,gout:entry.gout||null}}
+  if(entry){ui.form={id:entry.id,type:entry.type,date:entry.date,start:entry.start,end:entry.end,pause:entry.pause||0,note:entry.note||'',site:entry.site||'',gin:entry.gin||null,gout:entry.gout||null}}
   else{
     var last=sorted(state.entries.filter(function(e){return e.type===type})).pop();
-    ui.form={id:null,type:type,date:date||todayIso(),start:last?last.start:'09:00',end:last?last.end:'18:00',pause:last?(last.pause||0):60,note:''};
+    ui.form={id:null,type:type,date:date||todayIso(),start:last?last.start:'09:00',end:last?last.end:'18:00',pause:last?(last.pause||0):60,note:'',site:defaultSite()};
   }
   ui.modal='form';draw();
 }
@@ -556,11 +586,13 @@ function onClick(e){
   else if(a==='qdate'){ui.q.date=el.dataset.v;draw()}
   else if(a==='qpreset'){var pp=PRESET[el.dataset.v];ui.q.start=pp[0];ui.q.end=pp[1];ui.q.pause=pp[2];draw()}
   else if(a==='qsave'){saveQuick()}
-  else if(a==='clockin'){var n=new Date();var ts=n.getTime();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:ts,gin:null,gpend:true};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start);getPos().then(function(g){if(!state.active||state.active.ts!==ts)return;state.active.gin=tagSite(g);state.active.gpend=false;saveQuiet();if(!ui.modal)draw()})}
-  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;fm.gout=tagSite(g);fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
+  else if(a==='clockin'){var n=new Date();var ts=n.getTime();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:ts,gin:null,gpend:true};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start);locate(ts)}
+  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;var fm=ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true,site:(ac.gin&&ac.gin.site)||defaultSite(),gin:ac.gin||null,gout:null,gpend:true};ui.modal='form';draw();getPos().then(function(g){if(ui.form!==fm)return;if(g&&g.err){fm.gerr=g.err}else{fm.gout=tagSite(g)}fm.gpend=false;var gl=document.getElementById('gline');if(gl)gl.innerHTML=geoFormLine(fm)})}
   else if(a==='discard'){if(!ui.confirmDiscard){ui.confirmDiscard=true;draw();return}ui.confirmDiscard=false;state.active=null;persist('Sessione scartata')}
   else if(a==='csv'){downloadCsv()}
   else if(a==='siteadd'){addSite()}
+  else if(a==='geotest'){geoTest()}
+  else if(a==='georetry'){var ac2=state.active;if(!ac2)return;ac2.gpend=true;draw();locate(ac2.ts)}
   else if(a==='siterm'){ui.sform.sites.splice(+el.dataset.i,1);draw()}
   else if(a==='bkshare'){backupShare()}
   else if(a==='bkcopy'){backupCopy()}
@@ -572,6 +604,7 @@ function saveEntry(){
   var net=span(f.start,f.end)-(+f.pause||0);
   if(!f.start||!f.end||net<=0){toast('Controlla orari e pausa');return}
   var rec={id:f.id||newId(),type:f.type,date:f.date,start:f.start,end:f.end,pause:+f.pause||0,note:f.note.trim()};
+  if(f.type==='sede'&&f.site)rec.site=f.site;
   if(f.gin)rec.gin=f.gin;if(f.gout)rec.gout=f.gout;
   if(f.id){state.entries=state.entries.map(function(x){return x.id===f.id?rec:x})}else{state.entries.push(rec)}
   if(f.fromClock)state.active=null;
@@ -583,10 +616,28 @@ function saveQuick(){
   if(!q.date){toast('Scegli il giorno');return}
   var net=span(q.start,q.end)-(+q.pause||0);
   if(!q.start||!q.end||net<=0){toast('Controlla orari e pausa');return}
-  state.entries.push({id:newId(),type:q.type,date:q.date,start:q.start,end:q.end,pause:+q.pause||0,note:q.note.trim()});
+  var qr={id:newId(),type:q.type,date:q.date,start:q.start,end:q.end,pause:+q.pause||0,note:q.note.trim()};if(q.type==='sede'&&q.site)qr.site=q.site;state.entries.push(qr);
   var d=parse(q.date);ui.view={y:d.getFullYear(),m:d.getMonth()};
   ui.q.note='';
   persist('Giornata salvata: '+fmtH(net));
+}
+function locate(ts){
+  getPos().then(function(g){
+    var a=state.active;if(!a||a.ts!==ts)return;
+    if(g&&g.err){a.gin=null;a.gerr=g.err}else{a.gin=tagSite(g);a.gerr=null}
+    a.gpend=false;saveQuiet();
+    var gs=geoStatus(a);toast(gs.t.replace('✓ ',''),4000);
+    if(!ui.modal)draw();
+  });
+}
+function geoTest(){
+  var out=document.getElementById('geotest');if(out)out.textContent='Cerco la posizione…';
+  getPos().then(function(g){
+    var o=document.getElementById('geotest');if(!o)return;
+    if(g.err){o.textContent=geoStatus({gerr:g.err}).t;return}
+    tagSite(g);
+    o.textContent=g.site?'✓ Sei in sede: '+g.site+' (a '+fmtDist(g.d)+', precisione '+g.ac+' m)':(state.settings.sites.length?'Fuori sede. La più vicina è '+g.near+', a '+fmtDist(g.d)+' (precisione '+g.ac+' m)':'Posizione rilevata, ma non hai sedi salvate');
+  });
 }
 function addSite(){
   var name=document.getElementById('s-sname').value.trim(),co=document.getElementById('s-scoord').value.trim();
