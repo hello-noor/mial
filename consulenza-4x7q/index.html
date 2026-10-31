@@ -236,11 +236,28 @@ textarea.out{min-height:240px;font-size:13px;font-family:ui-monospace,Menlo,Cons
 .lsede{stroke:var(--sede)}.lsmart{stroke:var(--smart)}
 .lexp{fill:none;stroke-width:1.5;stroke-dasharray:5 5;opacity:.7}
 .lexp.sede{stroke:var(--sede)}.lexp.smart{stroke:var(--smart)}
+.pill.neu{background:var(--surface-2);color:var(--muted)}
+.curcol{fill:var(--surface-2)}
+.axis.cur{fill:var(--ink)}.axis.val{fill:var(--ink)}.axis.tlab{fill:var(--ink)}
+.todayline{stroke:var(--ink);stroke-width:1;stroke-dasharray:2 3;opacity:.45}
+.pt-sede{fill:var(--sede);stroke:var(--surface);stroke-width:2}.pt-smart{fill:var(--smart);stroke:var(--surface);stroke-width:2}
+.hero{border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.hero b{font-family:var(--display);font-size:20px;letter-spacing:-.01em}.hero span{font-size:14px}
+.hero.ok{background:var(--ok-soft);color:var(--ok)}.hero.ok span{color:var(--ink)}
+.hero.warn{background:var(--smart-soft);color:var(--smart)}.hero.warn span{color:var(--ink)}
+.hero.neu{background:var(--surface-2);color:var(--ink)}
+.goal{display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
+.gbar{position:relative;height:10px;background:var(--surface-2);border-radius:99px}
+.gbar i{display:block;height:100%;border-radius:99px}.gbar i.sede{background:var(--sede)}.gbar i.smart{background:var(--smart)}
+.gbar u{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1px;background:var(--ink);border-radius:2px}
 .pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--smart-soft);color:var(--smart)}
 .srow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
 .srowt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .catlist{display:flex;flex-direction:column;gap:12px}
-.catrow{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font-size:14px}
+.catrow{display:grid;grid-template-columns:92px 1fr 86px;gap:10px;align-items:center;font-size:14px}
+.catname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.catrow b{text-align:right;display:flex;flex-direction:column;line-height:1.2;font-variant-numeric:tabular-nums}
+.catrow b small{color:var(--muted);font-weight:600;font-size:11px}
 .catbar{height:10px;background:var(--surface-2);border-radius:99px;overflow:hidden}
 .catbar i{display:block;height:100%;background:var(--sede);border-radius:99px}
 /* Barra di navigazione */
@@ -523,13 +540,16 @@ function weekCard(){
   var t=todayIso(),mon=mondayOf(t),sun=addDays(mon,6),s=state.settings;
   var wk=state.entries.filter(function(e){return e.date>=mon&&e.date<=sun});
   var st=stats(wk);
+  var on=mon>=effStart();
   function line(type,count,target){
+    target=on?target:0;
     var n=Math.max(target,count),pips='';
     for(var i=0;i<n;i++)pips+='<span class="pip '+type+(i<count?' on':'')+'"></span>';
-    return '<div class="row"><div class="lab '+type+'">'+ICON[type]+TYPE[type]+'</div><div class="pips" aria-hidden="true">'+pips+'</div><div class="count">'+count+' <small>di '+target+'</small></div></div>';
+    return '<div class="row"><div class="lab '+type+'">'+ICON[type]+TYPE[type]+'</div><div class="pips" aria-hidden="true">'+pips+'</div><div class="count">'+count+(target?' <small>di '+target+'</small>':'')+'</div></div>';
   }
   return '<section class="card" aria-label="Questa settimana"><div class="card-h"><h2>Questa settimana</h2><span>'+fmtShortMonth(mon)+' – '+fmtShortMonth(sun)+'</span></div>'
    +line('sede',st.sede.days,s.targetSede)+line('smart',st.smart.days,s.targetSmart)
+   +(on?'':'<p class="hint">Gli obiettivi partono '+dayLong(effStart())+'.</p>')
    +'<p class="hint">Ore registrate: <b>'+fmtH(st.min)+'</b> ('+fmtH(st.sede.min)+' in sede, '+fmtH(st.smart.min)+' smart)</p></section>';
 }
 
@@ -539,7 +559,7 @@ function pilotCard(){
   var weeks=Math.max(1,Math.round(total/7));
   var inRange=state.entries.filter(function(e){return e.date>=s.startDate&&e.date<=s.endDate});
   var st=stats(inRange);
-  var status=el===0?'Parte il '+fmtLong(s.startDate):(el>=total?'Periodo concluso':'Settimana '+Math.min(weeks,Math.floor((el-1)/7)+1)+' di '+weeks);
+  var wp=weekProgress(),status=wp.started===0?'Obiettivi da '+dayLong(effStart()):(el>=total?'Periodo concluso':'Settimana '+wp.started+' di '+wp.total);
   var val=s.rate>0?'<p class="hint">Valore a tariffa giornaliera: <b>'+new Intl.NumberFormat('it-IT',{style:'currency',currency:'EUR'}).format(st.days*s.rate)+'</b></p>':'';
   return '<section class="card" aria-label="Totale periodo"><div class="card-h"><h2>Totale periodo</h2><span>'+status+'</span></div>'
    +'<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+total+'" aria-valuenow="'+el+'"><i style="width:'+Math.round(el/total*100)+'%"></i></div>'
@@ -672,89 +692,137 @@ function num(x){return (Math.round(x*10)/10).toString().replace('.',',')}
 function dayKeys(a,b){var out=[],d=parse(a),e=parse(b);while(d<=e){out.push(iso(d));d.setDate(d.getDate()+1)}return out}
 function dayMaps(){var sd={},sm={};state.entries.forEach(function(e){if(e.type==='sede')sd[e.date]=1;else sm[e.date]=1});return {sd:sd,sm:sm}}
 function shortDay(s){var d=parse(s);return pad(d.getDate())+'/'+pad(d.getMonth()+1)}
+function dayLong(s){return new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long'}).format(parse(s))}
 function monthShort(k){var p=k.split('-');return cap(new Intl.DateTimeFormat('it-IT',{month:'short'}).format(new Date(+p[0],+p[1]-1,1)))}
-function weekList(){var s=state.settings,t=todayIso(),ref=t<s.startDate?s.startDate:(t>s.endDate?s.endDate:t),cur=mondayOf(ref),m=mondayOf(s.startDate),out=[];while(m<=cur){out.push(m);m=addDays(m,7)}return out}
-function weekStats(mon){var sun=addDays(mon,6),st=stats(state.entries.filter(function(e){return e.date>=mon&&e.date<=sun}));return {mon:mon,sd:st.sede.days,sm:st.smart.days}}
 function emptyNote(txt){return '<p class="hint" style="text-align:center;padding:18px 0">'+txt+'</p>'}
-function svgWeeks(){
-  var ws=weekList().map(weekStats),s=state.settings;
-  if(!ws.length)return emptyNote('Nessuna settimana ancora da mostrare.');
-  var W=320,H=180,pl=10,pr=10,pt=18,pb=24,n=ws.length,tgt=s.targetSede+s.targetSmart;
-  var mx=Math.max(tgt,1);ws.forEach(function(w){mx=Math.max(mx,w.sd+w.sm)});
-  var ph=H-pt-pb,bw=(W-pl-pr)/n,bar=Math.min(26,bw*0.6),yT=pt+ph-(tgt/mx)*ph;
+/* Gli obiettivi si contano a settimane intere (lunedì-domenica) dentro il periodo. */
+function nextMonday(s){var d=parse(s);d.setDate(d.getDate()+(8-d.getDay())%7);return iso(d)}
+function effStart(){return nextMonday(state.settings.startDate)}
+function periodWeeks(){var e=state.settings.endDate,m=effStart(),out=[];while(addDays(m,6)<=e){out.push(m);m=addDays(m,7)}if(!out.length)out.push(effStart());return out}
+function weekProgress(){var ws=periodWeeks(),t=todayIso(),started=0,done=0;ws.forEach(function(m){if(m<=t)started++;if(addDays(m,6)<t)done++});return {weeks:ws,started:started,done:done,total:ws.length}}
+function weekStats(mon){var sun=addDays(mon,6),st=stats(state.entries.filter(function(e){return e.date>=mon&&e.date<=sun}));return {mon:mon,sd:st.sede.days,sm:st.smart.days}}
+function allMonthKeys(){var set={};monthKeys().forEach(function(k){set[k]=1});state.expenses.forEach(function(x){set[x.date.slice(0,7)]=1});return Object.keys(set).sort()}
+
+function typeStatus(act,target,wp){
+  var dueDone=target*wp.done,dueNow=target*wp.started;
+  if(!target)return {c:'neu',t:'Nessun obiettivo',note:''};
+  if(wp.started===0)return {c:'neu',t:'Non ancora iniziato',note:''};
+  if(act<dueDone)return {c:'warn',t:'Indietro di '+gg(dueDone-act),note:''};
+  if(act>dueNow)return {c:'ok',t:'Avanti di '+gg(act-dueNow),note:''};
+  if(act===dueNow)return {c:'ok',t:'In regola',note:''};
+  return {c:'ok',t:'In linea',note:'questa settimana ne manca '+(dueNow-act)};
+}
+function goalRow(type,act,target,wp){
+  var st=typeStatus(act,target,wp),endT=target*wp.total;
+  var pct=endT?Math.min(100,act/endT*100):0,mk=endT?Math.min(100,target*wp.started/endT*100):0;
+  return '<div class="goal"><div class="row"><div class="lab '+type+'">'+ICON[type]+TYPE[type]+'</div><span class="pill '+st.c+'">'+st.t+'</span></div>'
+   +'<div class="gbar"><i class="'+type+'" style="width:'+pct.toFixed(1)+'%"></i>'+(mk>0&&mk<100?'<u style="left:'+mk.toFixed(1)+'%"></u>':'')+'</div>'
+   +'<p class="hint"><b>'+act+'</b> su '+endT+' nel periodo · previste finora '+(target*wp.started)+(st.note?' · '+st.note:'')+'</p></div>';
+}
+function statusCard(){
+  var s=state.settings,wp=weekProgress();
+  var st=stats(state.entries.filter(function(x){return x.date>=s.startDate&&x.date<=s.endDate}));
+  var dueDoneS=s.targetSede*wp.done,dueDoneM=s.targetSmart*wp.done,dueNowS=s.targetSede*wp.started,dueNowM=s.targetSmart*wp.started;
+  var behindS=Math.max(0,dueDoneS-st.sede.days),behindM=Math.max(0,dueDoneM-st.smart.days),hero;
+  if(wp.started===0){hero={c:'neu',t:'Il pilota non è ancora iniziato',s:'Gli obiettivi si contano da '+dayLong(effStart())+'.'}}
+  else if(behindS||behindM){
+    var parts=[];if(behindS)parts.push(gg(behindS)+' in sede');if(behindM)parts.push(gg(behindM)+' smart');
+    hero={c:'warn',t:'Sei indietro',s:'Rispetto alle settimane già concluse ti mancano '+parts.join(' e ')+'.'};
+  }else{
+    hero={c:'ok',t:'Sei in linea con gli obiettivi',s:'Hai fatto '+gg(st.sede.days)+' in sede e '+gg(st.smart.days)+' smart. Previste entro questa settimana: '+dueNowS+' e '+dueNowM+'.'};
+  }
+  var endS=s.targetSede*wp.total,endM=s.targetSmart*wp.total;
+  var left='Per chiudere il periodo mancano '+gg(Math.max(0,endS-st.sede.days))+' in sede e '+gg(Math.max(0,endM-st.smart.days))+' smart.';
+  var head=wp.started===0?'Parte lunedì '+shortDay(effStart()):(wp.done>=wp.total?'Periodo concluso':'Settimana '+wp.started+' di '+wp.total);
+  return '<section class="card"><div class="card-h"><h2>Come sei messo</h2><span>'+head+'</span></div>'
+   +'<div class="hero '+hero.c+'"><b>'+hero.t+'</b><span>'+hero.s+'</span></div>'
+   +goalRow('sede',st.sede.days,s.targetSede,wp)+goalRow('smart',st.smart.days,s.targetSmart,wp)
+   +'<p class="hint">'+left+' La linea scura sulle barre indica dove dovresti essere oggi. Le settimane vanno da lunedì a domenica.</p></section>';
+}
+
+function svgWeeks(wp){
+  var s=state.settings,tgt=s.targetSede+s.targetSmart,ws=wp.weeks,n=ws.length,t=todayIso(),data=ws.map(weekStats);
+  var W=320,H=190,pl=26,pr=6,pt=22,pb=26,ph=H-pt-pb,pw=W-pl-pr,bw=pw/n,bar=Math.min(20,bw*0.62);
+  var mx=Math.max(tgt,1);data.forEach(function(w){mx=Math.max(mx,w.sd+w.sm)});mx=Math.ceil(mx);
+  var Y=function(v){return pt+ph-v/mx*ph},step=mx>6?2:1;
   var o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Giornate per settimana" style="width:100%;height:auto">';
-  o+='<line class="tline" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+yT.toFixed(1)+'" y2="'+yT.toFixed(1)+'"/>';
-  ws.forEach(function(w,i){
-    var x=pl+i*bw+(bw-bar)/2,hs=w.sd/mx*ph,hm=w.sm/mx*ph,yb=pt+ph,cx=(x+bar/2).toFixed(1);
-    if(w.sd)o+='<rect class="bar-sede" x="'+x.toFixed(1)+'" y="'+(yb-hs).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hs.toFixed(1)+'" rx="4"/>';
-    if(w.sm)o+='<rect class="bar-smart" x="'+x.toFixed(1)+'" y="'+(yb-hs-hm).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hm.toFixed(1)+'" rx="4"/>';
-    if(w.sd+w.sm)o+='<text class="axis" x="'+cx+'" y="'+(yb-hs-hm-5).toFixed(1)+'" text-anchor="middle">'+(w.sd+w.sm)+'</text>';
-    o+='<text class="axis" x="'+cx+'" y="'+(H-6)+'" text-anchor="middle">'+shortDay(w.mon)+'</text>';
+  for(var v=0;v<=mx;v+=step)o+='<line class="grid" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'"/><text class="axis" x="'+(pl-6)+'" y="'+(Y(v)+3).toFixed(1)+'" text-anchor="end">'+v+'</text>';
+  data.forEach(function(w,i){
+    var x=pl+i*bw+(bw-bar)/2,cx=(x+bar/2).toFixed(1),cur=w.mon<=t&&addDays(w.mon,6)>=t,y0=Y(0),hs=w.sd/mx*ph,hm=w.sm/mx*ph;
+    if(cur)o+='<rect class="curcol" x="'+(pl+i*bw+1).toFixed(1)+'" y="'+(pt-4)+'" width="'+(bw-2).toFixed(1)+'" height="'+(ph+8)+'" rx="6"/>';
+    if(w.sd)o+='<rect class="bar-sede" x="'+x.toFixed(1)+'" y="'+(y0-hs).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hs.toFixed(1)+'" rx="4"/>';
+    if(w.sm)o+='<rect class="bar-smart" x="'+x.toFixed(1)+'" y="'+(y0-hs-hm).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hm.toFixed(1)+'" rx="4"/>';
+    if(w.sd+w.sm)o+='<text class="axis val" x="'+cx+'" y="'+(y0-hs-hm-5).toFixed(1)+'" text-anchor="middle">'+(w.sd+w.sm)+'</text>';
+    o+='<text class="axis'+(cur?' cur':'')+'" x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">S'+(i+1)+'</text>';
   });
+  o+='<line class="tline" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(tgt).toFixed(1)+'" y2="'+Y(tgt).toFixed(1)+'"/>';
+  o+='<text class="axis tlab" x="'+(W-pr)+'" y="'+(Y(tgt)-5).toFixed(1)+'" text-anchor="end">obiettivo '+tgt+'</text>';
   return o+'</svg>';
 }
-function svgCum(){
-  var s=state.settings,t=todayIso(),keys=dayKeys(s.startDate,s.endDate),N=keys.length;
-  if(N<2)return emptyNote('Periodo non valido.');
-  var W=320,H=200,pl=30,pr=8,pt=10,pb=22,pw=W-pl-pr,ph=H-pt-pb;
-  var mx=Math.max(1,s.targetSede*N/7,s.targetSmart*N/7),dm=dayMaps(),li=t<s.startDate?-1:(t>s.endDate?N-1:keys.indexOf(t));
+function svgCum(wp){
+  var s=state.settings,t=todayIso(),st=effStart(),keys=dayKeys(st,s.endDate),N=keys.length;
+  if(N<2)return emptyNote('Il periodo è troppo breve per questo grafico.');
+  var W=320,H=214,pl=26,pr=40,pt=16,pb=24,pw=W-pl-pr,ph=H-pt-pb;
+  var endS=s.targetSede*wp.total,endM=s.targetSmart*wp.total,mx=Math.max(1,Math.ceil(Math.max(endS,endM)));
+  var dm=dayMaps(),li=t<st?-1:(t>s.endDate?N-1:keys.indexOf(t));
   var X=function(i){return pl+i/(N-1)*pw},Y=function(v){return pt+ph-v/mx*ph};
+  var pre={sd:{},sm:{}};state.entries.forEach(function(e){if(e.date>=s.startDate&&e.date<st){(e.type==='sede'?pre.sd:pre.sm)[e.date]=1}});
+  var cs=Object.keys(pre.sd).length,cm=Object.keys(pre.sm).length;
   var o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Andamento nel periodo" style="width:100%;height:auto">';
-  [0,0.5,1].forEach(function(f){var v=mx*f,y=Y(v).toFixed(1);o+='<line class="grid" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'"/><text class="axis" x="'+(pl-6)+'" y="'+(+y+3)+'" text-anchor="end">'+num(v)+'</text>'});
-  var cs=0,cm=0,ps=[],pm=[],es=[],em=[];
+  var ticks=[0,Math.round(mx/2),mx].filter(function(v,i,a){return a.indexOf(v)===i});
+  ticks.forEach(function(v){o+='<line class="grid" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v).toFixed(1)+'" y2="'+Y(v).toFixed(1)+'"/><text class="axis" x="'+(pl-6)+'" y="'+(Y(v)+3).toFixed(1)+'" text-anchor="end">'+v+'</text>'});
+  var ps=[],pm=[],es=[],em=[],lastS=0,lastM=0;
   keys.forEach(function(k,i){
-    if(dm.sd[k])cs++;if(dm.sm[k])cm++;
-    if(i<=li){ps.push(X(i).toFixed(1)+','+Y(cs).toFixed(1));pm.push(X(i).toFixed(1)+','+Y(cm).toFixed(1))}
+    if(dm.sd[k]&&k>=st)cs++;if(dm.sm[k]&&k>=st)cm++;
+    if(i<=li){ps.push(X(i).toFixed(1)+','+Y(cs).toFixed(1));pm.push(X(i).toFixed(1)+','+Y(cm).toFixed(1));lastS=cs;lastM=cm}
     es.push(X(i).toFixed(1)+','+Y(s.targetSede*(i+1)/7).toFixed(1));em.push(X(i).toFixed(1)+','+Y(s.targetSmart*(i+1)/7).toFixed(1));
     if(i===0)o+='<text class="axis" x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="start">'+shortDay(k)+'</text>';
-    else if(k.slice(8)==='01'&&i>=7)o+='<text class="axis" x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle">'+monthShort(k.slice(0,7))+'</text>';
+    else if(k.slice(8)==='01'&&i>=7&&i<=N-8)o+='<text class="axis" x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle">'+monthShort(k.slice(0,7))+'</text>';
+    else if(i===N-1)o+='<text class="axis" x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="end">'+shortDay(k)+'</text>';
   });
+  if(li>0&&li<N-1)o+='<line class="todayline" x1="'+X(li).toFixed(1)+'" x2="'+X(li).toFixed(1)+'" y1="'+pt+'" y2="'+(pt+ph)+'"/><text class="axis cur" x="'+X(li).toFixed(1)+'" y="'+(pt-4)+'" text-anchor="middle">oggi</text>';
   o+='<polyline class="lexp sede" points="'+es.join(' ')+'"/><polyline class="lexp smart" points="'+em.join(' ')+'"/>';
-  if(ps.length)o+='<polyline class="lsede" points="'+ps.join(' ')+'"/><polyline class="lsmart" points="'+pm.join(' ')+'"/>';
+  if(ps.length){
+    o+='<polyline class="lsede" points="'+ps.join(' ')+'"/><polyline class="lsmart" points="'+pm.join(' ')+'"/>';
+    o+='<circle class="pt-sede" cx="'+X(li).toFixed(1)+'" cy="'+Y(lastS).toFixed(1)+'" r="5"/><circle class="pt-smart" cx="'+X(li).toFixed(1)+'" cy="'+Y(lastM).toFixed(1)+'" r="5"/>';
+  }
+  if(endS===endM)o+='<text class="axis tlab" x="'+(W-pr+5)+'" y="'+(Y(endS)+3).toFixed(1)+'">'+endS+'</text>';
+  else{o+='<text class="axis tlab" x="'+(W-pr+5)+'" y="'+(Y(endS)+3).toFixed(1)+'">'+endS+'</text><text class="axis tlab" x="'+(W-pr+5)+'" y="'+(Y(endM)+3).toFixed(1)+'">'+endM+'</text>'}
   return o+'</svg>';
 }
 function svgMonths(){
-  if(!state.expenses.length)return emptyNote('Nessuna spesa ancora registrata.');
-  var keys=monthKeys(),data=keys.map(function(k){var z=sumExp(state.expenses.filter(function(x){return x.date.indexOf(k)===0}));return {k:k,tot:z.tot,bill:z.bill}});
-  var W=320,H=180,pl=8,pr=8,pt=18,pb=24,pw=W-pl-pr,ph=H-pt-pb,n=data.length,mx=Math.max(1,Math.max.apply(null,data.map(function(d){return d.tot})));
+  if(!state.expenses.length)return emptyNote('Nessuna spesa registrata. Aggiungila dalla scheda Spese.');
+  var keys=allMonthKeys(),data=keys.map(function(k){var z=sumExp(state.expenses.filter(function(x){return x.date.indexOf(k)===0}));return {k:k,tot:z.tot,bill:z.bill}});
+  var W=320,H=180,pl=8,pr=8,pt=20,pb=24,pw=W-pl-pr,ph=H-pt-pb,n=data.length,mx=Math.max(1,Math.max.apply(null,data.map(function(d){return d.tot})));
   var bw=pw/n,bar=Math.min(44,bw*0.5),o='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Spese per mese" style="width:100%;height:auto">';
+  o+='<line class="grid" x1="'+pl+'" x2="'+(W-pr)+'" y1="'+(pt+ph)+'" y2="'+(pt+ph)+'"/>';
   data.forEach(function(d,i){
     var x=pl+i*bw+(bw-bar)/2,ht=d.tot/mx*ph,hb=d.bill/mx*ph,yb=pt+ph,cx=(x+bar/2).toFixed(1);
-    o+='<rect class="bar-tot" x="'+x.toFixed(1)+'" y="'+(yb-ht).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="6"/>';
+    if(d.tot)o+='<rect class="bar-tot" x="'+x.toFixed(1)+'" y="'+(yb-ht).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+ht.toFixed(1)+'" rx="6"/>';
     if(d.bill)o+='<rect class="bar-bill" x="'+x.toFixed(1)+'" y="'+(yb-hb).toFixed(1)+'" width="'+bar.toFixed(1)+'" height="'+hb.toFixed(1)+'" rx="6"/>';
-    if(d.tot)o+='<text class="axis" x="'+cx+'" y="'+(yb-ht-5).toFixed(1)+'" text-anchor="middle">'+Math.round(d.tot)+' €</text>';
-    o+='<text class="axis" x="'+cx+'" y="'+(H-6)+'" text-anchor="middle">'+monthShort(d.k)+'</text>';
+    if(d.tot)o+='<text class="axis val" x="'+cx+'" y="'+(yb-ht-6).toFixed(1)+'" text-anchor="middle">'+eur(d.tot).replace(/,00/,'')+'</text>';
+    o+='<text class="axis" x="'+cx+'" y="'+(H-7)+'" text-anchor="middle">'+monthShort(d.k)+'</text>';
   });
-  return o+'</svg><div class="legend"><span><i class="dot" style="background:var(--sede);opacity:.3"></i>Totale</span><span><i class="dot" style="background:var(--sede)"></i>Da fatturare</span></div>';
+  return o+'</svg>';
 }
 function catBars(){
-  if(!state.expenses.length)return emptyNote('Nessuna spesa ancora registrata.');
-  var by={};state.expenses.forEach(function(x){var c=x.cat||'Senza categoria';by[c]=(by[c]||0)+x.amount});
+  if(!state.expenses.length)return emptyNote('Nessuna spesa registrata.');
+  var by={},tot=0;state.expenses.forEach(function(x){var c=x.cat||'Senza categoria';by[c]=(by[c]||0)+x.amount;tot+=x.amount});
   var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a]}),mx=by[ks[0]];
-  return '<div class="catlist">'+ks.map(function(c){return '<div class="catrow"><span>'+esc(c)+'</span><div class="catbar"><i style="width:'+(by[c]/mx*100).toFixed(1)+'%"></i></div><b>'+eur(by[c])+'</b></div>'}).join('')+'</div>';
-}
-function statusCard(){
-  var s=state.settings,t=todayIso(),N=dayKeys(s.startDate,s.endDate).length;
-  var e=t<s.startDate?0:(t>s.endDate?N:Math.round((parse(t)-parse(s.startDate))/864e5)+1);
-  var st=stats(state.entries.filter(function(x){return x.date>=s.startDate&&x.date<=s.endDate}));
-  function row(lab,act,exp,endT){
-    var d=Math.round((act-exp)*10)/10,c=Math.abs(d)<0.5?['ok','In linea']:(d<0?['warn','Indietro di '+num(-d)]:['ok','Avanti di '+num(d)]);
-    return '<div class="srow"><div class="srowt"><b>'+lab+'</b><span class="hint">'+act+' fatte · attese finora '+num(exp)+' · totale periodo '+num(endT)+'</span></div><span class="pill '+c[0]+'">'+c[1]+'</span></div>';
-  }
-  var fs=s.targetSede*N/7,fm=s.targetSmart*N/7;
-  var rem=Math.max(0,Math.ceil(fs-st.sede.days))+' in sede e '+Math.max(0,Math.ceil(fm-st.smart.days))+' smart';
-  return '<section class="card"><div class="card-h"><h2>Come sei messo</h2><span>'+(e===0?'Non ancora iniziato':'Giorno '+e+' di '+N)+'</span></div>'
-   +row('In sede',st.sede.days,s.targetSede*e/7,fs)+row('Smart working',st.smart.days,s.targetSmart*e/7,fm)
-   +'<p class="hint">Per chiudere il periodo ti servono ancora: '+rem+'.</p>'
-   +'<p class="hint">Obiettivi: '+s.targetSede+' in sede e '+s.targetSmart+' smart a settimana. Si contano le giornate, non le ore.</p></section>';
+  return '<div class="catlist">'+ks.map(function(c){return '<div class="catrow"><span class="catname">'+esc(c)+'</span><div class="catbar"><i style="width:'+(by[c]/mx*100).toFixed(1)+'%"></i></div><b>'+eur(by[c])+'<small>'+Math.round(by[c]/tot*100)+'%</small></b></div>'}).join('')+'</div>';
 }
 function andamentoPage(){
+  var wp=weekProgress(),s=state.settings,tgt=s.targetSede+s.targetSmart,ex=sumExp(state.expenses);
   var leg='<div class="legend"><span><i class="dot sede"></i>In sede</span><span><i class="dot smart"></i>Smart working</span></div>';
+  var none=state.entries.length?'':'<p class="hint">Non hai ancora registrato giornate: i grafici si riempiono dalla prima timbratura.</p>';
   return statusCard()
-   +'<section class="card"><div class="card-h"><h2>Giornate per settimana</h2><span>linea: obiettivo</span></div>'+svgWeeks()+leg+'</section>'
-   +'<section class="card"><div class="card-h"><h2>Andamento nel periodo</h2><span>tratteggio: ritmo previsto</span></div>'+svgCum()+leg+'</section>'
-   +'<section class="card"><div class="card-h"><h2>Spese per mese</h2></div>'+svgMonths()+'</section>'
-   +'<section class="card"><div class="card-h"><h2>Spese per categoria</h2></div>'+catBars()+'</section>';
+   +'<section class="card"><div class="card-h"><h2>Giornate per settimana</h2><span>S1 parte lunedì '+shortDay(wp.weeks[0])+'</span></div>'
+   +svgWeeks(wp)+leg+'<p class="hint">Ogni barra è una settimana. La linea tratteggiata è l’obiettivo: '+gg(tgt)+' a settimana ('+s.targetSede+' in sede e '+s.targetSmart+' smart).</p>'+none+'</section>'
+   +'<section class="card"><div class="card-h"><h2>Andamento nel periodo</h2><span>giornate sommate</span></div>'
+   +svgCum(wp)+leg+'<p class="hint">Linea piena: giornate fatte. Tratteggio: ritmo previsto, fino a fine periodo.</p></section>'
+   +'<section class="card"><div class="card-h"><h2>Spese per mese</h2><span>'+eur(ex.tot)+' in tutto</span></div>'
+   +svgMonths()+(state.expenses.length?'<div class="legend"><span><i class="dot" style="background:var(--sede);opacity:.3"></i>Totale del mese</span><span><i class="dot" style="background:var(--sede)"></i>Da fatturare ('+eur(ex.bill)+')</span></div>':'')+'</section>'
+   +'<section class="card"><div class="card-h"><h2>Spese per categoria</h2><span>% sul totale</span></div>'+catBars()+'</section>';
 }
 ICON.chart=svgI('<path d="M5 20V13M12 20V5M19 20V9"/>');
 function svgI(d){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+d+'</svg>'}
