@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232997ff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231a5fb8%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2032%29%20rotate%28-8%29%20translate%28-32%20-32%29%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M20%2020v24M44%2020v24M13%2026v12M51%2026v12M20%2032h24%22/%3E%3C/g%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="Allenati con clienti simulati: obiezioni, discovery MEDDPICC e punteggio.">
 <meta property="og:type" content="website">
@@ -14,6 +12,8 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://hello-noor.github.io/mial/gym/og-image.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%232997ff%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%231a5fb8%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%2832%2032%29%20rotate%28-8%29%20translate%28-32%20-32%29%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%225%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22M20%2020v24M44%2020v24M13%2026v12M51%2026v12M20%2032h24%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sales Gym — Simulatore trattative</title>
@@ -353,6 +353,9 @@ details.adv h2.sec:first-of-type{margin-top:8px}
 /* titolo grande in home */
 body.on-home .top .logo{visibility:hidden}
 body.on-home .brand{padding-top:4px}
+.brow{display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.5vw,26px)}
+.bmark{width:clamp(64px,10vw,104px);height:clamp(64px,10vw,104px);border-radius:28%;background:linear-gradient(135deg,#2997ff,#1a5fb8);color:#fff;display:grid;place-items:center;font-size:clamp(36px,5.6vw,58px);transform:rotate(-8deg);box-shadow:0 18px 40px -12px #2997ffaa,inset 0 2px 0 #ffffff40;flex:none}
+.bmark .ico{stroke-width:2.4}
 .brand{text-align:center;padding:30px 0 10px}
 .brand .wm{font-family:"Russo One",var(--hd);font-size:clamp(56px,11vw,104px);font-weight:400;line-height:1;letter-spacing:.02em;display:inline-block;transform:skewX(-8deg);background:linear-gradient(180deg,#fff 45%,#c3d3e8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #0b2a50) drop-shadow(0 14px 30px #2997ff55)}
 .brand .wm em{font-style:normal;margin-left:.2em;background:linear-gradient(180deg,#ffc08f,#ff7a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -416,7 +419,7 @@ body.on-home .brand{padding-top:4px}
 <!-- ================= HOME ================= -->
 <section id="home">
   <div class="brand">
-    <b class="wm">SALES<em>GYM</em></b>
+    <div class="brow"><span class="bmark" data-ic="dumbbell"></span><b class="wm">SALES<em>GYM</em></b></div>
     <p>Il simulatore di trattative <b>Massini</b>: clienti realistici, obiezioni vere, punteggio e livelli.</p>
   </div>
   <div class="hero">
@@ -1630,7 +1633,7 @@ function confetti(){
   const P=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:4+Math.random()*6,c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4}));
   let f=0; (function step(){ x.clearRect(0,0,c.width,c.height); P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<160) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
 }
-function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); // in home il titolo grande sostituisce il logo if(id==="home") renderHome(); }
+function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); /* in home il titolo grande sostituisce il logo */ if(id==="home") renderHome(); }
 
 /* ---------------- DEMO: risposte simulate, nessuna AI collegata ---------------- */
 function demoSample(){
