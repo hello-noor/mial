@@ -424,7 +424,7 @@ function settingsModal(){
    +'<div class="field"><label for="s-sname">Nome sede</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div>'
    +'<button class="btn alt" data-a="siteadd">Aggiungi sede</button><p class="hint">Senza coordinate usa la tua posizione attuale: premi mentre sei nella sede. Le coordinate si copiano da Google Maps tenendo premuto sul punto.</p>'
    +'<div class="field"><label for="s-rad">Raggio di tolleranza (metri)</label><input id="s-rad" type="number" min="50" max="2000" data-s="radius" value="'+s.radius+'"></div></div>'
-   +'<div class="bk"><div class="field"><label for="s-bk">Backup dei dati</label><textarea id="s-bk" rows="3" placeholder="Per ripristinare, incolla qui un backup"></textarea></div><div class="actions"><button class="btn alt" data-a="bkcopy">Copia backup</button><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div><p class="hint">I dati stanno solo su questo telefono. Copia ogni tanto un backup e conservalo nelle note.</p></div>'
+   +'<div class="bk"><div class="field"><label for="s-bk">Backup dei dati</label><textarea id="s-bk" rows="3" placeholder="Per ripristinare, incolla qui un backup"></textarea></div><div class="actions"><button class="btn" data-a="bkshare">Condividi backup</button><button class="btn alt" data-a="bkcopy">Copia testo</button></div><div class="actions"><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div><div class="field"><label for="s-bkf">Oppure ripristina da file di backup</label><input id="s-bkf" type="file" accept=".json,.txt,application/json,text/plain"></div><p class="hint">I dati stanno solo su questo telefono. Copia ogni tanto un backup e conservalo nelle note.</p></div>'
    +'<div class="actions"><button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="savesettings">Salva</button></div></div></div>';
 }
 
@@ -488,6 +488,15 @@ function downloadCsv(){
     a.href=u;a.download='consulenza-massini.csv';document.body.appendChild(a);a.click();a.remove();
     setTimeout(function(){URL.revokeObjectURL(u)},4000);
   }catch(e){toast('Download non disponibile')}
+}
+function backupShare(){
+  var txt=JSON.stringify(state),name='backup-massini-'+todayIso()+'.json';
+  try{
+    var f=new File([txt],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){navigator.share({files:[f],title:'Backup Consulenza Massini'}).catch(function(){});return}
+    if(navigator.share){navigator.share({title:'Backup Consulenza Massini',text:txt}).catch(function(){});return}
+  }catch(e){}
+  backupCopy();
 }
 function backupCopy(){
   var ta=document.getElementById('s-bk'),txt=JSON.stringify(state);
@@ -553,6 +562,7 @@ function onClick(e){
   else if(a==='csv'){downloadCsv()}
   else if(a==='siteadd'){addSite()}
   else if(a==='siterm'){ui.sform.sites.splice(+el.dataset.i,1);draw()}
+  else if(a==='bkshare'){backupShare()}
   else if(a==='bkcopy'){backupCopy()}
   else if(a==='bkrestore'){backupRestore()}
 }
@@ -601,6 +611,10 @@ function copyText(){
 }
 function onInput(e){
   var t=e.target;
+  if(t.id==='s-bkf'){
+    if(e.type!=='change')return;var file=t.files&&t.files[0];if(!file)return;
+    var rd=new FileReader();rd.onload=function(){var ta=document.getElementById('s-bk');if(!ta)return;ta.value=String(rd.result);backupRestore()};rd.readAsText(file);return;
+  }
   if(t.dataset.q){
     ui.q[t.dataset.q]=t.value;
     if(t.dataset.q==='date'){if(e.type==='change')draw()}
