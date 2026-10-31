@@ -2,7 +2,7 @@
 var C='massini-tracker';
 self.addEventListener('install',function(e){
   self.skipWaiting();
-  e.waitUntil(caches.open(C).then(function(c){return c.addAll(['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png'])}));
+  e.waitUntil(caches.open(C).then(function(c){return c.addAll(['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','apple-touch-icon.png','favicon-32.png'])}));
 });
 self.addEventListener('activate',function(e){e.waitUntil(self.clients.claim())});
 self.addEventListener('fetch',function(e){
