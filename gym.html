@@ -525,6 +525,7 @@ details.adv h2.sec:first-of-type{margin-top:8px}
   <div class="tools">
     <button class="btn ghost sm" id="hintBtn" data-ic="bulb">Coach</button>
     <button class="btn ghost sm" id="kbBtn" data-ic="doc">Scheda</button>
+    <button class="btn ghost sm" id="showBtn" data-ic="factory">Invita in showroom</button>
     <button class="btn ghost sm" id="endBtn" data-ic="flag">Chiudi e valuta</button>
     <span class="turns" id="turns"></span>
     <button class="btn link sm" id="quitBtn">Abbandona</button>
@@ -1204,10 +1205,12 @@ async function clientTurn(opening){
   }
   S.busy=false; lock(false); updTurns(); $("cAv").classList.remove("talk");
 }
-function lock(b){ $("send").disabled=b||S.done; $("input").disabled=b||S.done; $("hintBtn").disabled=b||S.done; if(!b&&!S.done) $("input").focus(); }
+function lock(b){ $("showBtn").disabled=b||S.done; $("send").disabled=b||S.done; $("input").disabled=b||S.done; $("hintBtn").disabled=b||S.done; if(!b&&!S.done) $("input").focus(); }
 $("send").onclick=()=>{const v=$("input").value.trim(); if(!v||S.busy||S.done) return; $("input").value=""; addRow("s",v); S.msgs.push({r:"s",t:v}); updTurns(); clientTurn(false);};
 $("input").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("send").click();}};
 $("kbBtn").onclick=()=>$("kbPanel").classList.toggle("hidden");
+// invito precompilato: il venditore può modificarlo prima di inviarlo
+$("showBtn").onclick=()=>{ if(S.busy||S.done) return; $("input").value=`Le propongo di venire a trovarci nel nostro showroom a Tordandrea di Assisi: vedrebbe ${kb().name.toLowerCase()} in funzione con un prodotto simile al vostro e parlerebbe direttamente con i nostri tecnici. Le andrebbe bene una mattina della prossima settimana?`; $("input").focus(); };
 $("hintBtn").onclick=async()=>{
   if(S.busy) return; S.busy=true; lock(true);
   const box=addSys("hint",'<span class="typing">Il coach sta pensando…</span>');
@@ -1601,6 +1604,11 @@ function demoSample(){
     const opening=!/CONVERSAZIONE FINORA/.test(prompt), mt=maxTurns(), n=repTurns();
     if(opening){ D.won=false; return SRC().cold?"Pronto? Chi parla? Guardi, ho cinque minuti al massimo.":`Buongiorno. Sì, ricordo il contatto. Mi dica pure, ma vado di fretta: cosa mi proponete di concreto? [MOOD:${S.mood}]`; }
     const t=lastRep(), q=quality(t); let mood=S.mood, out=[];
+    if(/showroom/i.test(t)){ // invito allo showroom: accetta solo se il cliente è abbastanza convinto
+      const ready=mood>=50||objs().every((o,i)=>S.ot[i+1]==="done");
+      if(ready){ D.won=true; return `Volentieri: vedere le macchine dal vivo mi aiuta a decidere. Martedì mattina va bene, porto anche il responsabile di produzione. [FINE:VINTO] [MOOD:${Math.min(100,mood+15)}]`; }
+      mood-=3; out.push("Lo showroom è un bel posto, ma prima di muovermi voglio capire se ne vale la pena.");
+    }
     if(S.mode==="disc"){
       const k=MEDK.find(k=>(S.med[k]||0)<2);
       if(k && /\?/.test(t)){ const lv=q>=2?2:1; mood+=lv*4; out.push((lv===2?"Le spiego bene. ":"In parte sì. ")+(S.card?.[k]?.t||"")+` [MED:${k}:${lv}]`); }
