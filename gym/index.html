@@ -349,6 +349,8 @@ details.adv h2.sec:first-of-type{margin-top:8px}
 #setup:not(.p-ch) #channels button.on{background:none;color:var(--mut);font-weight:400}
 #setup:not(.p-persona) #pdet{display:none}
 /* titolo grande in home */
+body.on-home .top .logo{visibility:hidden}
+body.on-home .brand{padding-top:4px}
 .brand{text-align:center;padding:30px 0 10px}
 .brand .wm{font-family:"Russo One",var(--hd);font-size:clamp(56px,11vw,104px);font-weight:400;line-height:1;letter-spacing:.02em;display:inline-block;transform:skewX(-8deg);background:linear-gradient(180deg,#fff 45%,#c3d3e8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 0 #0b2a50) drop-shadow(0 14px 30px #2997ff55)}
 .brand .wm em{font-style:normal;margin-left:.2em;background:linear-gradient(180deg,#ffc08f,#ff7a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -375,7 +377,7 @@ details.adv h2.sec:first-of-type{margin-top:8px}
 }
 </style>
 </head>
-<body>
+<body class="on-home">
 <canvas id="confetti"></canvas>
 <div class="modal hidden" id="verdictModal"><div class="mbox">
   <h3 class="mt">Il tuo verdetto</h3>
@@ -1626,7 +1628,7 @@ function confetti(){
   const P=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:4+Math.random()*6,c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4}));
   let f=0; (function step(){ x.clearRect(0,0,c.width,c.height); P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<160) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
 }
-function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); if(id==="home") renderHome(); }
+function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); // in home il titolo grande sostituisce il logo if(id==="home") renderHome(); }
 
 /* ---------------- DEMO: risposte simulate, nessuna AI collegata ---------------- */
 function demoSample(){
