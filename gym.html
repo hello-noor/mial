@@ -339,6 +339,15 @@ details.adv h2.sec:first-of-type{margin-top:8px}
 .logo .demo-pill{display:inline-block;margin:0 0 0 8px;font-size:12px;text-transform:none;letter-spacing:.06em;vertical-align:6px}
 .icl span{font-size:13px;padding:5px 11px;gap:7px;color:var(--tx)}
 .demo-pill{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:99px;background:#2a1a0e;border:1px solid #6b3f1c;color:var(--acc2);font-size:12px;font-weight:700;letter-spacing:.06em;vertical-align:middle}
+/* percorso guidato */
+.wz{display:flex;align-items:center;gap:12px;margin:12px 0 4px;font-size:13px;color:var(--mut2)}
+.wzbar{flex:1;max-width:260px;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.wzbar i{display:block;height:100%;background:linear-gradient(90deg,#1a5fb8,#2997ff);transition:width .4s}
+.wzhint{color:var(--mut);font-size:13px;margin:18px 0 0}
+/* finché non scegli, nulla appare selezionato */
+#setup:not(.p-mode) .mode.sel,#setup:not(.p-src) .so.sel,#setup:not(.p-lang) .lg.sel,#setup:not(.p-persona) .pc.sel,#setup:not(.p-product) #products .chip.sel,#setup:not(.p-diff) #presets .chip.sel{border-color:var(--line);box-shadow:none;background:var(--panel2);color:inherit;font-weight:inherit}
+#setup:not(.p-ch) #channels button.on{background:none;color:var(--mut);font-weight:400}
+#setup:not(.p-persona) #pdet{display:none}
 /* wordmark da gioco */
 .logo{gap:12px}
 .logo .m{width:46px;height:46px;border-radius:14px;color:#fff;font-size:24px;transform:rotate(-8deg);box-shadow:0 10px 26px -8px #2997ffaa,inset 0 1px 0 #ffffff40;transition:transform .2s}
@@ -430,74 +439,70 @@ details.adv h2.sec:first-of-type{margin-top:8px}
 
 <!-- ================= SETUP ================= -->
 <section id="setup" class="hidden">
-  <div class="stepper"><span class="on">1 · Scenario</span><i></i><span>2 · Difficoltà</span></div>
-  <div class="modes" id="modes"></div>
+  <div class="wz"><div class="wzbar"><i id="wzBar"></i></div><span id="wzLab"></span></div>
 
-  <h2 class="sec"><span class="n">1</span>Il cliente</h2>
-  <div class="carousel" id="carousel"></div>
-  <div class="card" id="pdet"></div>
+  <div class="wstep" data-s="0">
+    <h2 class="sec"><span data-ic="target"></span>Che allenamento vuoi fare?</h2>
+    <div class="modes" id="modes"></div>
+    <h2 class="sec"><span data-ic="user"></span>Il cliente</h2>
+    <div class="carousel" id="carousel"></div>
+    <div class="card" id="pdet"></div>
+  </div>
 
-  <details class="adv" id="adv" open><summary><span data-ic="sliders"></span>Personalizza lo scenario <small>fonte, canale, lingua, prodotto</small></summary>
-  <div class="row" style="margin-top:4px"><span class="muted">Scegli tu ogni voce qui sotto, oppure</span><button class="btn ghost sm" id="rndScen" data-ic="dice">Scegli a caso per me</button></div>
-  <h2 class="sec"><span class="n">2</span>Da dove arriva il contatto</h2>
-  <div class="src" id="sources"></div>
-  <div class="card" style="margin-top:10px">
-    <h3>Canale della conversazione</h3>
+  <div class="wstep" data-s="1">
+    <h2 class="sec"><span data-ic="inbox"></span>Da dove arriva il contatto</h2>
+    <div class="src" id="sources"></div>
+    <h2 class="sec"><span data-ic="chat"></span>Canale della conversazione</h2>
     <div class="seg" id="channels"></div>
   </div>
 
-  <h2 class="sec"><span class="n">3</span>Lingua della trattativa</h2>
-  <div class="langs" id="langs"></div>
-  <div class="row" style="margin-top:10px">
-    <span class="muted">Feedback del coach in:</span>
-    <div class="seg" id="fbLang" style="flex:1;max-width:360px"></div>
+  <div class="wstep" data-s="2">
+    <h2 class="sec"><span data-ic="globe"></span>Lingua della trattativa</h2>
+    <div class="langs" id="langs"></div>
+    <div class="row" style="margin-top:10px">
+      <span class="muted">Feedback del coach in:</span>
+      <div class="seg" id="fbLang" style="flex:1;max-width:360px"></div>
+    </div>
+    <h2 class="sec"><span data-ic="package"></span>Cosa vendi</h2>
+    <div class="row" id="products"></div>
+    <details style="margin-top:12px"><summary>Scheda prodotto (la conosce anche il cliente)</summary><div class="card kb" id="kbSetup" style="margin-top:10px"></div></details>
   </div>
 
-  <h2 class="sec"><span class="n">4</span>Cosa vendi</h2>
-  <div class="row" id="products"></div>
-  <details style="margin-top:12px"><summary>Scheda prodotto (la conosce anche il cliente)</summary><div class="card kb" id="kbSetup" style="margin-top:10px"></div></details>
-  </details>
+  <div class="wstep" data-s="3">
+    <h2 class="sec"><span data-ic="dumbbell"></span>Difficoltà</h2>
+    <div class="card">
+      <div class="gauge"><div class="num" id="gNum">45</div><div class="meta">su 100<br>Moltiplicatore XP <b id="gMul">×1.0</b></div></div>
+      <div class="row" id="presets"></div>
+      <div id="sliders"></div>
+      <div class="switch" id="hidSw"><div><b style="font-size:13.5px"><span data-ic="eye"></span> Obiezione nascosta</b><div class="muted">Il cliente ha un vero motivo che non dice: va scoperto con le domande.</div></div><div class="tg"></div></div>
+    </div>
+  </div>
+
+  <div class="wstep" data-s="4">
+    <div id="objSec">
+    <h2 class="sec"><span data-ic="shield"></span>Obiezioni <span class="r"><button class="btn ghost sm" id="allObj">Tutte</button><button class="btn ghost sm" id="noneObj">Nessuna</button><button class="btn ghost sm" id="rndObj" data-ic="dice">3</button></span></h2>
+    <div class="card">
+      <div id="objList"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <input type="text" id="newObj" placeholder="Obiezione raccolta sul campo…">
+        <button class="btn sm" id="addObj">Aggiungi</button>
+      </div>
+    </div>
+    </div>
+    <div id="discInfo" class="hidden"></div>
+    <h2 class="sec"><span data-ic="doc"></span>Contesto di questa trattativa</h2>
+    <div class="card">
+      <textarea id="extra" rows="2" placeholder="Facoltativo: es. ha un preventivo concorrente a −18%…"></textarea>
+      <p class="muted" style="margin:8px 0 0">I dati interni Massini (prezzi, consegne, garanzia) si impostano una volta sola in <b>Impostazioni</b>.</p>
+    </div>
+  </div>
+
+  <p class="wzhint"><span data-ic="dice"></span> Se non scegli, al passo successivo scelgo io a caso.</p>
 
   <div class="dock"><div class="in">
     <div class="sum" id="dockSum"></div>
     <button class="btn ghost sm" id="sBack" aria-label="Indietro" data-ic="left"></button>
-    <button class="btn ghost" id="toStep2" data-ic="sliders">Difficoltà</button>
-    <button class="btn" id="quickStart">Inizia</button>
-  </div></div>
-</section>
-
-<section id="setup2" class="hidden">
-  <div class="stepper"><span>1 · Scenario</span><i></i><span class="on">2 · Difficoltà</span></div>
-  <h2 class="sec"><span class="n">5</span>Difficoltà</h2>
-  <div class="card">
-    <div class="gauge"><div class="num" id="gNum">45</div><div class="meta">su 100<br>Moltiplicatore XP <b id="gMul">×1.0</b></div></div>
-    <div class="row" id="presets"></div>
-    <div id="sliders"></div>
-    <div class="switch" id="hidSw"><div><b style="font-size:13.5px"><span data-ic="eye"></span> Obiezione nascosta</b><div class="muted">Il cliente ha un vero motivo che non dice: va scoperto con le domande.</div></div><div class="tg"></div></div>
-  </div>
-
-  <div id="objSec">
-  <h2 class="sec"><span class="n">6</span>Obiezioni <span class="r"><button class="btn ghost sm" id="allObj">Tutte</button><button class="btn ghost sm" id="noneObj">Nessuna</button><button class="btn ghost sm" id="rndObj" data-ic="dice">3</button></span></h2>
-  <div class="card">
-    <div id="objList"></div>
-    <div style="display:flex;gap:8px;margin-top:12px">
-      <input type="text" id="newObj" placeholder="Obiezione raccolta sul campo…">
-      <button class="btn sm" id="addObj">Aggiungi</button>
-    </div>
-  </div>
-
-  </div>
-  <div id="discInfo" class="hidden"></div>
-
-  <h2 class="sec"><span class="n">7</span>Contesto di questa trattativa</h2>
-  <div class="card">
-    <textarea id="extra" rows="2" placeholder="Facoltativo: es. ha un preventivo concorrente a −18%…"></textarea>
-    <p class="muted" style="margin:8px 0 0">I dati interni Massini (prezzi, consegne, garanzia) si impostano una volta sola in <b>Impostazioni</b>.</p>
-  </div>
-
-  <div class="dock"><div class="in">
-    <div class="sum" id="dockSum2"></div>
-    <button class="btn ghost sm" id="s2Back" aria-label="Indietro" data-ic="left"></button>
+    <button class="btn" id="wzNext">Avanti</button>
     <button class="btn" id="start">Inizia</button>
   </div></div>
 </section>
@@ -1002,7 +1007,7 @@ function renderHome(){
   $("bAll").textContent=showAllB?"Comprimi":"Vedi tutti";
   $("bCount").textContent=`${g.badges.length}/${BADGES.length}`;
   $("gallery").innerHTML=PERSONAS.map(p=>{const c=g.clients[p.id]||{};return `<div class="gc" data-id="${p.id}">${avatar(p.av,c.best>=70?80:c.best?55:50,72)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span>${icsHTML(p)}${stars(c.stars||0)}${c.best?`<span style="margin-top:2px">record ${c.best}</span>`:""}</div>`;}).join("");
-  $("gallery").querySelectorAll(".gc").forEach(el=>el.onclick=()=>{setPersona(PERSONAS.find(p=>p.id===el.dataset.id));openSetup();});
+  $("gallery").querySelectorAll(".gc").forEach(el=>el.onclick=()=>{setPersona(PERSONAS.find(p=>p.id===el.dataset.id));openSetup(["persona"]);});
   $("hist").innerHTML=!h.length?'<p class="muted" style="margin:0">Nessun allenamento ancora: inizia la prima trattativa!</p>':
     h.slice(-10).reverse().map(x=>`<div class="hist"><span>${x.date} · ${ic(x.mode==="disc"?"search":"target")} ${x.flag||""} <b>${esc(x.persona)}</b> <span class="muted">${esc(x.src||"")} · diff. ${x.diff??"—"}</span></span><span><b>${x.score}</b> · ${esc(x.label||x.esito)}${x.xp?` · <span style="color:var(--xp)">+${x.xp} XP</span>`:""}</span></div>`).join("");
 }
@@ -1018,11 +1023,31 @@ function confirmLeave(){ return true; }
 $("repName").oninput=e=>{store.set("rep",e.target.value);$("hName").textContent=e.target.value||"commerciale";};
 
 /* ---------------- SETUP ---------------- */
-function openSetup(){ show("setup"); renderSetup(); window.scrollTo(0,0); }
-$("sBack").onclick=()=>show("home");
-$("rndScen").onclick=()=>{ S.src=pick(SOURCES).id; S.ch=pick(CHANNELS).id; S.product=pick(KB).id; renderSources(); renderProducts(); renderDock(); };
-$("toStep2").onclick=()=>show("setup2");
-$("s2Back").onclick=()=>show("setup");
+function openSetup(picked=[]){ S.picked=new Set(picked); $("setup").className=picked.map(k=>"p-"+k).join(" "); show("setup"); renderSetup(); goStep(0); }
+/* percorso guidato: un passo alla volta; quello che non scegli viene estratto a caso */
+const WZ=["Allenamento e cliente","Contatto e canale","Lingua e prodotto","Difficoltà","Obiezioni e contesto"];
+const PICK_IDS=[["modes","mode"],["carousel","persona"],["sources","src"],["channels","ch"],["langs","lang"],["products","product"],["presets","diff"],["sliders","diff"],["hidSw","diff"],["objList","obj"],["allObj","obj"],["noneObj","obj"],["rndObj","obj"],["addObj","obj"]];
+let wz=0;
+const markPick=e=>{ for(const [id,k] of PICK_IDS) if(e.target.closest("#"+id)){ S.picked.add(k); $("setup").classList.add("p-"+k); } };
+$("setup").addEventListener("click",markPick,true); $("setup").addEventListener("input",markPick,true);
+function randomizeStep(n){
+  const got=[], un=k=>!S.picked.has(k);
+  if(n===0){ if(un("mode")){ S.mode=pick(["close","disc"]); got.push(S.mode==="disc"?"Discovery":"Chiusura"); } if(un("persona")){ setPersona(pick(PERSONAS)); got.push(S.persona.name); } }
+  if(n===1){ if(un("src")){ S.src=pick(SOURCES).id; got.push(SRC().l); } if(un("ch")){ S.ch=pick(CHANNELS).id; got.push(CHANNELS.find(c=>c.id===S.ch).l); } }
+  if(n===2){ if(un("lang")){ S.lang=Math.random()<.5?"it":pick(LANGS).id; if(S.base&&!S.base.gen) S.persona=localize(S.base,S.lang); got.push(L().n); } if(un("product")){ S.product=pick(KB).id; got.push(kb().name); } }
+  if(n===3&&un("diff")){ const k=pick(Object.keys(PRESETS)), v=PRESETS[k]; S.preset=k; SL.forEach(s=>S.diff[s.k]=Math.max(0,Math.min(100,v+rI(17)-8))); S.hid=v>=60; got.push("difficoltà "+k); }
+  if(n===4&&un("obj")&&S.mode!=="disc"){ rndObjs(3+rI(2)); got.push(S.selected.size+" obiezioni"); }
+  ({0:["mode","persona"],1:["src","ch"],2:["lang","product"],3:["diff"],4:["obj"]})[n].forEach(k=>{S.picked.add(k);$("setup").classList.add("p-"+k);}); renderSetup();
+  if(got.length) toast(ic("dice"),"Scelto a caso: "+got.join(", "));
+}
+function goStep(n){
+  wz=n; document.querySelectorAll("#setup .wstep").forEach(e=>e.classList.toggle("hidden",+e.dataset.s!==n));
+  $("wzBar").style.width=((n+1)/WZ.length*100)+"%"; $("wzLab").textContent=`Passo ${n+1} di ${WZ.length} · ${WZ[n]}`;
+  const last=n===WZ.length-1; $("wzNext").classList.toggle("hidden",last); $("start").classList.toggle("hidden",!last);
+  window.scrollTo(0,0);
+}
+$("wzNext").onclick=()=>{ randomizeStep(wz); goStep(wz+1); };
+$("sBack").onclick=()=>wz?goStep(wz-1):show("home");
 function setPersona(p){ S.base=p; S.persona=localize(p,S.lang); S.product=p.prod; renderSetup(); }
 function renderSetup(){ renderMode(); renderCarousel(); renderPdet(); renderSources(); renderLangs(); renderProducts(); renderDiff(); renderObjs(); renderDock(); }
 function renderCarousel(){
@@ -1100,8 +1125,7 @@ $("internal").oninput=e=>store.set("internal",e.target.value);
 function renderDock(){
   const p=S.persona, ok=p&&(S.mode==="disc"||S.selected.size)&&sample;
   $("dockSum").innerHTML=p?`${avatar(p.av,55,40)}<div><b>${esc(p.name)} · ${L().f} · ${SRC().i}</b><span>${kb().name} · diff. ${diffScore()} · ×${mult()} XP · ${S.mode==="disc"?"Discovery":S.selected.size+" obiezioni"}</span></div>`:`<div><b>Scegli un cliente</b><span>poi configura lo scenario</span></div>`;
-  $("dockSum2").innerHTML=$("dockSum").innerHTML;
-  $("toStep2").disabled=!p; $("start").disabled=!ok; $("quickStart").disabled=!ok; $("hRandom").disabled=!sample;
+  $("start").disabled=!ok; $("hRandom").disabled=!sample;
 }
 function surprise(){
   S.lang=Math.random()<.5?"it":pick(["en","pt","en","pt","es","fr","de"]);
@@ -1251,12 +1275,11 @@ async function startChat(){
   if(disc){
     const w=addSys("sys",'<span class="dots"><i></i><i></i><i></i></span> Preparo lo scenario del cliente…'); lock(true);
     const ok=await genCard(); w.remove(); lock(false);
-    if(!ok){ toast(ic("alert"),"Scenario non generato: riprova"); show("setup2"); return; }
+    if(!ok){ toast(ic("alert"),"Scenario non generato: riprova"); openSetup(); return; }
   }
   clientTurn(true);
 }
 $("start").onclick=startChat;
-$("quickStart").onclick=startChat;
 $("quitBtn").onclick=()=>{show("home");};
 $("endBtn").onclick=()=>{ if(S.busy) return; if(repTurns()<2){ addSys("sys","Scambia almeno un paio di battute prima di chiedere la valutazione."); return; } S.mode==="disc"?openVerdict():evaluate(); };
 
@@ -1354,7 +1377,7 @@ function renderReport(r){
 }
 $("copyRep").onclick=async()=>{try{await navigator.clipboard.writeText(lastReport);$("copyRep").textContent="Copiato ✓";}catch(e){$("copyRep").textContent="Copia non riuscita";}setTimeout(()=>$("copyRep").textContent="Copia report",1800);};
 $("again").onclick=startChat;
-$("newSet").onclick=openSetup;
+$("newSet").onclick=()=>openSetup();
 $("toHome").onclick=()=>show("home");
 
 /* ---------------- MODALITÀ E DISCOVERY MEDDPICC ---------------- */
@@ -1579,7 +1602,7 @@ function acceptQuest(q){
   if(c.src) S.src=c.src;
   setPersona(S.base&&!S.base.gen?S.base:pick(PERSONAS));
   if(c.diff){ SL.forEach(s=>S.diff[s.k]=Math.max(0,Math.min(100,c.diff+rI(15)-7))); S.preset=""; }
-  openSetup();
+  openSetup(["mode","src","lang","diff"].filter(k=>c[k]!==undefined));
 }
 
 /* ---------------- FX ---------------- */
@@ -1593,7 +1616,7 @@ function confetti(){
   const P=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:4+Math.random()*6,c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4}));
   let f=0; (function step(){ x.clearRect(0,0,c.width,c.height); P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<160) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
 }
-function show(id){ ["home","setup","setup2","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); if(id==="home") renderHome(); }
+function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); if(id==="home") renderHome(); }
 
 /* ---------------- DEMO: risposte simulate, nessuna AI collegata ---------------- */
 function demoSample(){
