@@ -179,7 +179,7 @@ var toastTimer=null;
 var tEl=document.createElement('div');tEl.className='toast';tEl.setAttribute('role','status');tEl.hidden=true;document.body.appendChild(tEl);
 
 /* ---------- date e orari ---------- */
-var DEFAULT_TAGS=['Audit','Ascolto','Riunione','Affiancamento marketing','Vendite','Produzione','Sito web','Sales Gym','Report','Formazione'];
+var DEFAULT_TAGS=['Audit','Riunione','Affiancamento marketing','Sales','Produzione','Sito web','Report','Formazione'];
 function normState(){var s=state.settings;if(!s.tagsInit){s.tags=(s.tags&&s.tags.length)?s.tags:DEFAULT_TAGS.slice();s.tagsInit=true}s.tags=s.tags||[];s.sites=s.sites||[];s.radius=+s.radius||250;if(!s.sitesInit){[{name:'Massini Bastia',lat:43.05281,lng:12.54444},{name:'Massini Tordandrea',lat:43.03847,lng:12.56242}].forEach(function(d){if(!s.sites.some(function(x){return x.name===d.name}))s.sites.push(d)});s.sitesInit=true}if(state.active&&state.active.gpend)state.active.gpend=false}
 function saveQuiet(){try{localStorage.setItem(LS,JSON.stringify(state))}catch(e){}}
 function pad(n){return String(n).padStart(2,'0')}
