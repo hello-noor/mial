@@ -437,7 +437,8 @@ details.adv h2.sec:first-of-type{margin-top:8px}
   <div class="carousel" id="carousel"></div>
   <div class="card" id="pdet"></div>
 
-  <details class="adv" id="adv"><summary><span data-ic="sliders"></span>Personalizza lo scenario <small>fonte, canale, lingua, prodotto</small></summary>
+  <details class="adv" id="adv" open><summary><span data-ic="sliders"></span>Personalizza lo scenario <small>fonte, canale, lingua, prodotto</small></summary>
+  <div class="row" style="margin-top:4px"><span class="muted">Scegli tu ogni voce qui sotto, oppure</span><button class="btn ghost sm" id="rndScen" data-ic="dice">Scegli a caso per me</button></div>
   <h2 class="sec"><span class="n">2</span>Da dove arriva il contatto</h2>
   <div class="src" id="sources"></div>
   <div class="card" style="margin-top:10px">
@@ -825,6 +826,7 @@ const CHANNELS=[
   {id:"phone",i:ic("phone"),l:"Telefono",p:"La conversazione è una telefonata: frasi parlate e brevi."},
   {id:"video",i:ic("video"),l:"Videocall",p:"La conversazione è una videochiamata già fissata."},
   {id:"visit",i:ic("factory"),l:"Visita",p:"Il venditore è in visita da te in azienda, di persona."},
+  {id:"showroom",i:ic("star"),l:"Showroom Massini",p:"La conversazione avviene nello showroom Massini a Tordandrea di Assisi: sei in visita, vedi le macchine in funzione e parli di persona con il venditore."},
   {id:"chat",i:ic("chat"),l:"Email/WhatsApp",p:"La conversazione avviene per messaggi scritti (email o WhatsApp): scrivi come in un messaggio, a volte in modo stringato."}
 ];
 
@@ -1018,6 +1020,7 @@ $("repName").oninput=e=>{store.set("rep",e.target.value);$("hName").textContent=
 /* ---------------- SETUP ---------------- */
 function openSetup(){ show("setup"); renderSetup(); window.scrollTo(0,0); }
 $("sBack").onclick=()=>show("home");
+$("rndScen").onclick=()=>{ S.src=pick(SOURCES).id; S.ch=pick(CHANNELS).id; S.product=pick(KB).id; renderSources(); renderProducts(); renderDock(); };
 $("toStep2").onclick=()=>show("setup2");
 $("s2Back").onclick=()=>show("setup");
 function setPersona(p){ S.base=p; S.persona=localize(p,S.lang); S.product=p.prod; renderSetup(); }
