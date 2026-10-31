@@ -192,7 +192,10 @@ th{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;le
 tfoot td{font-weight:700;border-bottom:0}
 
 /* Moduli */
-.qf{display:flex;flex-direction:column;gap:14px}
+.qf{display:flex;flex-direction:column;gap:12px}
+.fblock{background:var(--surface-2);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.fblock .field input,.fblock .field select,.fblock .field textarea{background:var(--surface)}
+.fblock .sub{margin-top:2px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .seg button{border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 6px;font-size:15px;white-space:nowrap;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink)}
 .seg button svg{width:20px;height:20px}
@@ -459,14 +462,16 @@ function quickForm(){
   var q=ui.q,t=todayIso(),y=addDays(t,-1);
   var seg=['sede','smart'].map(function(k){return '<button type="button" class="'+k+'" data-a="qtype" data-v="'+k+'" aria-pressed="'+(q.type===k)+'">'+ICON[k]+TYPE[k]+'</button>'}).join('');
   var pauses=[0,15,30,45,60,90].map(function(p){return '<option value="'+p+'"'+(+q.pause===p?' selected':'')+'>'+(p?p+' min':'Nessuna')+'</option>'}).join('');
-  return '<div class="qf"><div class="seg">'+seg+'</div>'
-   +(q.type==='sede'?siteSelect('q-site','data-q="site"',q.site):'')
-   +'<div class="presets"><button type="button" class="chip" data-a="qdate" data-v="'+t+'" aria-pressed="'+(q.date===t)+'">Oggi</button><button type="button" class="chip" data-a="qdate" data-v="'+y+'" aria-pressed="'+(q.date===y)+'">Ieri</button></div>'
-   +'<div class="field"><label for="q-date">Giorno</label><input id="q-date" type="date" data-q="date" value="'+q.date+'"></div>'
-   +'<div class="presets"><button type="button" class="chip" data-a="qpreset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="qpreset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="qpreset" data-v="pm">Pomeriggio 14–18</button></div>'
+  var presets=[['day','Giornata 9–18'],['am','Mattina 9–13'],['pm','Pomeriggio 14–18'],['night','Serata 20–24']].map(function(p){return '<button type="button" class="chip" data-a="qpreset" data-v="'+p[0]+'">'+p[1]+'</button>'}).join('');
+  var quando='<div class="fblock"><p class="sub">Quando</p><div class="presets"><button type="button" class="chip" data-a="qdate" data-v="'+t+'" aria-pressed="'+(q.date===t)+'">Oggi</button><button type="button" class="chip" data-a="qdate" data-v="'+y+'" aria-pressed="'+(q.date===y)+'">Ieri</button></div>'
+   +'<div class="field"><label for="q-date">Giorno</label><input id="q-date" type="date" data-q="date" value="'+q.date+'"></div></div>';
+  var dove=q.type==='sede'?(siteSelect('q-site','data-q="site"',q.site)?'<div class="fblock"><p class="sub">Dove</p>'+siteSelect('q-site','data-q="site"',q.site)+'</div>':''):'';
+  var orario='<div class="fblock"><p class="sub">Orario</p><div class="presets">'+presets+'</div>'
    +'<div class="two"><div class="field"><label for="q-start">Inizio</label><input id="q-start" type="time" data-q="start" value="'+q.start+'"></div><div class="field"><label for="q-end">Fine</label><input id="q-end" type="time" data-q="end" value="'+q.end+'"></div></div>'
-   +'<div class="two" style="align-items:flex-end"><div class="field"><label for="q-pause">Pausa</label><select id="q-pause" data-q="pause">'+pauses+'</select></div><div class="dur" id="qdur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:10px">'+durText(q)+'</div></div>'
-   +'<div class="field"><label>Cosa hai fatto</label>'+tagChips(q.tags,'qtag')+'</div><div class="field"><label for="q-note">Dettagli (facoltativo)</label><textarea id="q-note" data-q="note" rows="2" placeholder="Es. audit marketing">'+esc(q.note)+'</textarea></div>'
+   +'<div class="two" style="align-items:flex-end"><div class="field"><label for="q-pause">Pausa</label><select id="q-pause" data-q="pause">'+pauses+'</select></div><div class="dur" id="qdur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:12px">'+durText(q)+'</div></div></div>';
+  var cosa='<div class="fblock"><p class="sub">Cosa hai fatto</p>'+tagChips(q.tags,'qtag')
+   +'<div class="field"><label for="q-note">Dettagli (facoltativo)</label><textarea id="q-note" data-q="note" rows="2" placeholder="Es. audit marketing">'+esc(q.note)+'</textarea></div></div>';
+  return '<div class="qf"><div class="seg">'+seg+'</div>'+quando+dove+orario+cosa
    +'<button class="save '+q.type+'" data-a="qsave">Salva giornata</button></div>';
 }
 function recCard(){
@@ -585,7 +590,7 @@ function formModal(){
    +'<div class="seg">'+seg+'</div>'
    +'<div class="field"><label for="f-date">Giorno</label><input id="f-date" type="date" data-f="date" value="'+f.date+'"></div>'
    +(f.type==='sede'?siteSelect('f-site','data-f="site"',f.site):'')
-   +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button></div>'
+   +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button><button type="button" class="chip" data-a="preset" data-v="night">Serata 20–24</button></div>'
    +'<div class="two"><div class="field"><label for="f-start">Inizio</label><input id="f-start" type="time" data-f="start" value="'+f.start+'"></div><div class="field"><label for="f-end">Fine</label><input id="f-end" type="time" data-f="end" value="'+f.end+'"></div></div>'
    +'<div class="two" style="align-items:flex-end"><div class="field"><label for="f-pause">Pausa</label><select id="f-pause" data-f="pause">'+pauses+'</select></div><div class="dur" id="dur" aria-live="polite" style="flex:1;text-align:right;padding-bottom:10px">'+durText(ui.form)+'</div></div>'
    +'<div class="field"><label>Cosa hai fatto</label>'+tagChips(f.tags,'ftag')+'</div><div class="field"><label for="f-note">Dettagli (facoltativo)</label><textarea id="f-note" data-f="note" rows="2" placeholder="Es. audit marketing, incontro con il reparto vendite">'+esc(f.note)+'</textarea></div>'
@@ -598,7 +603,7 @@ function durText(f){
   if(raw<=0)return '<span class="err">Inizio e fine coincidono</span>';
   var net=raw-(+f.pause||0);
   if(net<=0)return '<span class="err">La pausa è più lunga della giornata</span>';
-  return 'Totale: '+fmtH(net)+(toMin(f.end)<toMin(f.start)?' · finisce il giorno dopo':'');
+  return 'Totale: '+fmtH(net)+(toMin(f.end)<toMin(f.start)?'<br><small>fino al giorno dopo</small>':'');
 }
 
 function settingsModal(){
@@ -724,7 +729,7 @@ function openForm(type,date,entry){
   }
   ui.modal='form';draw();
 }
-var PRESET={day:['09:00','18:00',60],am:['09:00','13:00',0],pm:['14:00','18:00',0]};
+var PRESET={day:['09:00','18:00',60],am:['09:00','13:00',0],pm:['14:00','18:00',0],night:['20:00','00:00',0]};
 
 function onClick(e){
   var scr=e.target.closest('[data-scrim]');
