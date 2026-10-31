@@ -144,6 +144,9 @@ tfoot td{font-weight:700;border-bottom:0}
 textarea.out{min-height:220px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:99px;font-weight:600;font-size:14px;z-index:20;max-width:90%}
 .noscript{padding:20px}
+.timer{font-family:var(--display);font-size:46px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.clock.sede{border-left:6px solid var(--sede)}.clock.smart{border-left:6px solid var(--smart)}
+.manual{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);flex-wrap:wrap}
 .toast[hidden]{display:none}
 .bk{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
 </style>
@@ -201,7 +204,7 @@ function initialView(){
   var ref=t<s.startDate?s.startDate:(t>s.endDate?s.endDate:t);
   var d=parse(ref);return {y:d.getFullYear(),m:d.getMonth()};
 }
-var ui={view:initialView(),filter:'all',modal:null,form:null,sform:null,confirmDel:false,toast:'',backup:null};
+var ui={view:initialView(),filter:'all',modal:null,form:null,sform:null,confirmDel:false,confirmDiscard:false,toast:'',backup:null};
 
 try{
   var raw=localStorage.getItem(LS);
@@ -213,6 +216,20 @@ function toast(msg,ms){
   tEl.textContent=msg;tEl.hidden=false;
   clearTimeout(toastTimer);
   toastTimer=setTimeout(function(){tEl.hidden=true},ms||2200);
+}
+
+function nowHM(){var d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())}
+function elapsedStr(ms){var s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h+':'+pad(m)+':'+pad(s%60)}
+function clockBlock(){
+  var a=state.active,manual='<div class="manual"><span>Aggiungi a mano</span><button class="ghost" data-a="add" data-type="sede">In sede</button><button class="ghost" data-a="add" data-type="smart">Smart</button></div>';
+  if(a){
+    var long=Date.now()-a.ts>16*3600e3;
+    return '<section class="card clock '+a.type+'" aria-label="Sessione in corso"><div class="card-h"><h2>Sessione in corso</h2><span class="pill '+a.type+'">'+TYPE[a.type]+'</span></div>'
+     +'<div class="timer" id="clock">'+elapsedStr(Date.now()-a.ts)+'</div>'
+     +'<p class="hint">Entrata alle <b>'+a.start+'</b>'+(a.date!==todayIso()?' del '+fmtShortMonth(a.date):'')+'.'+(long?' Aperta da molto: se ti sei dimenticato di chiudere, timbra l’uscita e correggi l’orario.':'')+'</p>'
+     +'<div class="actions"><button class="btn del" data-a="discard">'+(ui.confirmDiscard?'Conferma: scarta':'Scarta')+'</button><button class="btn" data-a="clockout">Timbra uscita</button></div></section>'+manual;
+  }
+  return '<div class="quick"><button class="big sede" data-a="clockin" data-type="sede">'+ICON.sede+'Timbra in sede<small>Entrata adesso</small></button><button class="big smart" data-a="clockin" data-type="smart">'+ICON.smart+'Timbra smart<small>Entrata adesso</small></button></div>'+manual;
 }
 
 function weekCard(){
@@ -301,15 +318,16 @@ function formModal(){
   var f=ui.form,editing=!!f.id;
   var seg=['sede','smart'].map(function(k){return '<button type="button" class="'+k+'" data-a="settype" data-v="'+k+'" aria-pressed="'+(f.type===k)+'">'+ICON[k]+TYPE[k]+'</button>'}).join('');
   var pauses=[0,15,30,45,60,90].map(function(p){return '<option value="'+p+'"'+(+f.pause===p?' selected':'')+'>'+(p?p+' min':'Nessuna')+'</option>'}).join('');
-  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="'+(editing?'Modifica giornata':'Nuova giornata')+'">'
-   +'<h2>'+(editing?'Modifica giornata':'Nuova giornata')+'</h2>'
+  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="'+(editing?'Modifica giornata':(f.fromClock?'Timbra uscita':'Nuova giornata'))+'">'
+   +'<h2>'+(editing?'Modifica giornata':(f.fromClock?'Timbra uscita':'Nuova giornata'))+'</h2>'
+   +(f.fromClock?'<p class="hint">Uscita alle '+f.end+'. Aggiungi la pausa se serve, poi salva.</p>':'')
    +'<div class="seg">'+seg+'</div>'
    +'<div class="field"><label for="f-date">Giorno</label><input id="f-date" type="date" data-f="date" value="'+f.date+'"></div>'
    +'<div class="presets"><button type="button" class="chip" data-a="preset" data-v="day">Giornata 9–18</button><button type="button" class="chip" data-a="preset" data-v="am">Mattina 9–13</button><button type="button" class="chip" data-a="preset" data-v="pm">Pomeriggio 14–18</button></div>'
    +'<div class="two"><div class="field"><label for="f-start">Inizio</label><input id="f-start" type="time" data-f="start" value="'+f.start+'"></div><div class="field"><label for="f-end">Fine</label><input id="f-end" type="time" data-f="end" value="'+f.end+'"></div><div class="field"><label for="f-pause">Pausa</label><select id="f-pause" data-f="pause">'+pauses+'</select></div></div>'
    +'<div class="dur" id="dur" aria-live="polite">'+durText()+'</div>'
    +'<div class="field"><label for="f-note">Cosa hai fatto (facoltativo)</label><textarea id="f-note" data-f="note" rows="2" placeholder="Es. audit marketing, incontro con il reparto vendite">'+esc(f.note)+'</textarea></div>'
-   +'<div class="actions">'+(editing?'<button class="btn del" data-a="del">'+(ui.confirmDel?'Conferma eliminazione':'Elimina')+'</button>':'')+'<button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="saveentry">Salva</button></div>'
+   +'<div class="actions">'+(editing?'<button class="btn del" data-a="del">'+(ui.confirmDel?'Conferma eliminazione':'Elimina')+'</button>':'')+'<button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="saveentry">'+(f.fromClock?'Salva e chiudi':'Salva')+'</button></div>'
    +'</div></div>';
 }
 function durText(){
@@ -367,7 +385,7 @@ function draw(){
    +'<header class="top"><div><p class="kicker">Dal '+fmtLong(s.startDate)+' al '+fmtLong(s.endDate)+'</p><h1>Consulenza Massini</h1></div>'
    +'<div class="tools"><button class="ghost" data-a="summary">Riepilogo</button><button class="ghost" data-a="settings">Impostazioni</button></div></header>'
    +banner
-   +'<div class="quick"><button class="big sede" data-a="add" data-type="sede">'+ICON.sede+'In sede<small>Aggiungi giornata</small></button><button class="big smart" data-a="add" data-type="smart">'+ICON.smart+'Smart working<small>Aggiungi giornata</small></button></div>'
+   +clockBlock()
    +'<div class="cards">'+weekCard()+pilotCard()+'</div>'
    +registro()+monthTable()+'</div>';
   if(ui.modal==='form')html+=formModal();
@@ -447,6 +465,9 @@ function onClick(e){
   else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.modal='settings';draw()}
   else if(a==='savesettings'){saveSettings()}
   else if(a==='copy'){copyText()}
+  else if(a==='clockin'){var n=new Date();state.active={type:el.dataset.type,date:iso(n),start:nowHM(),ts:n.getTime()};ui.confirmDiscard=false;persist('Entrata timbrata alle '+state.active.start)}
+  else if(a==='clockout'){var ac=state.active;if(!ac)return;ui.confirmDel=false;ui.form={id:null,type:ac.type,date:ac.date,start:ac.start,end:nowHM(),pause:0,note:'',fromClock:true};ui.modal='form';draw()}
+  else if(a==='discard'){if(!ui.confirmDiscard){ui.confirmDiscard=true;draw();return}ui.confirmDiscard=false;state.active=null;persist('Sessione scartata')}
   else if(a==='csv'){downloadCsv()}
   else if(a==='bkcopy'){backupCopy()}
   else if(a==='bkrestore'){backupRestore()}
@@ -458,8 +479,9 @@ function saveEntry(){
   if(!f.start||!f.end||net<=0){toast('Controlla orari e pausa');return}
   var rec={id:f.id||newId(),type:f.type,date:f.date,start:f.start,end:f.end,pause:+f.pause||0,note:f.note.trim()};
   if(f.id){state.entries=state.entries.map(function(x){return x.id===f.id?rec:x})}else{state.entries.push(rec)}
+  if(f.fromClock)state.active=null;
   var d=parse(f.date);ui.view={y:d.getFullYear(),m:d.getMonth()};
-  ui.modal=null;persist('Giornata salvata');
+  ui.modal=null;persist(f.fromClock?'Uscita timbrata, giornata salvata':'Giornata salvata');
 }
 function saveSettings(){
   var s=ui.sform;
@@ -484,6 +506,8 @@ app.addEventListener('change',onInput);
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ui.modal){ui.modal=null;draw()}});
 
 draw();
+setInterval(function(){var c=document.getElementById('clock');if(c&&state.active)c.textContent=elapsedStr(Date.now()-state.active.ts)},1000);
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&!ui.modal)draw()});
 
 if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
 })();
