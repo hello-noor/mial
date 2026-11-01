@@ -90,6 +90,8 @@ h2{font-family:var(--display);font-size:19px;margin:0;font-weight:700;letter-spa
 /* Segmented control */
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--surface-2);border-radius:14px;padding:4px}
 .tabs button{border:0;background:transparent;border-radius:11px;padding:11px 10px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--muted)}
+.tabs4{grid-template-columns:repeat(4,1fr)}.tabs4 button{font-size:13px;padding:10px 4px}
+.banner{background:var(--smart-soft);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:14px;font-weight:600}
 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.12)}
 :root[data-theme="dark"] .tabs button[aria-selected="true"]{background:var(--line)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tabs button[aria-selected="true"]{background:var(--line)}}
@@ -196,6 +198,7 @@ tfoot td{font-weight:700;border-bottom:0}
 .fblock{background:var(--surface-2);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .fblock .field input,.fblock .field select,.fblock .field textarea{background:var(--surface)}
 .fblock .sub{margin-top:2px}
+.fblock .btn.alt{background:var(--surface)}
 .qrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .qrow input[type=date]{flex:0 0 auto;width:150px;min-width:0;border:1.5px solid transparent;background:var(--surface);border-radius:12px;padding:10px 8px;min-height:44px;font-size:14px}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -644,24 +647,31 @@ function durText(f){
 }
 
 function settingsModal(){
-  var s=ui.sform;
-  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="Impostazioni"><h2>Impostazioni</h2>'
-   +'<div class="two"><div class="field"><label for="s-start">Inizio periodo</label><input id="s-start" type="date" data-s="startDate" value="'+s.startDate+'"></div><div class="field"><label for="s-end">Fine periodo</label><input id="s-end" type="date" data-s="endDate" value="'+s.endDate+'"></div></div>'
-   +'<div class="two"><div class="field"><label for="s-ts">Giorni in sede a settimana</label><input id="s-ts" type="number" min="0" max="7" data-s="targetSede" value="'+s.targetSede+'"></div><div class="field"><label for="s-tm">Giorni smart a settimana</label><input id="s-tm" type="number" min="0" max="7" data-s="targetSmart" value="'+s.targetSmart+'"></div></div>'
-   +'<div class="field"><label for="s-rate">Tariffa giornaliera in € (facoltativa)</label><input id="s-rate" type="number" min="0" step="1" data-s="rate" value="'+s.rate+'"></div>'
-   +'<div class="field"><label for="s-offs">Ferie o giorni liberi extra (AAAA-MM-GG, separati da virgola)</label><textarea id="s-offs" rows="2" data-s="offsText" placeholder="Es. 2026-12-30, 2027-01-07">'+esc(s.offsText||'')+'</textarea></div>'
-   +'<div class="field"><label for="s-cats">Categorie delle spese (separate da virgola)</label><textarea id="s-cats" rows="2" data-s="catsText">'+esc(s.catsText||'')+'</textarea></div>'
-   +'<div class="field"><label for="s-tags">Tag per “Cosa hai fatto” (separati da virgola)</label><textarea id="s-tags" rows="3" data-s="tagsText">'+esc(s.tagsText||'')+'</textarea></div>'
-   +'<p class="hint">La tariffa serve solo a mostrare il valore delle giornate registrate. Lasciala a 0 per nasconderlo.</p>'
-   +'<div class="bk"><p class="sub">Sedi per la verifica della posizione</p>'+(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b> <span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>')
-   +'<div class="field"><label for="s-sname">Nome sede</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div>'
-   +'<button class="btn alt" data-a="geotest">Verifica dove sono adesso</button><p class="hint" id="geotest" role="status"></p>'
-   +'<button class="btn alt" data-a="siteadd">Aggiungi sede</button><p class="hint">Senza coordinate usa la tua posizione attuale: premi mentre sei nella sede. Le coordinate si copiano da Google Maps tenendo premuto sul punto.</p>'
-   +'<div class="field"><label for="s-rad">Raggio di tolleranza (metri)</label><input id="s-rad" type="number" min="50" max="2000" data-s="radius" value="'+s.radius+'"></div></div>'
-   +'<div class="bk"><div class="field"><label for="s-bk">Backup dei dati</label><textarea id="s-bk" rows="3" placeholder="Per ripristinare, incolla qui un backup"></textarea></div><div class="actions"><button class="btn" data-a="bkshare">Condividi backup</button><button class="btn alt" data-a="bkcopy">Copia testo</button></div><div class="actions"><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div><div class="field"><label for="s-bkf">Oppure ripristina da file di backup</label><input id="s-bkf" type="file" accept=".json,.txt,application/json,text/plain"></div><p class="hint">I dati stanno solo su questo telefono. Copia ogni tanto un backup e conservalo nelle note.</p></div>'
+  var s=ui.sform,t=ui.stab||'periodo';
+  var tabs=[['periodo','Periodo'],['sedi','Sedi'],['voci','Voci'],['dati','Dati']].map(function(x){return '<button role="tab" data-a="stab" data-v="'+x[0]+'" aria-selected="'+(t===x[0])+'">'+x[1]+'</button>'}).join('');
+  var body='';
+  if(t==='periodo'){
+    body='<div class="fblock"><p class="sub">Periodo</p><div class="two"><div class="field"><label for="s-start">Inizio</label><input id="s-start" type="date" data-s="startDate" value="'+s.startDate+'"></div><div class="field"><label for="s-end">Fine</label><input id="s-end" type="date" data-s="endDate" value="'+s.endDate+'"></div></div></div>'
+     +'<div class="fblock"><p class="sub">Obiettivi a settimana</p><div class="two"><div class="field"><label for="s-ts">In sede</label><input id="s-ts" type="number" min="0" max="7" data-s="targetSede" value="'+s.targetSede+'"></div><div class="field"><label for="s-tm">Smart</label><input id="s-tm" type="number" min="0" max="7" data-s="targetSmart" value="'+s.targetSmart+'"></div></div></div>'
+     +'<div class="fblock"><p class="sub">Festività e giorni liberi</p><p class="hint">Festività nazionali e Pasquetta sono già incluse. Qui aggiungi ferie o giorni liberi.</p><div class="field"><label for="s-offs">Date (AAAA-MM-GG, separate da virgola)</label><textarea id="s-offs" rows="2" data-s="offsText" placeholder="Es. 2026-12-30, 2027-01-07">'+esc(s.offsText||'')+'</textarea></div></div>'
+     +'<div class="fblock"><p class="sub">Compenso</p><div class="field"><label for="s-rate">Tariffa giornaliera in € (facoltativa)</label><input id="s-rate" type="number" min="0" step="1" data-s="rate" value="'+s.rate+'"></div><p class="hint">Serve solo a mostrare il valore delle giornate. A 0 lo nascondi.</p></div>';
+  } else if(t==='sedi'){
+    var list=(s.sites.map(function(x,i){return '<div class="row"><span><b>'+esc(x.name)+'</b><br><span class="hint">'+x.lat.toFixed(4)+', '+x.lng.toFixed(4)+'</span></span><button class="ghost" data-a="siterm" data-i="'+i+'">Rimuovi</button></div>'}).join('')||'<p class="hint">Nessuna sede salvata.</p>');
+    body='<div class="fblock"><p class="sub">Sedi salvate</p>'+list+'<button class="btn alt" data-a="geotest">Verifica dove sono adesso</button><p class="hint" id="geotest" role="status"></p></div>'
+     +'<div class="fblock"><p class="sub">Aggiungi sede</p><div class="field"><label for="s-sname">Nome</label><input id="s-sname" type="text" placeholder="Es. Massini Assisi"></div><div class="field"><label for="s-scoord">Coordinate (facoltative)</label><input id="s-scoord" type="text" placeholder="Es. 43.0707, 12.6196"></div><button class="btn alt" data-a="siteadd">Aggiungi sede</button><p class="hint">Senza coordinate usa la tua posizione attuale: premi mentre sei nella sede.</p></div>'
+     +'<div class="fblock"><div class="field"><label for="s-rad">Raggio di tolleranza (metri)</label><input id="s-rad" type="number" min="50" max="2000" data-s="radius" value="'+s.radius+'"></div></div>';
+  } else if(t==='voci'){
+    body='<div class="fblock"><p class="sub">Cosa hai fatto (tag)</p><div class="field"><label for="s-tags">Separati da virgola</label><textarea id="s-tags" rows="4" data-s="tagsText">'+esc(s.tagsText||'')+'</textarea></div></div>'
+     +'<div class="fblock"><p class="sub">Categorie spese</p><div class="field"><label for="s-cats">Separate da virgola</label><textarea id="s-cats" rows="3" data-s="catsText">'+esc(s.catsText||'')+'</textarea></div></div>';
+  } else {
+    body='<div class="fblock"><p class="sub">Esporta</p><p class="hint">Il backup contiene giornate, spese, sedi e impostazioni. I dati stanno solo su questo telefono: esportali spesso.</p>'
+     +'<div class="actions"><button class="btn" data-a="bkshare">Esporta backup</button></div>'
+     +'<div class="actions"><button class="btn alt" data-a="csv">CSV giornate</button><button class="btn alt" data-a="bkcopy">Copia testo</button></div></div>'
+     +'<div class="fblock"><p class="sub">Ripristina</p><p class="hint">Sostituisce tutti i dati attuali con quelli del backup.</p><div class="field"><label for="s-bkf">Da file</label><input id="s-bkf" type="file" accept=".json,.txt,application/json,text/plain"></div><div class="field"><label for="s-bk">Oppure incolla il testo</label><textarea id="s-bk" rows="3" placeholder="Incolla qui un backup"></textarea></div><div class="actions"><button class="btn alt" data-a="bkrestore">Ripristina da testo</button></div></div>';
+  }
+  return '<div class="scrim" data-scrim="1"><div class="sheet" role="dialog" aria-modal="true" aria-label="Impostazioni"><h2>Impostazioni</h2><div class="tabs tabs4" role="tablist">'+tabs+'</div>'+body
    +'<div class="actions"><button class="btn alt" data-a="close">Annulla</button><button class="btn" data-a="savesettings">Salva</button></div></div></div>';
 }
-
 function summaryText(){
   var s=state.settings,out=['CONSULENZA MASSINI · Registro giornate','Periodo: '+fmtLong(s.startDate)+' – '+fmtLong(s.endDate),''];
   monthKeys().forEach(function(k){
@@ -860,16 +870,18 @@ ICON.today=svgI('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>');
 ICON.cal=svgI('<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>');
 ICON.wallet=svgI('<rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18"/><path d="M16 15h2"/>');
 ICON.doc=svgI('<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>');
+ICON.share=svgI('<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>');
 ICON.gear=svgI('<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>');
 function draw(){
-  var banner='';
+  var last=state.lastBackup||0,days=Math.floor((Date.now()-last)/864e5),banner='';
+  if((state.entries.length||state.expenses.length)&&(!last||days>=7))banner='<div class="banner"><span>'+(last?'Ultimo backup '+days+' giorni fa':'Non hai ancora esportato un backup')+'</span><button class="ghost" data-a="bkshare">Esporta</button></div>';
   var s=state.settings;
   var titles={oggi:'Oggi',registro:'Registro',spese:'Spese',andamento:'Andamento'};
   var today=cap(new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long'}).format(new Date()));
   var body=ui.page==='spese'?spesePage():(ui.page==='andamento'?andamentoPage():(ui.page==='registro'?(pilotCard()+registro()+monthTable()):(recCard()+weekCard()+recentCard())));
   var html='<div class="wrap">'
    +'<header class="top"><div><p class="kicker">Timbro · '+today+'</p><h1>'+titles[ui.page]+'</h1></div>'
-   +'<div class="tools"><button class="icon-btn" data-a="'+(ui.page==='spese'?'expsummary':'summary')+'" aria-label="Riepilogo">'+ICON.doc+'</button><button class="icon-btn" data-a="settings" aria-label="Impostazioni">'+ICON.gear+'</button></div></header>'
+   +'<div class="tools"><button class="icon-btn" data-a="bkshare" aria-label="Esporta backup">'+ICON.share+'</button><button class="icon-btn" data-a="'+(ui.page==='spese'?'expsummary':'summary')+'" aria-label="Riepilogo">'+ICON.doc+'</button><button class="icon-btn" data-a="settings" aria-label="Impostazioni">'+ICON.gear+'</button></div></header>'
    +banner+body+'</div>'
    +'<nav class="nav" aria-label="Sezioni"><div class="nav-in">'+[['oggi','Oggi',ICON.today],['registro','Registro',ICON.cal],['spese','Spese',ICON.wallet],['andamento','Andamento',ICON.chart]].map(function(n){return '<button data-a="setpage" data-v="'+n[0]+'"'+(ui.page===n[0]?' aria-current="page"':'')+'>'+n[2]+'<span>'+n[1]+'</span>'+((n[0]==='oggi'&&state.active&&ui.page!=='oggi')?'<i class="badge" aria-label="sessione in corso"></i>':'')+'</button>'}).join('')+'</div></nav>';
   if(ui.modal==='form')html+=formModal();
@@ -900,6 +912,7 @@ function downloadCsv(kind){
   }catch(e){toast('Download non disponibile')}
 }
 function backupShare(){
+  state.lastBackup=Date.now();saveQuiet();
   var txt=JSON.stringify(state),name='backup-massini-'+todayIso()+'.json';
   try{
     var f=new File([txt],name,{type:'application/json'});
@@ -909,6 +922,7 @@ function backupShare(){
   backupCopy();
 }
 function backupCopy(){
+  state.lastBackup=Date.now();saveQuiet();
   var ta=document.getElementById('s-bk'),txt=JSON.stringify(state);
   function fb(){ta.value=txt;ta.focus();ta.select();toast('Copia a mano il testo qui sopra')}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){toast('Backup copiato')}).catch(fb)}else{fb()}
@@ -958,7 +972,7 @@ function onClick(e){
   else if(a==='thismonth'){ui.view=initialView();draw()}
   else if(a==='filter'){ui.filter=el.dataset.v;draw()}
   else if(a==='summary'){ui.modal='summary';draw()}
-  else if(a==='settings'){ui.sform=JSON.parse(JSON.stringify(state.settings));ui.sform.tagsText=state.settings.tags.join(', ');ui.sform.catsText=state.settings.cats.join(', ');ui.sform.offsText=(state.settings.offs||[]).join(', ');ui.modal='settings';draw()}
+  else if(a==='settings'){ui.stab='periodo';ui.sform=JSON.parse(JSON.stringify(state.settings));ui.sform.tagsText=state.settings.tags.join(', ');ui.sform.catsText=state.settings.cats.join(', ');ui.sform.offsText=(state.settings.offs||[]).join(', ');ui.modal='settings';draw()}
   else if(a==='savesettings'){saveSettings()}
   else if(a==='copy'){copyText()}
   else if(a==='setmode'){ui.mode=el.dataset.v;state.mode=ui.mode;try{localStorage.setItem(LS,JSON.stringify(state))}catch(x){}draw()}
@@ -990,6 +1004,7 @@ function onClick(e){
   else if(a==='geotest'){geoTest()}
   else if(a==='georetry'){var ac2=state.active;if(!ac2)return;ac2.gpend=true;draw();locate(ac2.ts)}
   else if(a==='siterm'){ui.sform.sites.splice(+el.dataset.i,1);draw()}
+  else if(a==='stab'){ui.stab=el.dataset.v;draw()}
   else if(a==='bkshare'){backupShare()}
   else if(a==='bkcopy'){backupCopy()}
   else if(a==='bkrestore'){backupRestore()}
