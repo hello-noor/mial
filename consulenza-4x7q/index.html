@@ -763,7 +763,7 @@ function statusCard(){
   var endS=s.targetSede*wp.wTotal,endM=s.targetSmart*wp.wTotal;
   var left='Per chiudere il periodo mancano '+gg(Math.max(0,Math.ceil(endS-st.sede.days-0.001)))+' in sede e '+gg(Math.max(0,Math.ceil(endM-st.smart.days-0.001)))+' smart.';
   var head=wp.started===0?'Parte lunedì '+shortDay(effStart()):(wp.done>=wp.total?'Periodo concluso':'Settimana '+wp.started+' di '+wp.total);
-  return '<section class="card"><div class="card-h"><h2>Come sei messo</h2><span>'+head+'</span></div>'
+  return '<section class="card"><div class="card-h"><h2>Obiettivi del periodo</h2><span>'+head+'</span></div>'
    +'<div class="hero '+hero.c+'"><b>'+hero.t+'</b><span>'+hero.s+'</span></div>'
    +goalRow('sede',st.sede.days,s.targetSede,wp)+goalRow('smart',st.smart.days,s.targetSmart,wp)
    +'<p class="hint">'+left+' La linea scura sulle barre indica dove dovresti essere oggi. Le settimane vanno da lunedì a domenica.</p></section>';
