@@ -67,9 +67,13 @@ button:active{transform:scale(.97)}
 .wrap{max-width:640px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) calc(104px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:16px}
 
 /* Intestazione */
-.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:6px 2px 2px}
-.kicker{margin:0 0 2px;font-size:13px;color:var(--muted);font-weight:600}
-h1{font-family:var(--display);font-size:32px;line-height:1.05;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
+.top{display:flex;flex-direction:column;gap:12px;padding:6px 2px 2px}
+.toprow{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.kicker{margin:0 0 4px;font-size:12px;color:var(--sede);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.01em}
+.appicon{width:36px;height:36px;border-radius:10px;box-shadow:var(--shadow)}
+.dateblock{display:flex;flex-direction:column}
+h1{font-family:var(--display);font-size:36px;line-height:1.05;margin:0;font-weight:700;letter-spacing:-.02em;text-wrap:balance}
 h2{font-family:var(--display);font-size:19px;margin:0;font-weight:700;letter-spacing:-.01em;text-wrap:balance}
 .tools{display:flex;gap:8px}
 .icon-btn{width:42px;height:42px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center;color:var(--ink)}
@@ -877,11 +881,13 @@ function draw(){
   if((state.entries.length||state.expenses.length)&&(!last||days>=7))banner='<div class="banner"><span>'+(last?'Ultimo backup '+days+' giorni fa':'Non hai ancora esportato un backup')+'</span><button class="ghost" data-a="bkshare">Esporta</button></div>';
   var s=state.settings;
   var titles={oggi:'Oggi',registro:'Registro',spese:'Spese',andamento:'Andamento'};
-  var today=cap(new Intl.DateTimeFormat('it-IT',{weekday:'long',day:'numeric',month:'long'}).format(new Date()));
+  var nowD=new Date(),dw=cap(new Intl.DateTimeFormat('it-IT',{weekday:'long'}).format(nowD)),dt=new Intl.DateTimeFormat('it-IT',{day:'numeric',month:'long'}).format(nowD);
+  var bigT=ui.page==='oggi'?dt:titles[ui.page],smallT=ui.page==='oggi'?dw:dw+' · '+dt;
   var body=ui.page==='spese'?spesePage():(ui.page==='andamento'?andamentoPage():(ui.page==='registro'?(pilotCard()+registro()+monthTable()):(recCard()+weekCard()+recentCard())));
   var html='<div class="wrap">'
-   +'<header class="top"><div><p class="kicker">Timbro · '+today+'</p><h1>'+titles[ui.page]+'</h1></div>'
-   +'<div class="tools"><button class="icon-btn" data-a="bkshare" aria-label="Esporta backup">'+ICON.share+'</button><button class="icon-btn" data-a="'+(ui.page==='spese'?'expsummary':'summary')+'" aria-label="Riepilogo">'+ICON.doc+'</button><button class="icon-btn" data-a="settings" aria-label="Impostazioni">'+ICON.gear+'</button></div></header>'
+   +'<header class="top"><div class="toprow"><div class="brand"><img class="appicon" src="icon-192.png" alt=""><span>Timbro</span></div>'
+   +'<div class="tools"><button class="icon-btn" data-a="bkshare" aria-label="Esporta backup">'+ICON.share+'</button><button class="icon-btn" data-a="'+(ui.page==='spese'?'expsummary':'summary')+'" aria-label="Riepilogo">'+ICON.doc+'</button><button class="icon-btn" data-a="settings" aria-label="Impostazioni">'+ICON.gear+'</button></div></div>'
+   +'<div class="dateblock"><p class="kicker">'+smallT+'</p><h1>'+bigT+'</h1></div></header>'
    +banner+body+'</div>'
    +'<nav class="nav" aria-label="Sezioni"><div class="nav-in">'+[['oggi','Oggi',ICON.today],['registro','Registro',ICON.cal],['spese','Spese',ICON.wallet],['andamento','Andamento',ICON.chart]].map(function(n){return '<button data-a="setpage" data-v="'+n[0]+'"'+(ui.page===n[0]?' aria-current="page"':'')+'>'+n[2]+'<span>'+n[1]+'</span>'+((n[0]==='oggi'&&state.active&&ui.page!=='oggi')?'<i class="badge" aria-label="sessione in corso"></i>':'')+'</button>'}).join('')+'</div></nav>';
   if(ui.modal==='form')html+=formModal();
