@@ -372,6 +372,12 @@ body.demo .compose,body.demo #showBtn,body.demo #cGen{display:none}
 .conseq b{color:var(--tx)}
 .conseq.ok{border-left-color:var(--ok)}.conseq.mid{border-left-color:var(--mid)}.conseq.ko{border-left-color:var(--ko)}
 .demo-note{margin:10px 0 0;font-size:13px}
+.gc.locked,.pc.locked{cursor:not-allowed;background:var(--bg2);border-style:dashed}
+.gc.locked:hover,.pc.locked:hover{transform:none;border-color:var(--line)}
+.locked .av{opacity:.45;filter:grayscale(.7)}
+.locked b{color:var(--mut2)}
+.locked .lk{display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px;font-size:12px;color:var(--mut2)}
+.locked .lk svg{margin:0;width:13px;height:13px}
 /* dashboard titolare */
 .dhead h1{font-family:var(--hd);font-size:26px;margin:14px 0 4px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
 .dhead h1 .demo-pill{margin:0}
@@ -643,7 +649,7 @@ button.dcard:hover,button.dcard:focus-visible{border-color:var(--blu)}
    mftecno.com (ottobre 2026). Integrare con i dati interni.
    ===================================================================== */
 /* ---------------- ICONE (SVG, stile lineare) ---------------- */
-const IC={play:'<path d="M7 4v16l13-8z"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/>',
+const IC={lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',play:'<path d="M7 4v16l13-8z"/>',dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor"/>',
 trophy:'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',users:'<circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/>',
 clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
 sparkles:'<path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9zM19 14v6M16 17h6"/>',doc:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
@@ -1093,8 +1099,8 @@ function renderHome(){
   $("badges").innerHTML=shown.map(b=>`<div class="bdg ${g.badges.includes(b.id)?'':'off'}" title="${esc(b.d)}"><span class="i">${b.i}</span><b>${b.n}</b><div style="font-size:12px;color:var(--mut);margin-top:2px">${b.d}</div></div>`).join("");
   $("bAll").textContent=showAllB?"Comprimi":"Vedi tutti";
   $("bCount").textContent=`${g.badges.length}/${BADGES.length}`;
-  $("gallery").innerHTML=PERSONAS.map(p=>{const c=g.clients[p.id]||{};return `<div class="gc" data-id="${p.id}">${avatar(p.av,c.best>=70?80:c.best?55:50,72)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span>${icsHTML(p)}${stars(c.stars||0)}${c.best?`<span style="margin-top:2px">record ${c.best}</span>`:""}</div>`;}).join("");
-  $("gallery").querySelectorAll(".gc").forEach(el=>el.onclick=()=>{setPersona(PERSONAS.find(p=>p.id===el.dataset.id));openSetup(["persona"]);});
+  $("gallery").innerHTML=PERSONAS.map(p=>{const c=g.clients[p.id]||{};return `<div class="gc" data-id="${p.id}">${avatar(p.av,c.best>=70?80:c.best?55:50,72)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span>${icsHTML(p)}${stars(c.stars||0)}${c.best?`<span style="margin-top:2px">record ${c.best}</span>`:""}</div>`;}).join("")+LOCKED.map(p=>`<div class="gc locked" aria-disabled="true">${avatar(p.av,50,72)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span>${icsHTML(p)}<span class="lk">${ic("lock")} Versione completa</span></div>`).join("");
+  $("gallery").querySelectorAll(".gc:not(.locked)").forEach(el=>el.onclick=()=>{setPersona(PERSONAS.find(p=>p.id===el.dataset.id));openSetup(["persona"]);});
   $("hist").innerHTML=!h.length?'<p class="muted" style="margin:0">Nessun allenamento ancora: inizia la prima trattativa!</p>':
     h.slice(-10).reverse().map(x=>`<div class="hist"><span>${x.date} · ${ic(x.mode==="disc"?"search":"target")} ${x.flag||""} <b>${esc(x.persona)}</b> <span class="muted">${esc(x.src||"")} · diff. ${x.diff??"—"}</span></span><span><b>${x.score}</b> · ${esc(x.label||x.esito)}${x.xp?` · <span style="color:var(--xp)">+${x.xp} XP</span>`:""}</span></div>`).join("");
 }
@@ -1140,7 +1146,7 @@ function renderSetup(){ renderMode(); renderCarousel(); renderPdet(); renderSour
 function renderCarousel(){
   const g=G();
   $("carousel").innerHTML=`<button class="pc special" id="cRnd"><span class="i">${ic("dice")}</span><b>Cliente a caso</b><span>tra i ${PERSONAS.length} tipo</span></button><button class="pc special" id="cGen"><span class="i">${ic("sparkles")}</span><b>Genera nuovo</b><span>caratteristiche miste</span></button>`+
-    PERSONAS.map(p=>{const lp=S.base?.id===p.id?S.persona:localize(p,S.lang); if(S.base?.id!==p.id && lp.localized) lp.name=p.name; return `<button class="pc ${S.base?.id===p.id?'sel':''}" data-id="${p.id}">${avatar(p.av,55,64)}<b>${esc(S.base?.id===p.id?S.persona.name:p.name)}</b><span>${esc(p.role)}</span>${stars(g.clients[p.id]?.stars||0)}</button>`;}).join("");
+    PERSONAS.map(p=>{const lp=S.base?.id===p.id?S.persona:localize(p,S.lang); if(S.base?.id!==p.id && lp.localized) lp.name=p.name; return `<button class="pc ${S.base?.id===p.id?'sel':''}" data-id="${p.id}">${avatar(p.av,55,64)}<b>${esc(S.base?.id===p.id?S.persona.name:p.name)}</b><span>${esc(p.role)}</span>${stars(g.clients[p.id]?.stars||0)}</button>`;}).join("")+LOCKED.map(p=>`<button class="pc locked" disabled>${avatar(p.av,50,64)}<b>${esc(p.name)}</b><span>${esc(p.role)}</span><span class="lk">${ic("lock")} Versione completa</span></button>`).join("");
   $("carousel").querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>setPersona(PERSONAS.find(p=>p.id===b.dataset.id)));
   $("cRnd").onclick=()=>{ setPersona(pick(PERSONAS)); scrollSel(); };
   $("cGen").onclick=()=>setPersona(generatePersona(S.lang));
@@ -1707,7 +1713,7 @@ function confetti(){
 function show(id){ ["home","setup","chat","report","dash"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); /* in home il titolo grande sostituisce il logo */ if(id==="home") renderHome(); }
 
 /* ---------------- DEMO GUIDATA: dialoghi scritti, tre risposte a turno, nessuna AI ---------------- */
-let DEMO=false;
+let DEMO=false, LOCKED=[];
 const k_={a:"ascolto_domande",p:"conoscenza_prodotto",v:"valore_vs_prezzo",n:"prove_e_numeri",c:"chiusura_prossimo_passo"};
 const SCR={
  dir:{objs:["Se si ferma la linea, chi mi risponde?","Un solo fornitore per tutto l'impianto è un rischio","Mi servono numeri, non promesse"],
@@ -2039,10 +2045,10 @@ else if(!store.get("rep","")) $("setModal").classList.remove("hidden"); // nome 
   try{ sample=await window.claude?.use?.("sample"); }catch(e){ sample=null; }
   $("aiStatus").textContent="AI pronta";
   if(!sample){ sample=demoSample(); DEMO=true; document.body.classList.add("demo"); WZS=[0,1,3]; S.lang="it"; S.fb="it";
-    const all=PERSONAS.length; PERSONAS.splice(0,all,...PERSONAS.filter(p=>SCR[p.id])); QUESTS.splice(0,QUESTS.length,...QUESTS.filter(q=>!q.cfg.lang));
+    LOCKED=PERSONAS.filter(p=>!SCR[p.id]); PERSONAS.splice(0,PERSONAS.length,...PERSONAS.filter(p=>SCR[p.id])); QUESTS.splice(0,QUESTS.length,...QUESTS.filter(q=>!q.cfg.lang));
     $("goHome").querySelector("b").insertAdjacentHTML("afterend",'<span class="demo-pill">DEMO</span>');
     $("aiStatus").textContent="Demo guidata: a ogni turno scegli tra tre risposte. Nessuna AI collegata.";
-    $("gallery").insertAdjacentHTML("afterend",`<p class="muted demo-note">In questa demo ci sono ${PERSONAS.length} clienti con dialoghi scritti. La versione completa con AI ne ha ${all}, a risposta libera.</p>`);
+    $("gallery").insertAdjacentHTML("afterend",`<p class="muted demo-note">Nella demo puoi allenarti con ${PERSONAS.length} clienti, con dialoghi scritti. Gli altri ${LOCKED.length} si sbloccano nella versione completa con AI, a risposta libera.</p>`);
     renderHome();
   }
   renderDock();
