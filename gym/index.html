@@ -361,6 +361,71 @@ body.on-home .brand{padding-top:4px}
 .brand .wm em{font-style:normal;margin-left:.2em;background:linear-gradient(180deg,#ffc08f,#ff7a1f);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand p{margin:14px auto 0;max-width:560px;color:var(--mut2);font-size:16px}
 .brand p b{color:var(--blu2)}
+/* demo guidata */
+body.demo .compose,body.demo #showBtn,body.demo #cGen{display:none}
+.choices{display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:0 0 20px 20px}
+.choices:empty{display:none}
+.choices p{margin:0}
+.choice{text-align:left;background:var(--panel2);border:1px solid var(--line2);color:var(--tx);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.4;transition:border-color .15s,background .15s}
+.choice:hover,.choice:focus-visible{border-color:var(--blu);background:var(--bluBg)}
+.conseq{align-self:stretch;font-size:13px;line-height:1.45;color:var(--mut2);padding:8px 12px;border-left:3px solid var(--line2);background:#ffffff08;border-radius:0 10px 10px 0}
+.conseq b{color:var(--tx)}
+.conseq.ok{border-left-color:var(--ok)}.conseq.mid{border-left-color:var(--mid)}.conseq.ko{border-left-color:var(--ko)}
+.demo-note{margin:10px 0 0;font-size:13px}
+/* dashboard titolare */
+.dhead h1{font-family:var(--hd);font-size:26px;margin:14px 0 4px;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.dhead h1 .demo-pill{margin:0}
+.dhead p{margin:0 0 14px}
+.dfilters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.dfilters .seg{flex:0 1 380px}
+.dfilters select{width:auto;flex:0 1 220px;background:var(--panel2);border:1px solid var(--line2);color:var(--tx);border-radius:12px;padding:9px 10px;font-size:13px}
+.dfilters .btn{margin-left:auto}
+.dins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.dcard{display:flex;flex-direction:column;gap:5px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;color:var(--tx);font-size:13px}
+button.dcard:hover,button.dcard:focus-visible{border-color:var(--blu)}
+.dcard .k{color:var(--mut2);font-size:12.5px;display:flex;align-items:center;gap:6px}
+.dcard b{font-family:var(--hd);font-size:19px;font-weight:600;line-height:1.25}
+.dcard .muted{font-size:13px}
+.drep h3{align-items:center}
+.dreco{background:var(--bluBg);border:1px solid var(--blu3);border-radius:12px;padding:11px 13px;font-size:14px;line-height:1.45;margin-bottom:12px}
+.dstats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.dstats div{background:var(--panel2);border-radius:10px;padding:10px}
+.dstats b{display:block;font-size:20px;font-family:var(--hd)}
+.dstats span{font-size:12px;color:var(--mut2)}
+.dstats .dtr{font-size:18px;color:var(--tx)}
+.dsub{font-size:13px;margin:0 0 6px;color:var(--mut2);font-weight:600}
+.dleg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mut2);margin-bottom:4px}
+.dleg span{display:flex;align-items:center;gap:6px}
+.dleg i{width:14px;height:2px;border-radius:2px}
+#dLine svg{display:block;width:100%}
+.dax{font-size:12px;fill:var(--mut)}
+.dlb{font-size:12px;fill:var(--mut2)}
+.dlb.b{fill:var(--tx);font-weight:600}
+.dtab{margin:6px 0 14px;font-size:13px}
+.dtab summary{color:var(--mut2);cursor:pointer}
+.dscroll{overflow-x:auto}
+.dscroll table{width:100%;border-collapse:collapse;font-size:13.5px;white-space:nowrap}
+.dscroll th{text-align:left;font-weight:500;color:var(--mut);font-size:12px;padding:6px 10px;border-bottom:1px solid var(--line)}
+.dscroll td{padding:9px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.dscroll tr:last-child td{border-bottom:0}
+.dtable tr[data-rep]{cursor:pointer}
+.dtable tr[data-rep]:hover td,.dtable tr.on td{background:var(--panel2)}
+.spark{display:block}
+.dtr{font-weight:600;color:var(--mut2);white-space:nowrap}
+.dst{display:inline-flex;align-items:center;gap:5px;color:var(--tx);font-weight:600}
+.dst svg{color:var(--ko)}
+.dgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dgrid2>.card{background:var(--panel2);margin:0}
+.dgrid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.dgrid3>.card{margin:0}
+.dnote{margin:0 0 8px}
+.dbar{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(40px,1fr) 44px;gap:8px;align-items:center;font-size:13px;padding:5px 0;border-radius:6px}
+.dbar .l{color:var(--mut2);line-height:1.25}
+.dbar .t{height:10px;background:#ffffff0a;border-radius:0 4px 4px 0}
+.dbar .t i{display:block;height:100%;background:var(--blu);border-radius:0 4px 4px 0}
+.dbar b{text-align:right;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+#dtip{position:fixed;z-index:90;pointer-events:none;background:#000;border:1px solid var(--line2);color:var(--tx);border-radius:8px;padding:6px 9px;font-size:12px;line-height:1.45;max-width:240px}
+@media (max-width:760px){.dins,.dgrid2,.dgrid3{grid-template-columns:1fr}.dstats{grid-template-columns:1fr 1fr}.dfilters .btn{margin-left:0}.top .prof{display:none}#dashBtn{margin-left:auto}.logo>div>span:not(.demo-pill){display:none}}
 /* wordmark da gioco */
 .logo{gap:12px}
 .logo .m{width:46px;height:46px;border-radius:14px;color:#fff;font-size:24px;transform:rotate(-8deg);box-shadow:0 10px 26px -8px #2997ffaa,inset 0 1px 0 #ffffff40;transition:transform .2s}
@@ -413,6 +478,7 @@ body.on-home .brand{padding-top:4px}
   <div class="top" id="topbar">
     <div class="logo" id="goHome"><div class="m" data-ic="dumbbell"></div><div><b class="wm">SALES<em>GYM</em></b><span>by <i>Massini</i> · allenamento commerciale</span></div></div>
     <div class="prof"><div class="lvl" id="pLvl">1</div><div><small id="pTitle">Tirocinante</small><div class="xpb"><i id="pXp"></i></div></div></div>
+    <button class="btn ghost sm" id="dashBtn" data-ic="chart">Titolare</button>
     <button class="iconbtn" id="setBtn" title="Impostazioni" aria-label="Impostazioni" data-ic="gear"></button>
   </div>
 
@@ -538,6 +604,7 @@ body.on-home .brand{padding-top:4px}
         <textarea id="input" rows="1" placeholder="Scrivi la tua risposta…"></textarea>
         <button class="btn" id="send" data-ic="send">Invia</button>
       </div>
+      <div class="choices" id="choices"></div>
     </div>
     <aside class="cside">
       <h4 class="sideh">Andamento</h4>
@@ -554,6 +621,9 @@ body.on-home .brand{padding-top:4px}
     <button class="btn link sm" id="quitBtn">Abbandona</button>
   </div>
 </section>
+
+<!-- ================= DASHBOARD TITOLARE ================= -->
+<section id="dash" class="hidden"><div id="dashBody"></div><div id="dtip" class="hidden"></div></section>
 
 <!-- ================= REPORT ================= -->
 <section id="report" class="hidden">
@@ -1044,7 +1114,7 @@ function openSetup(picked=[]){ S.picked=new Set(picked); $("setup").className=pi
 /* percorso guidato: un passo alla volta; quello che non scegli viene estratto a caso */
 const WZ=["Allenamento e cliente","Contatto e canale","Lingua e prodotto","Difficoltà","Obiezioni e contesto"];
 const PICK_IDS=[["modes","mode"],["carousel","persona"],["sources","src"],["channels","ch"],["langs","lang"],["products","product"],["presets","diff"],["sliders","diff"],["hidSw","diff"],["objList","obj"],["allObj","obj"],["noneObj","obj"],["rndObj","obj"],["addObj","obj"]];
-let wz=0;
+let wz=0, WZS=[0,1,2,3,4];
 const markPick=e=>{ for(const [id,k] of PICK_IDS) if(e.target.closest("#"+id)){ S.picked.add(k); $("setup").classList.add("p-"+k); } };
 $("setup").addEventListener("click",markPick,true); $("setup").addEventListener("input",markPick,true);
 function randomizeStep(n){
@@ -1058,14 +1128,14 @@ function randomizeStep(n){
   if(got.length) toast(ic("dice"),"Scelto a caso: "+got.join(", "));
 }
 function goStep(n){
-  wz=n; document.querySelectorAll("#setup .wstep").forEach(e=>e.classList.toggle("hidden",+e.dataset.s!==n));
-  $("wzBar").style.width=((n+1)/WZ.length*100)+"%"; $("wzLab").textContent=`Passo ${n+1} di ${WZ.length} · ${WZ[n]}`;
-  const last=n===WZ.length-1; $("wzNext").classList.toggle("hidden",last); $("start").classList.toggle("hidden",!last);
+  wz=n; document.querySelectorAll("#setup .wstep").forEach(e=>e.classList.toggle("hidden",+e.dataset.s!==WZS[n]));
+  $("wzBar").style.width=((n+1)/WZS.length*100)+"%"; $("wzLab").textContent=`Passo ${n+1} di ${WZS.length} · ${WZ[WZS[n]]}`;
+  const last=n===WZS.length-1; $("wzNext").classList.toggle("hidden",last); $("start").classList.toggle("hidden",!last);
   window.scrollTo(0,0);
 }
-$("wzNext").onclick=()=>{ randomizeStep(wz); goStep(wz+1); };
+$("wzNext").onclick=()=>{ randomizeStep(WZS[wz]); goStep(wz+1); };
 $("sBack").onclick=()=>wz?goStep(wz-1):show("home");
-function setPersona(p){ S.base=p; S.persona=localize(p,S.lang); S.product=p.prod; renderSetup(); }
+function setPersona(p){ S.base=p; S.persona=localize(p,S.lang); S.product=p.prod; if(DEMO) S.selected=new Set(SCR[p.id].objs); renderSetup(); }
 function renderSetup(){ renderMode(); renderCarousel(); renderPdet(); renderSources(); renderLangs(); renderProducts(); renderDiff(); renderObjs(); renderDock(); }
 function renderCarousel(){
   const g=G();
@@ -1145,11 +1215,11 @@ function renderDock(){
   $("start").disabled=!ok; $("hRandom").disabled=!sample;
 }
 function surprise(){
-  S.lang=Math.random()<.5?"it":pick(["en","pt","en","pt","es","fr","de"]);
-  setPersona(Math.random()<.5?pick(PERSONAS):generatePersona(S.lang));
+  S.lang=DEMO||Math.random()<.5?"it":pick(["en","pt","en","pt","es","fr","de"]);
+  setPersona(DEMO||Math.random()<.5?pick(PERSONAS):generatePersona(S.lang));
   S.src=pick(SOURCES).id; S.ch=pick(CHANNELS).id; S.mode=pick(["close","disc"]);
   SL.forEach(s=>S.diff[s.k]=rI(101)); S.hid=Math.random()<.4; S.preset="";
-  rndObjs(3+rI(2));
+  if(!DEMO) rndObjs(3+rI(2));
   startChat();
 }
 
@@ -1279,12 +1349,13 @@ async function startChat(){
   if(!S.persona||!sample||(!disc&&!S.selected.size)) return;
   S.msgs=[]; S.done=false; S.hints=0; S.ot={}; S.hidFound=false; S.hidden=(!disc&&S.hid)?pick(HIDDEN):"";
   S.med={}; S.card=null; S.verdict=""; S.nextStep=""; S.lastMed=null; S.real=disc?pickReal():"";
+  if(DEMO){ S.hidden=!disc&&S.hid?SCR[S.base.id].hid:""; S.real=disc?SCR[S.base.id].real:""; }
   $("moodLbl").textContent=disc?"Fiducia del cliente":"Propensione all'acquisto";
   const src=SRC(); S.mood=Math.round(48-S.diff.att*.25-S.diff.brand*.12-(src.t==="c"?10:src.t==="w"?4:0));
   $("log").innerHTML=""; $("cName").textContent=S.persona.name; $("cRole").textContent=`${L().f} ${S.persona.role} · ${S.persona.co} · ${S.persona.reg}`;
   setMood(S.mood); $("dWrap").innerHTML="";
   $("kbPanel").innerHTML=kbHTML(kb()); $("kbPanel").classList.add("hidden");
-  $("input").placeholder=L().ph;
+  $("input").placeholder=L().ph; $("choices").innerHTML="";
   show("chat"); updTurns(); renderTrack();
   const card=src.card, kw=kb().kw[S.lang]||kb().kw.it;
   addSys("lead",`<b>${src.i} ${src.l}</b> <span class="tmp ${src.t}">${src.tl}</span> · ${CHANNELS.find(c=>c.id===S.ch).i} ${CHANNELS.find(c=>c.id===S.ch).l}<div class="kv">${Object.entries(card).map(([k,v])=>`<span>${k}</span><span>${esc(v.replace("{kw}",kw).replace("{prod}",kb().name))}</span>`).join("")}<span>Azienda</span><span>${esc(S.persona.co)} · ${esc(S.persona.reg)}</span><span>Obiettivo</span><span>${disc?"qualificare il lead con MEDDPICC: scopri gli 8 elementi e decidi se è un deal reale":"ottenere un impegno concreto (visita, demo, test, ordine)"}</span></div>`);
@@ -1294,11 +1365,11 @@ async function startChat(){
     const ok=await genCard(); w.remove(); lock(false);
     if(!ok){ toast(ic("alert"),"Scenario non generato: riprova"); openSetup(); return; }
   }
-  clientTurn(true);
+  DEMO?guideStart():clientTurn(true);
 }
 $("start").onclick=startChat;
 $("quitBtn").onclick=()=>{show("home");};
-$("endBtn").onclick=()=>{ if(S.busy) return; if(repTurns()<2){ addSys("sys","Scambia almeno un paio di battute prima di chiedere la valutazione."); return; } S.mode==="disc"?openVerdict():evaluate(); };
+$("endBtn").onclick=()=>{ if(S.busy) return; if(repTurns()<2&&!S.done){ addSys("sys","Scambia almeno un paio di battute prima di chiedere la valutazione."); return; } S.mode==="disc"?openVerdict():evaluate(); };
 
 /* ---------------- VALUTAZIONE ---------------- */
 async function evaluate(){
@@ -1364,7 +1435,7 @@ function renderReport(r){
   const sc=Math.round(+r.score||0), es=["Vinto","Perso","In sospeso"].includes(r.esito)?r.esito:"In sospeso", cls=es==="Vinto"?"w":es==="Perso"?"l":"p";
   const A=award(r,sc,es);
   const vcls={"ok":"ok","parziale":"mid","male":"ko","non emersa":"na"}, vlab={"ok":"Gestita bene","parziale":"Parziale","male":"Da rifare","non emersa":"Non emersa"};
-  const t=r.tecnica||{}, tk=[["ascolto_domande","Ascolto e domande"],["conoscenza_prodotto","Conoscenza prodotto"],["valore_vs_prezzo","Valore vs prezzo"],["prove_e_numeri","Prove e numeri"],["chiusura_prossimo_passo","Chiusura / prossimo passo"],["lingua","Padronanza "+L().n]];
+  const t=r.tecnica||{}, tk=[["ascolto_domande","Ascolto e domande"],["conoscenza_prodotto","Conoscenza prodotto"],["valore_vs_prezzo","Valore vs prezzo"],["prove_e_numeri","Prove e numeri"],["chiusura_prossimo_passo","Chiusura / prossimo passo"],["lingua","Padronanza "+L().n]].filter(([k])=>k!=="lingua"||t.lingua!=null);
   const errs=r.errori_prodotto||[], hid=r.nascosta, C=2*Math.PI*56, col=sc>=70?"#34d399":sc>=45?"#fbbf24":"#f87171";
   $("rBody").innerHTML=`
   <div class="card"><div class="rhead">
@@ -1565,7 +1636,7 @@ function awardDisc(r,sc){
 function renderDisc(r){
   const sc=Math.max(0,Math.min(100,Math.round(+r.score||0))), A=awardDisc(r,sc), t=r.tecnica||{};
   const els=MED.map(m=>{ const e=(r.elementi||[]).find(x=>x.k===m.k)||{}; return {...m,lv:A.lv[m.k],voto:Math.max(0,Math.min(10,+e.voto||0)),ev:e.evidenza||"non emerso",dq:e.domanda_migliore||""}; });
-  const tk=[["ascolto","Ascolto"],["domande_aperte","Domande aperte"],["struttura","Struttura"],["controllo_conversazione","Controllo della conversazione"],["lingua","Padronanza "+L().n]];
+  const tk=[["ascolto","Ascolto"],["domande_aperte","Domande aperte"],["struttura","Struttura"],["controllo_conversazione","Controllo della conversazione"],["lingua","Padronanza "+L().n]].filter(([k])=>k!=="lingua"||t.lingua!=null);
   const real=VERDICTS.find(v=>v.id===S.real)||VERDICTS[1], mine=VERDICTS.find(v=>v.id===S.verdict)||VERDICTS[1];
   const cls=A.success?"w":A.verdOk?"p":"l", es=A.success?"Missione riuscita":A.verdOk?"Verdetto giusto, qualifica da rafforzare":"Da rivedere";
   const C=2*Math.PI*56, col=sc>=70?"#34d399":sc>=45?"#fbbf24":"#f87171";
@@ -1633,75 +1704,327 @@ function confetti(){
   const P=Array.from({length:160},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight/3,vx:(Math.random()-.5)*14,vy:Math.random()*-14-4,s:4+Math.random()*6,c:pick(cols),r:Math.random()*6,vr:(Math.random()-.5)*.4}));
   let f=0; (function step(){ x.clearRect(0,0,c.width,c.height); P.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);x.restore();}); if(++f<160) requestAnimationFrame(step); else x.clearRect(0,0,c.width,c.height); })();
 }
-function show(id){ ["home","setup","chat","report"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); /* in home il titolo grande sostituisce il logo */ if(id==="home") renderHome(); }
+function show(id){ ["home","setup","chat","report","dash"].forEach(s=>$(s).classList.toggle("hidden",s!==id)); $("topbar").classList.toggle("hidden",id==="chat"); document.body.classList.toggle("on-home",id==="home"); /* in home il titolo grande sostituisce il logo */ if(id==="home") renderHome(); }
 
-/* ---------------- DEMO: risposte simulate, nessuna AI collegata ---------------- */
+/* ---------------- DEMO GUIDATA: dialoghi scritti, tre risposte a turno, nessuna AI ---------------- */
+let DEMO=false;
+const k_={a:"ascolto_domande",p:"conoscenza_prodotto",v:"valore_vs_prezzo",n:"prove_e_numeri",c:"chiusura_prossimo_passo"};
+const SCR={
+ dir:{objs:["Se si ferma la linea, chi mi risponde?","Un solo fornitore per tutto l'impianto è un rischio","Mi servono numeri, non promesse"],
+  hid:"in realtà il responsabile della manutenzione è contrario e teme macchine che non conosce",
+  lose:"Per ora restiamo come siamo. Se cambia qualcosa la richiamo io.",real:"qualificato",
+  card:{IP:"La linea di confezionamento si ferma due volte a settimana e ogni fermo ci costa circa 4.000 euro.",M:"Vogliamo ridurre i fermi del 30% entro un anno e avere i dati di processo in un solo posto.",
+   CH:"Sono io a spingere per cambiare: ho già portato il caso in direzione con i miei numeri.",E:"Firma l'amministratore delegato, ma sui progetti tecnici segue il mio parere.",
+   DP:"Visita tecnica, poi offerta, poi comitato investimenti a fine trimestre.",DC:"Contano affidabilità e tempi dell'assistenza, poi viene il prezzo.",
+   CO:"Stiamo valutando un costruttore tedesco. Restare come siamo non è un'opzione.",PP:"Gli acquisti vogliono tre preventivi e pagamenti legati al collaudo finale.",sintesi:"Deal reale: dolore misurato, budget e sponsor interno."},
+  turns:[
+  {c:"Ho poco tempo. Cosa volete propormi sull'impianto?",o:[
+   {q:2,k:"a",t:"Prima di proporle qualcosa: dal ricevimento delle materie prime al pallet, dove perde più tempo oggi?",r:"Almeno parte dalla domanda giusta. I fermi si concentrano nel confezionamento.",why:"Sei partito dal problema del cliente, non dal catalogo."},
+   {q:1,k:"p",t:"Massini fa impianti pet food completi, dal ricevimento delle materie prime al pallet finito.",r:"Lo so, l'ho letto sul sito.",why:"Corretto, ma è una presentazione: non sai ancora cosa gli serve."},
+   {q:0,k:"a",t:"Abbiamo il miglior impianto sul mercato, le mando subito un'offerta.",r:"Un'offerta di cosa, se non sa nemmeno cosa produciamo?",why:"Frase vuota e offerta senza analisi: un tecnico la scarta subito."}]},
+  {ob:1,c:"Ho già avuto un fornitore che spariva. Se si ferma la linea, chi mi risponde?",o:[
+   {q:2,k:"p",t:"Teleassistenza e ricambi reperibili anche senza numero di serie. I tempi di intervento per la sua zona glieli faccio confermare per iscritto.",r:"Per iscritto mi va bene.",why:"Fatti dalla scheda e impegno a verificare quello che non sai."},
+   {q:1,k:"n",t:"Abbiamo un ottimo servizio di assistenza, stia tranquillo.",r:"Lo dicevano anche quelli di prima.",why:"Rassicurazione senza prove: non sposta un cliente scottato."},
+   {q:0,k:"p",t:"Le garantisco un tecnico da lei entro 4 ore, sempre.",r:"Entro 4 ore? Me lo scrive nel contratto?",why:"Hai promesso un dato che non hai.",err:"«Tecnico entro 4 ore»: non risulta dalle schede. Va verificato prima di prometterlo."}]},
+  {ob:2,c:"Un solo fornitore per tutto: se sbagliate, mi fermate tutto.",o:[
+   {q:2,k:"v",hid:1,t:"È anche il vantaggio: un'unica responsabilità e macchine che dialogano tra loro. Cosa è successo l'ultima volta che un guasto stava tra due fornitori?",r:"Si sono rimpallati la colpa per settimane, è vero.",why:"Hai ribaltato l'obiezione e fatto una domanda che lo fa parlare."},
+   {q:1,k:"v",t:"Può anche comprare solo una parte dell'impianto da noi.",r:"Sì, ma così torno al problema di prima.",why:"Vera, ma cede sul tuo punto di forza."},
+   {q:0,k:"v",t:"Chi compra da più fornitori sbaglia sempre.",r:"Sta dicendo che ho sbagliato tutto finora?",why:"Hai dato torto al cliente invece di capire il suo timore."}]},
+  {ob:3,c:"Mi servono numeri, non promesse. Capacità e consumi li ha?",o:[
+   {q:2,k:"n",t:"La capacità dipende dal progetto: mi dia prodotto e volumi e l'ufficio tecnico prepara i dati. Sul trasporto le dico già che il tubolare a catena usa un solo motore, con risparmio energetico dichiarato oltre il 50%.",r:"Questo è parlare chiaro. Le mando i volumi.",why:"Un dato vero e un impegno onesto su quello che non è pubblicato."},
+   {q:1,k:"n",t:"Le mando la brochure con tutti i dati.",r:"Sulla brochure non ci sono i miei volumi.",why:"Rimandi a un documento: lui vuole i suoi numeri."},
+   {q:0,k:"p",t:"Faccia conto su 20 tonnellate l'ora, più o meno.",r:"«Più o meno» non lo porto in direzione.",why:"Numero inventato davanti a un cliente che verifica tutto.",err:"«20 t/h» sul pet food: le capacità tipiche non sono pubblicate. Serve l'ufficio tecnico."}]},
+  {c:"Va bene. E adesso?",o:[
+   {q:2,k:"c",t:"Le propongo di vedere le macchine in funzione {show}, con chi seguirà la manutenzione. Meglio martedì o giovedì mattina?",r:"Giovedì. Porto anche lui, così le domande le fa direttamente.",why:"Prossimo passo concreto, con data e con la persona giusta."},
+   {q:1,k:"c",t:"Le mando un'offerta e poi ci risentiamo.",r:"Mandi pure, la guardo con calma.",why:"Nessuna data: la trattativa resta nelle sue mani."},
+   {q:0,k:"v",t:"Se firma entro il mese le faccio il 10% di sconto.",r:"Non compro un impianto per uno sconto.",why:"Sconto non richiesto: svaluta l'offerta.",err:"Sconto del 10% promesso senza autorizzazione né dati interni."}]}]},
+ buy:{objs:["Il vostro preventivo è più alto degli altri","Voglio penali e pagamenti diversi","Perché dovrei scegliere proprio voi?"],
+  hid:"in realtà avete già quasi deciso per un concorrente e cercate solo un prezzo da usare come leva",
+  lose:"Grazie, abbiamo tutto. Se servirà ancora, la contatto io.",real:"dubbia",
+  card:{IP:"Il costo per sacco è troppo alto, ma la linea funziona: non c'è un'emergenza.",M:"Mi hanno chiesto un risparmio sul costo di insacco, ma la cifra non è ancora stata fissata.",
+   CH:"Il direttore tecnico di uno stabilimento ci crede, ma sugli acquisti pesa poco.",E:"Il budget lo approva la capogruppo e per quest'anno non è ancora stanziato.",
+   DP:"Raccolgo tre offerte, poi si vedrà: una data non c'è ancora.",DC:"Per me conta il prezzo, per i tecnici l'affidabilità. Non ci siamo ancora allineati.",
+   CO:"Ho due preventivi in mano, oppure si rimanda tutto all'anno prossimo.",PP:"Gara interna e condizioni standard di gruppo a 90 giorni, difficili da negoziare.",sintesi:"Interesse vero, ma budget e tempi ancora incerti."},
+  turns:[
+  {c:"Le do dieci minuti. Ho tre preventivi sul tavolo per l'insaccatrice: mi dica perché dovrei tenere il vostro.",o:[
+   {q:2,k:"a",t:"Glielo dico volentieri, ma prima una cosa: oltre al prezzo, cosa vi serve dalla macchina? Quanti sacchi all'ora e quali prodotti?",r:"Polveri e granuli, circa 600 sacchi l'ora. Però il prezzo resta il tema.",why:"Sposti il confronto dal listino al bisogno reale."},
+   {q:1,k:"p",t:"Le nostre insaccatrici vanno da 200 a 1.200 sacchi l'ora, quindi coprono ogni esigenza.",r:"Bene. Ma lo fanno anche gli altri.",why:"Dato giusto, ma non legato al suo caso."},
+   {q:0,k:"v",t:"Mi dica il prezzo più basso che ha e cerco di avvicinarmi.",r:"Grazie, era quello che volevo sapere.",why:"Hai aperto subito a uno sconto, senza difendere il valore."}]},
+  {ob:1,c:"Siete più cari del concorrente più basso. Come lo giustifica?",o:[
+   {q:2,k:"v",t:"Confrontiamo il costo su tutta la vita della macchina: fermi, formati e integrazione con pallettizzatore e avvolgitore. Quanto vi costa oggi un'ora di fermo?",r:"Non l'ho mai calcolato così. Me lo faccia vedere.",why:"Porti il prezzo sul costo totale e le dai un numero da cercare."},
+   {q:1,k:"v",t:"Noi siamo un marchio di qualità, costiamo qualcosa in più.",r:"Lo dicono tutti quelli che costano di più.",why:"La qualità detta così non è un argomento per una buyer."},
+   {q:0,k:"v",t:"Va bene, le tolgo il 15%.",r:"Così in fretta? Allora il prezzo vero era un altro.",why:"Sconto immediato: hai confermato che il prezzo era gonfiato.",err:"Sconto del 15% concesso senza autorizzazione né dati interni."}]},
+  {ob:2,c:"Voglio penali sui ritardi e il saldo solo dopo il collaudo.",o:[
+   {q:2,k:"a",hid:1,t:"Il collaudo come condizione è ragionevole, le condizioni le verifico con la direzione e le rispondo per iscritto. Mi aiuta a capire chi deciderà alla fine e cosa conterà di più?",r:"Decide il gruppo, e il prezzo pesa molto.",why:"Non prometti ciò che non puoi e scopri come si decide."},
+   {q:1,k:"p",t:"Vedo cosa posso fare e le faccio sapere.",r:"Quando? Ho altri due fornitori che aspettano.",why:"Risposta vaga, senza impegno né data."},
+   {q:0,k:"p",t:"Nessun problema: penale piena su ogni ritardo e saldo a 180 giorni.",r:"Ottimo. Me lo mette per iscritto?",why:"Hai ceduto condizioni che non puoi decidere da solo.",err:"Penali e saldo a 180 giorni promessi senza conferma della direzione."}]},
+  {ob:3,c:"Fate tutti le stesse macchine. Perché proprio voi?",o:[
+   {q:2,k:"p",t:"Perché progettiamo sul vostro prodotto e sul materiale del sacco, e possiamo chiudere la linea fino al pallet filmato con un solo fornitore. Per i granuli, ad esempio, c'è l'IABA 800 S fino a 15 sacchi al minuto.",r:"Questo è un punto che gli altri non mi hanno fatto.",why:"Differenza concreta e modello preciso dalla scheda."},
+   {q:1,k:"p",t:"Abbiamo tanta esperienza nel settore.",r:"Anche gli altri, a sentir loro.",why:"Esperienza generica: non ti distingue."},
+   {q:0,k:"p",t:"Pesiamo con una precisione dello 0,1%, nessuno ci batte.",r:"Da dove viene questo dato?",why:"Numero inventato: una buyer lo chiede per iscritto.",err:"«Precisione 0,1%»: la precisione di pesatura non è pubblicata. Va verificata con l'ufficio tecnico."}]},
+  {c:"Mi mandi tutto entro venerdì, poi vediamo.",o:[
+   {q:2,k:"c",t:"Venerdì avrà l'offerta. Vorrei però farle vedere la macchina con il vostro sacco {show}, insieme al vostro direttore tecnico: è libero la prossima settimana?",r:"D'accordo, gli chiedo martedì. Così i tecnici mi dicono la loro.",why:"Porti dentro chi sostiene il progetto e fissi un passo oltre il preventivo."},
+   {q:1,k:"c",t:"Certo, venerdì le mando tutto.",r:"Perfetto, grazie.",why:"Sei diventato il terzo preventivo: nessun passo successivo."},
+   {q:0,k:"v",t:"Se decide oggi le tengo il prezzo bloccato.",r:"Non decido oggi, e lei lo sa.",why:"Pressione finta su una buyer esperta."}]}]},
+ own:{objs:["È un investimento troppo grande per noi","Devo parlarne con il mio socio","Non posso fermare l'azienda per i lavori"],
+  hid:"in realtà la banca non vi ha ancora concesso il finanziamento",
+  lose:"Lasciamo stare, per ora. Ci sentiamo più avanti, se serve.",real:"da_scartare",
+  card:{IP:"Problemi veri no: la linea è vecchia ma va. Ho visto un vostro video e mi sono incuriosito.",M:"Numeri non ne ho: non ho mai calcolato quanto mi costano i fermi.",
+   CH:"In azienda nessuno lo ha chiesto, è una curiosità mia.",E:"Decido con mio socio, e lui di cambiare non vuole sentir parlare.",
+   DP:"Non c'è un percorso: se ne riparla quando servirà.",DC:"Guarderei soprattutto il prezzo, ma un budget non c'è.",
+   CO:"L'alternativa vera è tenere quello che ho: oggi la banca non mi finanzierebbe.",PP:"Non ci siamo arrivati: prima dovrei parlare con la banca.",sintesi:"Curiosità senza budget né decisore: da scartare."},
+  turns:[
+  {c:"Senta, io ho un mangimificio con trenta persone, mica una multinazionale. Cosa vuole propormi?",o:[
+   {q:2,k:"a",t:"Prima vorrei capire come lavorate: cosa producete, quanto, e cosa vi dà più pensieri ogni giorno?",r:"Farina e pellet, un paio di tonnellate l'ora. Il pensiero è la macchina vecchia: se si rompe, siamo fermi.",why:"Con un titolare il rapporto viene prima del prodotto."},
+   {q:1,k:"p",t:"Facciamo mangimifici su misura da 1 a 60 tonnellate l'ora.",r:"Sessanta? A me ne bastano molte meno.",why:"Dato giusto, ma gli fa pensare che siete troppo grandi per lui."},
+   {q:0,k:"a",t:"Le illustro la nostra soluzione integrata chiavi in mano per l'ottimizzazione del processo.",r:"Parli come mangia, per favore.",why:"Gergo: è proprio quello che detesta."}]},
+  {ob:1,c:"Non mi nascondo: ho paura di indebitarmi per una cosa così grande.",o:[
+   {q:2,k:"v",hid:1,t:"La capisco. Non serve partire in grande: esistono versioni modulari, per esempio da 3 tonnellate l'ora. Come vi muovereste di solito per un investimento così?",r:"Così cambia, almeno se ne può parlare.",why:"Riconosci la paura e riduci il rischio con un fatto vero."},
+   {q:1,k:"v",t:"Si ripaga da solo in poco tempo, vedrà.",r:"Facile a dirsi. In quanto tempo, e con quali numeri?",why:"Promessa senza conti: lui se ne accorge."},
+   {q:0,k:"p",t:"Con gli incentivi le costa la metà, ci pensano loro.",r:"La metà? Chi me lo garantisce?",why:"Hai dato per certo un beneficio che non puoi garantire.",err:"«Con gli incentivi costa la metà»: dato non verificato. Va controllato con un consulente."}]},
+  {ob:2,c:"Comunque io da solo non decido: c'è il mio socio.",o:[
+   {q:2,k:"a",t:"Giusto così. Cosa preoccupa di più il suo socio? Possiamo parlarne insieme, con calma, quando vi è comodo.",r:"Lui teme i costi e il cambiamento. Se viene anche lui, forse ascolta.",why:"Coinvolgi il vero decisore senza scavalcare il titolare."},
+   {q:1,k:"c",t:"Va bene, allora ne parli con lui e mi faccia sapere.",r:"Sì, gli dico.",why:"Lasci la vendita a qualcuno che non sa spiegarla."},
+   {q:0,k:"a",t:"Ma lei è il titolare, può decidere da solo, no?",r:"Lei non conosce la mia azienda.",why:"Hai messo in discussione il suo rapporto con il socio."}]},
+  {ob:3,c:"E poi non posso fermarmi per mesi di lavori: i clienti non aspettano.",o:[
+   {q:2,k:"p",t:"È il punto delle versioni modulari: si installano senza opere edili, così riducono tempi e costi di cantiere. Il piano preciso lo facciamo sul suo stabilimento con i tecnici.",r:"Senza opere edili? Questo non lo sapevo.",why:"Un fatto della scheda risponde proprio alla sua paura."},
+   {q:1,k:"p",t:"Faremo il possibile per disturbare poco.",r:"Il possibile quanto sarebbe?",why:"Vago su una paura molto concreta."},
+   {q:0,k:"p",t:"In due settimane è tutto montato, glielo garantisco.",r:"Due settimane? E se non ci riuscite?",why:"Tempi inventati su ciò che gli fa più paura.",err:"«Montato in due settimane»: i tempi di installazione non sono nelle schede. Vanno verificati."}]},
+  {c:"Mi ha fatto venire voglia di capirne di più. Ma non correre, eh.",o:[
+   {q:2,k:"c",t:"Nessuna fretta. Venite lei e il suo socio a vedere le macchine {show}, senza impegno, e parlate con i nostri tecnici. Le va bene un sabato mattina o preferisce in settimana?",r:"Un sabato va bene: così il socio non ha scuse.",why:"Passo piccolo, senza pressione, con entrambi i decisori."},
+   {q:1,k:"c",t:"Le mando il materiale, così ve lo guardate.",r:"Sì, lo guardo appena ho un momento.",why:"Il materiale finisce in un cassetto: nessun passo concreto."},
+   {q:0,k:"c",t:"Allora le preparo subito il contratto, così blocchiamo il prezzo.",r:"Le avevo detto di non correre.",why:"Non hai ascoltato quello che ti ha appena detto."}]}]}
+};
+/* domande uguali per tutti i clienti: cambia quello che il cliente rivela (card) */
+const DISC_TURNS=[
+ {a:"IP",b:"M",o:[
+  {q:2,k:"domande_aperte",t:"Cosa vi sta costando di più oggi sulla linea, e come lo misurate: fermi, scarti, sacchi all'ora?",why:"Domanda aperta che unisce problema e numeri."},
+  {q:1,k:"domande_aperte",t:"Avete problemi di fermi sulla linea attuale?",why:"Si risponde sì o no: scopri il problema, non quanto pesa."},
+  {q:0,k:"struttura",t:"Le presento subito la nostra gamma, così capisce cosa possiamo fare.",r:"Aspetti, non le ho ancora detto di cosa ho bisogno.",why:"Pitch prima di capire: in discovery non serve."}]},
+ {a:"E",b:"CH",o:[
+  {q:2,k:"ascolto",t:"Chi in azienda spinge di più per questo progetto, e chi alla fine mette la firma?",why:"Fa emergere insieme lo sponsor e chi decide."},
+  {q:1,k:"domande_aperte",t:"È lei che decide?",why:"Troppo diretta: trovi chi firma, ma non chi ti sostiene."},
+  {q:0,k:"controllo_conversazione",t:"Mi passa il titolare, così gli mando direttamente il preventivo?",r:"Intanto sta parlando con me.",why:"Hai scavalcato chi hai davanti."}]},
+ {a:"DP",b:"DC",o:[
+  {q:2,k:"struttura",t:"Su cosa confronterete le offerte, e quali passaggi mancano prima di decidere?",why:"Scopri criteri e percorso, così sai se puoi vincere."},
+  {q:1,k:"domande_aperte",t:"Entro quando vorreste decidere?",why:"Hai la data, ma non come si arriva a deciderla."},
+  {q:0,k:"controllo_conversazione",t:"Se decidete entro il mese le faccio uno sconto.",r:"Non ho chiesto sconti, e non è così che decidiamo.",why:"Parli di prezzo prima di aver qualificato."}]},
+ {a:"CO",b:"PP",o:[
+  {q:2,k:"struttura",t:"Dopo il sì, cosa succede con acquisti e contratto? E chi altro state valutando, compreso il non fare nulla?",why:"Vedi la concorrenza vera e l'iter di firma."},
+  {q:1,k:"domande_aperte",t:"State sentendo altri fornitori?",why:"Utile, ma dimentichi l'alternativa di non fare nulla."},
+  {q:0,k:"controllo_conversazione",t:"I concorrenti non hanno il nostro livello di assistenza.",r:"Non li conosce, come fa a dirlo?",why:"Attaccare i concorrenti non ti dà informazioni."}]}
+];
+const G_OPEN={phone:"Pronto?",video:"Buongiorno, la sento bene.",visit:"Buongiorno, si accomodi.",showroom:"Buongiorno, grazie dell'invito: bello lo showroom.",chat:"Buongiorno, ho letto il suo messaggio."};
+const gTurns=()=>S.mode==="disc"?DISC_TURNS:SCR[S.base.id].turns;
+const gFill=t=>t.replace("{show}",S.ch==="showroom"?"qui in showroom, con il vostro prodotto":"nel nostro showroom a Tordandrea di Assisi");
+const gBest=t=>t.o.find(o=>o.q===2);
+function guideStart(){
+  S.guide={i:0,picks:[],won:false};
+  const cold=SRC().cold&&["phone","video","chat"].includes(S.ch)?" Non mi pare di conoscerla.":"";
+  guideSay(`${G_OPEN[S.ch]||""}${cold} ${S.mode==="disc"?"Mi dica pure, ho poco tempo.":gTurns()[0].c}`);
+}
+async function guideSay(text){
+  S.busy=true; lock(true); $("choices").innerHTML="";
+  const row=addRow("c",""); row.innerHTML='<span class="dots"><i></i><i></i><i></i></span>'; $("cAv").classList.add("talk");
+  await new Promise(r=>setTimeout(r,650));
+  row.textContent=text; S.msgs.push({r:"c",t:text}); $("cAv").classList.remove("talk");
+  if(S.done) addSys("sys",S.guide.won?"Il cliente ha accettato il passo successivo.":"Il cliente ha chiuso qui.");
+  S.busy=false; lock(false); updTurns(); guideOffer(); $("log").scrollTop=$("log").scrollHeight;
+}
+function guideOffer(){
+  const box=$("choices");
+  if(S.done){ box.innerHTML=`<button class="btn" id="gEnd">${ic("flag")} Vedi la valutazione</button>`; $("gEnd").onclick=()=>$("endBtn").click(); return; }
+  const opts=[...gTurns()[S.guide.i].o].sort(()=>Math.random()-.5);
+  box.innerHTML=`<p class="muted">Cosa rispondi?</p>`+opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(gFill(o.t))}</button>`).join("");
+  box.querySelectorAll(".choice").forEach(b=>b.onclick=()=>{ if(!S.busy) guidePick(opts[+b.dataset.i]); });
+}
+function guidePick(o){
+  const T=gTurns(), t=T[S.guide.i], d=diffScore(), disc=S.mode==="disc";
+  addRow("s",gFill(o.t)); S.msgs.push({r:"s",t:gFill(o.t)}); S.guide.picks.push({t,o});
+  const dlt=o.q===2?Math.round(14*(1.2-d/200)):o.q===1?3:-Math.round(11*(1+d/100));
+  setMood(S.mood+dlt);
+  const lab=[["ko","✕ Errore"],["mid","~ Debole"],["ok","✓ Mossa forte"]][o.q];
+  addSys("conseq "+lab[0],`<b>${lab[1]} ${dlt>0?"+":""}${dlt}</b> ${esc(o.why)}`+(o.err?`<br><b>Errore sul prodotto:</b> ${esc(o.err)}`:""));
+  let reply=o.r||"";
+  if(disc){ const c=SCR[S.base.id].card;
+    if(o.q===2){ reply=`${c[t.a]} ${c[t.b]}`; medReveal(t.a,2); medReveal(t.b,2); }
+    else if(o.q===1){ reply=c[t.a]; medReveal(t.a,1); }
+  } else {
+    if(t.ob) S.ot[t.ob]=o.q===2?"done":"raised";
+    if(o.hid&&o.q===2&&S.hidden&&!S.hidFound){ S.hidFound=true; toast(ic("eye"),"Obiezione nascosta scoperta!"); reply+=" Glielo dico in confidenza: "+S.hidden.replace(/^in realtà /,"")+"."; }
+  }
+  const next=T[++S.guide.i];
+  if(S.mood<=3){ S.done=true; reply=(o.r?o.r+" ":"")+"Mi scusi, chiudiamo qui."; }
+  else if(!next){ S.done=true;
+    S.guide.won=disc?S.mood>=45:(o.q===2&&S.mood>=45)||(o.q===1&&S.mood>=65);
+    if(disc) reply+=" Grazie delle domande: mi mandi un riepilogo e ci risentiamo.";
+    else if(!S.guide.won) reply=SCR[S.base.id].lose;
+  }
+  else if(!disc){ if(next.ob) S.ot[next.ob]="raised"; reply+=" "+next.c; }
+  renderTrack(); guideSay(reply.trim());
+}
+console.assert(Object.values(SCR).every(s=>s.turns.length===5&&s.turns.every(t=>[0,1,2].every(q=>t.o.some(o=>o.q===q)))),"SCR: ogni turno deve avere risposta forte, debole e sbagliata");
+
 function demoSample(){
-  const D={won:false};
   const wait=ms=>new Promise(r=>setTimeout(r,ms));
-  const stream=async(text,o)=>{ await wait(500+rI(500)); if(o&&o.onText&&!document.hidden) for(let i=6;i<text.length;i+=6){ o.onText({text:text.slice(0,i)}); await wait(18); } return {text}; };
-  const lastRep=()=>([...S.msgs].reverse().find(m=>m.r==="s")||{t:""}).t;
-  const quality=t=>(t.length>70)+(/\?/.test(t))+(/numer|dat[io]|%|€|referenz|garanzi|visit|demo|test|prova|assistenz|ricamb|fermi|risparm/i.test(t));
-  const objs=()=>[...S.selected];
-  const client=(prompt)=>{
-    const opening=!/CONVERSAZIONE FINORA/.test(prompt), mt=maxTurns(), n=repTurns();
-    if(opening){ D.won=false; return SRC().cold?"Pronto? Chi parla? Guardi, ho cinque minuti al massimo.":`Buongiorno. Sì, ricordo il contatto. Mi dica pure, ma vado di fretta: cosa mi proponete di concreto? [MOOD:${S.mood}]`; }
-    const t=lastRep(), q=quality(t); let mood=S.mood, out=[];
-    if(/showroom/i.test(t)){ // invito allo showroom: accetta solo se il cliente è abbastanza convinto
-      const ready=mood>=50||objs().every((o,i)=>S.ot[i+1]==="done");
-      if(ready){ D.won=true; return `Volentieri: vedere le macchine dal vivo mi aiuta a decidere. Martedì mattina va bene, porto anche il responsabile di produzione. [FINE:VINTO] [MOOD:${Math.min(100,mood+15)}]`; }
-      mood-=3; out.push("Lo showroom è un bel posto, ma prima di muovermi voglio capire se ne vale la pena.");
-    }
-    if(S.mode==="disc"){
-      const k=MEDK.find(k=>(S.med[k]||0)<2);
-      if(k && /\?/.test(t)){ const lv=q>=2?2:1; mood+=lv*4; out.push((lv===2?"Le spiego bene. ":"In parte sì. ")+(S.card?.[k]?.t||"")+` [MED:${k}:${lv}]`); }
-      else if(k) { mood-=4; out.push("Non ho capito bene dove vuole arrivare. Mi faccia una domanda precisa."); }
-      if(!MEDK.some(k=>(S.med[k]||0)<1) || (mt&&n>=mt) || n>=10){ D.won=mood>=45; out.push(D.won?"Va bene, ci risentiamo la prossima settimana con il direttore. [FINE:VINTO]":"Per ora ci fermiamo qui, grazie. [FINE:PERSO]"); }
-    } else {
-      const list=objs(); let open=list.findIndex((o,i)=>S.ot[i+1]==="raised"), next=list.findIndex((o,i)=>!S.ot[i+1]), fresh=open<0;
-      if(open>=0 && q>=2){ mood+=12; out.push(pick(["Questo è un argomento serio, lo ammetto.","Ok, con questi numeri il discorso cambia.","Mi sta convincendo, su questo punto."])+` [OK:${open+1}]`); open=-1; }
-      else if(open>=0){ mood-=6; out.push(pick(["Sì, ma non mi ha risposto davvero.","Belle parole, ma a me servono fatti.","Questo lo dicono tutti i fornitori."])); }
-      else if(fresh&&q<=0){ mood-=5; out.push("Mi dica qualcosa di concreto, per favore."); }
-      if(open<0 && next>=0){ out.push(list[next]+` [OBJ:${next+1}]`); }
-      else if(open<0 && S.hidden && !S.hidFound && /\?/.test(t)){ mood+=6; out.push("Glielo dico in confidenza: "+S.hidden.replace(/^in realtà /,"")+". [NASCOSTA]"); }
-      else if(open<0 && (next<0) && (!S.hidden||S.hidFound)){ D.won=mood>=50; out.push(D.won?"D'accordo: fissiamo una visita in stabilimento per vedere una macchina in funzione. [FINE:VINTO]":"Ci penso e le faccio sapere. [FINE:PERSO]"); }
-      if(mt&&n>=mt&&!/FINE/.test(out.join(" "))){ D.won=mood>=55; out.push(D.won?"Ok, mi mandi una proposta. [FINE:VINTO]":"Devo chiudere qui, mi scusi. [FINE:PERSO]"); }
-    }
-    return out.join(" ")+` [MOOD:${Math.max(0,Math.min(100,Math.round(mood)))}]`;
-  };
-  const coach=()=>{ const k=kb(), o=objs().find((x,i)=>S.ot[i+1]==="raised");
-    return S.mode==="disc"
-      ? `Chiedi cosa costa oggi il problema: «Quanto vi costa in un anno un fermo linea come quello di cui parlava?» Così fai emergere metriche e dolore insieme.`
-      : `${o?"Dietro c'è l'obiezione: «"+short(o)+"».":"Il cliente sta valutando se fidarsi."} Rispondi con un fatto: «${k.forza[0]}. Le propongo di vederlo dal vivo da un nostro cliente.»`; };
-  const card=()=>{ const p=S.persona, r=S.real;
-    return {M:{t:"Vuole ridurre i fermi linea del 30% e passare da 900 a 1.200 sacchi/ora entro un anno.",d:1},
-      E:{t:`Firma il direttore generale; ${p.name} prepara il dossier ma non ha l'ultima parola.`,d:2},
-      DC:{t:"Conta più l'assistenza in 24 ore e i ricambi a magazzino del prezzo di listino.",d:1},
-      DP:{t:"Visita in stabilimento, poi offerta tecnica, poi consiglio di amministrazione a fine trimestre.",d:2},
-      PP:{t:"Gli acquisti chiedono tre preventivi e pagamento 30/60/10 con collaudo finale.",d:3},
-      IP:{t:"La linea attuale si ferma due volte a settimana: ogni fermo costa circa 4.000 €.",d:1},
-      CH:{t:r==="da_scartare"?"Nessun vero sponsor interno: il progetto non ha un padrino.":"Il responsabile di produzione spinge per cambiare ed è ascoltato dal DG.",d:2},
-      CO:{t:"È in gioco un concorrente tedesco più economico, oppure rimandare tutto di un anno.",d:2},
-      sintesi:r==="qualificato"?"Deal reale: dolore misurabile, budget e sponsor interno.":r==="dubbia"?"Interesse vero ma budget e tempi ancora incerti.":"Curiosità senza budget né decisore: da scartare."}; };
-  const evalClose=()=>{ const list=objs(), done=list.filter((o,i)=>S.ot[i+1]==="done").length, sc=Math.max(15,Math.min(95,Math.round(30+done/Math.max(1,list.length)*40+(S.mood-40)*.5+(D.won?10:0))));
-    const v=x=>Math.max(2,Math.min(10,Math.round(x)));
-    return {score:sc,esito:D.won?"Vinto":S.done?"Perso":"In sospeso",sintesi:"Valutazione di prova generata in modalità demo, senza AI: serve a vedere come si presenta il report.",
-      tecnica:{ascolto_domande:v(sc/10),conoscenza_prodotto:v(sc/10+1),valore_vs_prezzo:v(sc/10-1),prove_e_numeri:v(sc/11),chiusura_prossimo_passo:v(D.won?8:4),lingua:8},
-      obiezioni:list.map((o,i)=>({obiezione:o,voto:S.ot[i+1]==="done"?"ok":S.ot[i+1]==="raised"?"parziale":"non emersa",commento:S.ot[i+1]==="done"?"Hai risposto con argomenti concreti.":S.ot[i+1]==="raised"?"Risposta generica: mancavano numeri o prove.":"Non è emersa nella conversazione.",risposta_migliore:S.ot[i+1]==="done"?"":"Riconosci il dubbio, poi porta un dato: "+kb().forza[0]+"."})),
-      nascosta:S.hidden?{scoperta:S.hidFound,commento:S.hidFound?"Bene: con le domande giuste l'hai fatta emergere.":"Servivano domande aperte sul processo decisionale."}:null,
-      errori_prodotto:[],punti_forti:["Tono professionale e cortese","Hai tenuto la conversazione sul problema del cliente"],
-      da_migliorare:["Porta più numeri: tempi, risparmi, referenze visitabili","Chiudi sempre con un prossimo passo concreto e datato"]}; };
+  const picks=()=>S.guide?.picks||[];
+  const coach=()=>{ const t=gTurns()[S.guide.i]; return t?`«${gFill(gBest(t).t)}» ${gBest(t).why}`:"La conversazione è finita: guarda la valutazione."; };
+  const dim=(ks,def)=>{ const out={}; ks.forEach(k=>{ const p=picks().filter(x=>(k_[x.o.k]||x.o.k)===k); out[k]=p.length?Math.round(p.reduce((a,x)=>a+[3,6,9][x.o.q],0)/p.length):def; }); return out; };
+  const strong=()=>picks().filter(x=>x.o.q===2).slice(0,3).map(x=>x.o.why);
+  const weak=()=>{ const w=picks().filter(x=>x.o.q<2).slice(0,3).map(x=>x.o.why+" Meglio: «"+gFill(gBest(x.t).t)+"»"); return w.length?w:["Tutte risposte forti: alza la difficoltà o prova un altro cliente."]; };
+  const evalClose=()=>{ const P=picks(), best=P.filter(x=>x.o.q===2).length, errs=P.filter(x=>x.o.err).map(x=>x.o.err), won=S.guide.won;
+    const avg=P.reduce((a,x)=>a+x.o.q,0)/Math.max(1,P.length*2);
+    const sc=Math.max(10,Math.min(98,Math.round(20+avg*65+(won?13:0)-errs.length*4)));
+    return {score:sc,esito:won?"Vinto":S.done?"Perso":"In sospeso",sintesi:`Trattativa guidata: punteggio calcolato dalle tue scelte, ${best} risposte forti su ${P.length}.`,
+      tecnica:{...dim(["ascolto_domande","conoscenza_prodotto","valore_vs_prezzo","prove_e_numeri","chiusura_prossimo_passo"],5)},
+      obiezioni:[...S.selected].map((ob,i)=>{ const x=P.find(p=>p.t.ob===i+1); return {obiezione:ob,voto:!x?"non emersa":["male","parziale","ok"][x.o.q],commento:x?x.o.why:"Non emersa: la trattativa si è chiusa prima.",risposta_migliore:x?gFill(gBest(x.t).t):""}; }),
+      nascosta:S.hidden?{scoperta:S.hidFound,commento:S.hidFound?"L'hai fatta emergere con la domanda giusta.":"Una domanda aperta al momento giusto l'avrebbe fatta emergere."}:null,
+      errori_prodotto:errs,punti_forti:strong(),da_migliorare:weak()}; };
   const evalDisc=()=>{ const cov=MEDK.reduce((a,k)=>a+(S.med[k]||0),0), sc=Math.max(15,Math.min(95,Math.round(25+cov*3.5+(S.verdict===S.real?15:0))));
-    return {score:sc,sintesi:"Valutazione di prova generata in modalità demo, senza AI.",
-      elementi:MED.map(m=>({k:m.k,voto:[2,5,9][S.med[m.k]||0],evidenza:S.med[m.k]?S.card?.[m.k]?.t:"non emerso",domanda_migliore:"Chi altro, oltre a lei, deve dire sì a questo progetto?"})),
-      tecnica:{ascolto:7,domande_aperte:Math.min(10,3+cov/2|0),struttura:6,controllo_conversazione:6,lingua:8},
-      commento_verdetto:S.verdict===S.real?"Verdetto coerente con quello che hai scoperto.":"Il verdetto non corrisponde alla realtà del deal: mancavano elementi chiave.",
-      forecast:S.real==="qualificato"?"Commit":S.real==="dubbia"?"Pipeline":"Omit",prossimo_passo_ok:!!S.nextStep,commento_passo:S.nextStep?"Passo concreto.":"Manca un prossimo passo.",
-      domande_ottime:["Quanto vi costa oggi un fermo linea?"],errori:[],punti_forti:["Buone domande aperte"],da_migliorare:["Scava su economic buyer e iter contrattuale"]}; };
-  const f=async(prompt,o)=>stream(/^Sei un coach/.test(prompt)?coach():client(prompt),o);
-  f.json=async()=>{ await wait(900); return S.mode==="disc"?(S.card?evalDisc():card()):evalClose(); };
+    const bestQ=k=>{ const t=DISC_TURNS.find(t=>t.a===k||t.b===k); return gBest(t).t; };
+    return {score:sc,sintesi:`Discovery guidata: punteggio calcolato dalle tue domande, ${cov} punti su 16.`,
+      elementi:MED.map(m=>({k:m.k,livello:S.med[m.k]||0,voto:[2,5,9][S.med[m.k]||0],evidenza:S.med[m.k]?SCR[S.base.id].card[m.k]:"non emerso",domanda_migliore:bestQ(m.k)})),
+      tecnica:dim(["ascolto","domande_aperte","struttura","controllo_conversazione"],5),
+      verdetto_ok:S.verdict===S.real,commento_verdetto:S.verdict===S.real?"Verdetto coerente con quello che hai scoperto.":`La realtà del deal: ${SCR[S.base.id].card.sintesi}`,
+      forecast:S.real==="qualificato"?"Commit":S.real==="dubbia"?"Pipeline":"Omit",prossimo_passo_ok:!!S.nextStep,commento_passo:S.nextStep?"Hai indicato un passo successivo.":"Manca un prossimo passo.",
+      domande_ottime:picks().filter(x=>x.o.q===2).map(x=>x.o.t).slice(0,3),errori:picks().filter(x=>x.o.q===0).map(x=>x.o.why),punti_forti:strong(),da_migliorare:weak()}; };
+  const f=async(prompt,o)=>{ await wait(400); return {text:coach()}; };
+  f.json=async()=>{ await wait(500); return S.mode==="disc"?(S.card?evalDisc():Object.fromEntries(Object.entries(SCR[S.base.id].card).map(([k,v])=>[k,k==="sintesi"?v:{t:v,d:2}]))):evalClose(); };
   return f;
 }
+
+/* ---------------- DASHBOARD TITOLARE: dati di esempio, stesse viste useranno i dati veri ---------------- */
+const DASH_WEEKS=12;
+const DASH_REPS=[
+ {id:"r1",n:"Luca Moretti",a:52,b:78,w:3,err:.08},
+ {id:"r2",n:"Elena Ricci",a:80,b:84,w:3,err:.03},
+ {id:"r3",n:"Davide Greco",a:62,b:60,w:2,err:.12,stop:8},
+ {id:"r4",n:"Marta Fabbri",a:44,b:68,w:4,err:.1,weak:["CO"]},
+ {id:"r5",n:"Simone Villa",a:74,b:56,w:2,err:.1,weak:["E","PP"]},
+ {id:"r6",n:"Giulia Serra",a:68,b:71,w:3,err:.5,prod:"Insaccatrici bocca aperta"}
+];
+const DASH_CL=[["Tecnico",4],["Buyer",-9],["Titolare",2],["Finanza",-5],["Estero",-3]];
+const DASH_OB=[["Prezzo più alto del concorrente",.35],["Rischio di fermo linea",.1],["Tempi di consegna",.05],["Assistenza e ricambi",-.05],["Un solo fornitore",0],["Budget non disponibile",.2]];
+const DASH_ERR=["Capacità in t/h promessa senza scheda","Precisione di pesatura non verificata","Tempi di consegna non confermati","Modello sbagliato per il formato"];
+const dashData=(()=>{ // generatore con seme fisso: i numeri restano uguali a ogni apertura
+  let x=20261104; const R=()=>(x=(x*48271)%2147483647)/2147483647, out=[];
+  for(const r of DASH_REPS) for(let w=0;w<(r.stop||DASH_WEEKS);w++) for(let i=0,c=Math.max(1,r.w-1+Math.floor(R()*2));i<c;i++){
+    const cl=DASH_CL[Math.floor(R()*5)], ob=DASH_OB[Math.floor(R()*6)], base=r.a+(r.b-r.a)*w/(DASH_WEEKS-1);
+    const score=Math.max(18,Math.min(98,Math.round(base+cl[1]-ob[1]*20+(R()-.5)*16))), med={};
+    MEDK.forEach(k=>{ const p=score/100+(r.weak?.includes(k)?-.42:0), v=R(); med[k]=v<p-.25?2:v<p+.2?1:0; });
+    out.push({rep:r.id,w,day:(DASH_WEEKS-1-w)*7+Math.floor(R()*6)+(r.stop?2:0),cl:cl[0],ch:CHANNELS[Math.floor(R()*CHANNELS.length)].l,ob:ob[0],obOk:R()<score/100-ob[1],score,win:score>=64,med,err:R()<r.err?DASH_ERR[Math.floor(R()*DASH_ERR.length)]:""});
+  }
+  return out;
+})();
+const DS={weeks:12,rep:""};
+const avgOf=(a,f)=>a.length?a.reduce((t,x)=>t+f(x),0)/a.length:null;
+const dashDate=d=>{ const x=new Date(); x.setDate(x.getDate()-d); return x.toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit"}); };
+function repStats(r,rows){
+  const a=rows.filter(s=>s.rep===r.id), from=DASH_WEEKS-DS.weeks, mid=from+DS.weeks/2;
+  const first=avgOf(a.filter(s=>s.w<mid),s=>s.score), second=avgOf(a.filter(s=>s.w>=mid),s=>s.score);
+  const all=dashData.filter(s=>s.rep===r.id), last=Math.min(...all.map(s=>s.day));
+  const med={}; MEDK.forEach(k=>med[k]=avgOf(a,s=>s.med[k]/2));
+  return {r,n:a.length,avg:avgOf(a,s=>s.score),delta:first!=null&&second!=null?second-first:null,last,stopped:last>=14,
+    series:Array.from({length:DS.weeks},(_,i)=>avgOf(a.filter(s=>s.w===from+i),s=>s.score)),med,medAvg:avgOf(MEDK,k=>med[k]||0),errs:a.filter(s=>s.err).map(s=>s.err)};
+}
+function repAction(s){
+  if(s.stopped) return `Nessun allenamento da ${s.last} giorni: chiedi cosa sta bloccando e fissa una sessione questa settimana.`;
+  if(s.n&&s.errs.length/s.n>=.25) return `${s.errs.length} errori sul prodotto: fai ripassare ${s.r.prod?`la scheda «${s.r.prod}»`:"le schede prodotto"} prima di una visita vera.`;
+  const w=MED.filter(m=>s.med[m.k]!=null).sort((a,b)=>s.med[a.k]-s.med[b.k])[0];
+  if(s.delta!=null&&s.delta<=-5) return `Punteggio in calo: rivedi insieme ${w?`l'elemento «${w.it}»`:"le ultime sessioni"} e assegna una discovery.`;
+  if(w&&s.med[w.k]<.35) return `Punto debole: «${w.it}». Assegna una discovery dedicata a questo elemento.`;
+  if(s.delta!=null&&s.delta>=5) return "In crescita: assegna un cliente più difficile per il prossimo allenamento.";
+  return "Andamento stabile: alza la difficoltà per tenere il ritmo.";
+}
+const dashBars=(title,items,unit,note)=>`<div class="card dbars"><h3>${title}</h3>${note?`<p class="muted dnote">${note}</p>`:""}${items.length?items.map(i=>`<div class="dbar" data-tip="${esc(i.l)}: ${Math.round(i.v)}${unit} su ${i.n} sessioni" tabindex="0"><span class="l">${esc(i.l)}</span><span class="t"><i style="width:${Math.max(1,i.v)}%"></i></span><b>${Math.round(i.v)}${unit}</b></div>`).join(""):'<p class="muted">Nessuna sessione in questo periodo.</p>'}</div>`;
+function groupBy(rows,key,val){ const m={}; rows.forEach(s=>(m[s[key]]=m[s[key]]||[]).push(s)); return Object.entries(m).map(([l,a])=>({l,n:a.length,v:avgOf(a,val)})).sort((a,b)=>b.v-a.v); }
+function spark(a){ const W=92,H=26,p=a.map((v,i)=>v==null?null:[3+i*(W-6)/Math.max(1,a.length-1),H-3-(v/100)*(H-6)]).filter(Boolean); if(!p.length) return "—"; const e=p[p.length-1];
+  return `<svg class="spark" width="${W}" height="${H}" role="img" aria-label="Andamento punteggio"><polyline points="${p.map(q=>q.map(n=>n.toFixed(1)).join(",")).join(" ")}" fill="none" stroke="var(--blu)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="${e[0]}" cy="${e[1]}" r="3" fill="var(--blu)"/></svg>`; }
+const dTrend=d=>d==null?'<span class="muted">—</span>':`<span class="dtr ${d>=3?"up":d<=-3?"dn":""}">${d>=3?"▲":d<=-3?"▼":"="} ${d>0?"+":""}${Math.round(d)}</span>`;
+function lineChart(el,me,team){
+  const W=Math.max(300,el.clientWidth), H=210, L_=30, R_=92, T=12, B=26, n=team.length;
+  const X=i=>L_+i*(W-L_-R_)/Math.max(1,n-1), Y=v=>T+(1-v/100)*(H-T-B);
+  const path=a=>a.map((v,i)=>v==null?null:`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).filter(Boolean).join(" ");
+  const lastI=a=>{ for(let i=a.length-1;i>=0;i--) if(a[i]!=null) return i; return -1; };
+  const li=lastI(me), ti=lastI(team), wkDate=i=>dashDate((DS.weeks-1-i)*7);
+  let ly=li>=0?Y(me[li]):0, ty=ti>=0?Y(team[ti]):0; if(li>=0&&ti>=0&&Math.abs(ly-ty)<16){ if(ly<ty) ty=ly+16; else ly=ty+16; }
+  el.innerHTML=`<svg width="${W}" height="${H}" role="img" aria-label="Punteggio settimanale rispetto alla media della squadra">
+   ${[0,50,100].map(v=>`<line x1="${L_}" x2="${W-R_}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L_-6}" y="${Y(v)+4}" text-anchor="end" class="dax">${v}</text>`).join("")}
+   ${[0,Math.floor((n-1)/2),n-1].map(i=>`<text x="${X(i)}" y="${H-7}" text-anchor="middle" class="dax">${wkDate(i)}</text>`).join("")}
+   <polyline points="${path(team)}" fill="none" stroke="var(--mut)" stroke-width="2" stroke-linejoin="round"/>
+   <polyline points="${path(me)}" fill="none" stroke="var(--blu)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+   ${ti>=0?`<text x="${X(ti)+8}" y="${ty+4}" class="dlb">Squadra ${Math.round(team[ti])}</text>`:""}
+   ${li>=0?`<circle cx="${X(li)}" cy="${Y(me[li])}" r="4" fill="var(--blu)" stroke="var(--panel)" stroke-width="2"/><text x="${X(li)+8}" y="${ly+4}" class="dlb b">${Math.round(me[li])}</text>`:""}
+   <line class="dcross" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="var(--line2)" visibility="hidden"/>
+   <rect x="${L_}" y="0" width="${W-L_-R_}" height="${H}" fill="transparent"/></svg>`;
+  const svg=el.querySelector("svg"), cross=svg.querySelector(".dcross");
+  svg.onmousemove=e=>{ const i=Math.max(0,Math.min(n-1,Math.round((e.clientX-svg.getBoundingClientRect().left-L_)/((W-L_-R_)/Math.max(1,n-1))))); cross.setAttribute("x1",X(i)); cross.setAttribute("x2",X(i)); cross.setAttribute("visibility","visible");
+    dashTip(`Settimana del ${wkDate(i)}<br>Venditore: ${me[i]==null?"nessuna sessione":Math.round(me[i])}<br>Squadra: ${team[i]==null?"—":Math.round(team[i])}`,e.clientX,e.clientY); };
+  svg.onmouseleave=()=>{ cross.setAttribute("visibility","hidden"); dashTip(); };
+}
+function dashTip(html,x,y){ const t=$("dtip"); if(!html){ t.classList.add("hidden"); return; } t.innerHTML=html; t.classList.remove("hidden"); t.style.left=Math.min(innerWidth-t.offsetWidth-8,x+12)+"px"; t.style.top=(y-t.offsetHeight-10)+"px"; }
+function renderDash(){
+  const from=DASH_WEEKS-DS.weeks, inPeriod=dashData.filter(s=>s.w>=from), stats=DASH_REPS.map(r=>repStats(r,inPeriod));
+  const rows=DS.rep?inPeriod.filter(s=>s.rep===DS.rep):inPeriod;
+  console.assert(stats.reduce((a,s)=>a+s.n,0)===inPeriod.length,"dashboard: le sessioni per venditore devono sommare al totale");
+  const up=[...stats].filter(s=>s.delta!=null&&s.n>=3).sort((a,b)=>b.delta-a.delta)[0];
+  const stop=[...stats].filter(s=>s.stopped).sort((a,b)=>b.last-a.last)[0];
+  const obs=groupBy(inPeriod,"ob",s=>s.obOk?100:0).filter(o=>o.n>=4), worst=[...obs].sort((a,b)=>a.v-b.v)[0];
+  const sel=DS.rep&&stats.find(s=>s.r.id===DS.rep);
+  const name=id=>DASH_REPS.find(r=>r.id===id).n;
+  $("dashBody").innerHTML=`
+  <div class="dhead"><div><h1>Dashboard titolare <span class="demo-pill">DATI DI ESEMPIO</span></h1>
+    <p class="muted">Nomi e numeri inventati, per mostrare come funzionerà. Qui si vedono punteggi e andamenti, mai le conversazioni.</p></div></div>
+  <div class="dfilters">
+    <div class="seg" id="dWeeks">${[4,8,12].map(w=>`<button class="${DS.weeks===w?"on":""}" data-w="${w}">${w} settimane</button>`).join("")}</div>
+    <select id="dRep" aria-label="Venditore"><option value="">Tutta la squadra</option>${DASH_REPS.map(r=>`<option value="${r.id}" ${DS.rep===r.id?"selected":""}>${esc(r.n)}</option>`).join("")}</select>
+    <button class="btn ghost sm" id="dCsv">${ic("doc")} Esporta CSV</button>
+  </div>
+  <div class="dins">
+    <button class="dcard" ${up?`data-rep="${up.r.id}"`:""}><span class="k">${ic("trend")} Chi sta migliorando</span><b>${up?esc(up.r.n):"—"}</b><span class="muted">${up?`${up.delta>0?"+":""}${Math.round(up.delta)} punti nel periodo`:"Dati insufficienti"}</span></button>
+    <button class="dcard" ${stop?`data-rep="${stop.r.id}"`:""}><span class="k">${ic("hourglass")} Chi si è fermato</span><b>${stop?esc(stop.r.n):"Nessuno"}</b><span class="muted">${stop?`Ultima sessione ${stop.last} giorni fa`:"Tutti si sono allenati di recente"}</span></button>
+    <div class="dcard"><span class="k">${ic("shield")} Dove la squadra perde di più</span><b>${worst?esc(worst.l):"—"}</b><span class="muted">${worst?`Superata solo nel ${Math.round(worst.v)}% dei casi`:"Dati insufficienti"}</span></div>
+  </div>
+  ${sel?`<div class="card drep"><h3>${esc(sel.r.n)} <button class="btn link sm" id="dAll">Torna alla squadra</button></h3>
+    <div class="dreco">${ic("bulb")} <b>Azione consigliata:</b> ${esc(repAction(sel))}</div>
+    <div class="dstats"><div><b>${sel.n}</b><span>sessioni</span></div><div><b>${sel.avg==null?"—":Math.round(sel.avg)}</b><span>punteggio medio</span></div><div><b>${dTrend(sel.delta)}</b><span>andamento</span></div><div><b>${sel.errs.length}</b><span>errori sul prodotto</span></div></div>
+    <h4 class="dsub">Punteggio settimanale</h4>
+    <div class="dleg"><span><i style="background:var(--blu)"></i>${esc(sel.r.n)}</span><span><i style="background:var(--mut)"></i>Media squadra</span></div>
+    <div id="dLine"></div>
+    <details class="dtab"><summary>Vedi come tabella</summary><div class="dscroll"><table><tr><th>Settimana del</th><th>Venditore</th><th>Squadra</th></tr>${sel.series.map((v,i)=>{const t=avgOf(inPeriod.filter(s=>s.w===from+i),s=>s.score);return `<tr><td>${dashDate((DS.weeks-1-i)*7)}</td><td>${v==null?"—":Math.round(v)}</td><td>${t==null?"—":Math.round(t)}</td></tr>`;}).join("")}</table></div></details>
+    <div class="dgrid2">
+    ${dashBars("MEDDPICC: quanto scopre",MED.map(m=>({l:m.it,v:(sel.med[m.k]||0)*100,n:sel.n})).sort((a,b)=>a.v-b.v),"%")}
+    <div class="card"><h3>Errori sul prodotto</h3>${sel.errs.length?`<ul class="clean">${Object.entries(sel.errs.reduce((m,e)=>(m[e]=(m[e]||0)+1,m),{})).sort((a,b)=>b[1]-a[1]).map(([e,c])=>`<li>${esc(e)} <b>×${c}</b></li>`).join("")}</ul>`:'<p class="muted">Nessun errore nel periodo.</p>'}</div>
+    </div></div>`:""}
+  <h2 class="sec">${ic("users")} Squadra</h2>
+  <div class="card dscroll"><table class="dtable"><tr><th>Venditore</th><th>Sessioni</th><th>Andamento</th><th>Punti</th><th></th><th>MEDDPICC</th><th>Errori</th><th>Ultima sessione</th></tr>
+    ${[...stats].sort((a,b)=>(b.avg??-1)-(a.avg??-1)).map(s=>`<tr class="${DS.rep===s.r.id?"on":""}" data-rep="${s.r.id}" tabindex="0"><td><b>${esc(s.r.n)}</b></td><td>${s.n}</td><td>${spark(s.series)}</td><td>${s.avg==null?"—":Math.round(s.avg)}</td><td>${dTrend(s.delta)}</td><td>${s.n?Math.round(s.medAvg*100)+"%":"—"}</td><td>${s.errs.length}</td><td>${s.stopped?`<span class="dst">${ic("alert")} Fermo da ${s.last} gg</span>`:s.last===0?"oggi":s.last===1?"ieri":`${s.last} gg fa`}</td></tr>`).join("")}
+  </table></div>
+  <h2 class="sec">${ic("chart")} ${sel?"Risultati di "+esc(sel.r.n):"Confronto squadra"}</h2>
+  <div class="dgrid3">
+    ${dashBars("Per tipo di cliente",groupBy(rows,"cl",s=>s.score)," pt")}
+    ${dashBars("Per canale",groupBy(rows,"ch",s=>s.score)," pt")}
+    ${dashBars("Obiezioni superate",groupBy(rows,"ob",s=>s.obOk?100:0),"%")}
+  </div>`;
+  $("dWeeks").querySelectorAll("button").forEach(b=>b.onclick=()=>{DS.weeks=+b.dataset.w;renderDash();});
+  $("dRep").onchange=e=>{DS.rep=e.target.value;renderDash();};
+  $("dCsv").onclick=dashCsv;
+  $("dashBody").querySelectorAll("[data-rep]").forEach(e=>{ e.onclick=()=>{DS.rep=e.dataset.rep;renderDash();window.scrollTo(0,0);}; e.onkeydown=k=>{ if(k.key==="Enter"&&e.tagName==="TR") e.click(); }; });
+  if($("dAll")) $("dAll").onclick=()=>{DS.rep="";renderDash();};
+  if(sel) lineChart($("dLine"),sel.series,Array.from({length:DS.weeks},(_,i)=>avgOf(inPeriod.filter(s=>s.w===from+i),s=>s.score)));
+  $("dashBody").querySelectorAll("[data-tip]").forEach(e=>{ const on=ev=>{ const r=e.getBoundingClientRect(); dashTip(esc(e.dataset.tip),ev.clientX||r.left,ev.clientY||r.top); }; e.onmousemove=on; e.onfocus=on; e.onmouseleave=e.onblur=()=>dashTip(); });
+}
+function dashCsv(){
+  const from=DASH_WEEKS-DS.weeks, rows=dashData.filter(s=>s.w>=from&&(!DS.rep||s.rep===DS.rep));
+  const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const lines=[["Data","Venditore","Tipo cliente","Canale","Obiezione","Superata","Punteggio","Esito","MEDDPICC su 16","Errore prodotto"].map(q).join(";"),
+    ...rows.map(s=>[dashDate(s.day),DASH_REPS.find(r=>r.id===s.rep).n,s.cl,s.ch,s.ob,s.obOk?"sì":"no",s.score,s.win?"Vinto":"Perso",MEDK.reduce((a,k)=>a+s.med[k],0),s.err].map(q).join(";"))];
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob(["﻿"+`"DATI DI ESEMPIO: nomi e numeri inventati"\n`+lines.join("\n")],{type:"text/csv;charset=utf-8"}));
+  a.download="sales-gym-dati-esempio.csv"; a.click(); URL.revokeObjectURL(a.href); toast(ic("doc"),`Esportate ${rows.length} sessioni`);
+}
+function openDash(){ show("dash"); renderDash(); window.scrollTo(0,0); }
+$("dashBtn").onclick=openDash;
+window.addEventListener("resize",()=>{ if(!$("dash").classList.contains("hidden")&&DS.rep) renderDash(); });
 
 /* ---------------- INIT ---------------- */
 S.custom=store.get("custom",[]);
@@ -1710,11 +2033,18 @@ if(sel&&sel.length) sel.forEach(t=>S.selected.add(t)); else DEFAULT_OBJ.slice(0,
 $("repName").value=store.get("rep",""); $("internal").value=store.get("internal","");
 document.querySelectorAll("[data-ic]").forEach(e=>e.insertAdjacentHTML("afterbegin",ic(e.dataset.ic)+(e.textContent.trim()?" ":"")));
 renderHome(); renderDock();
-if(!store.get("rep","")) $("setModal").classList.remove("hidden"); // nome chiesto una volta sola
+if(location.hash==="#titolare") openDash();
+else if(!store.get("rep","")) $("setModal").classList.remove("hidden"); // nome chiesto una volta sola
 (async()=>{
   try{ sample=await window.claude?.use?.("sample"); }catch(e){ sample=null; }
   $("aiStatus").textContent="AI pronta";
-  if(!sample){ sample=demoSample(); $("goHome").querySelector("b").insertAdjacentHTML("afterend",'<span class="demo-pill">DEMO</span>'); $("aiStatus").textContent="Modalità demo: risposte simulate, nessuna AI collegata."; } // shortcut: senza AI la demo usa risposte preimpostate, solo in italiano
+  if(!sample){ sample=demoSample(); DEMO=true; document.body.classList.add("demo"); WZS=[0,1,3]; S.lang="it"; S.fb="it";
+    const all=PERSONAS.length; PERSONAS.splice(0,all,...PERSONAS.filter(p=>SCR[p.id])); QUESTS.splice(0,QUESTS.length,...QUESTS.filter(q=>!q.cfg.lang));
+    $("goHome").querySelector("b").insertAdjacentHTML("afterend",'<span class="demo-pill">DEMO</span>');
+    $("aiStatus").textContent="Demo guidata: a ogni turno scegli tra tre risposte. Nessuna AI collegata.";
+    $("gallery").insertAdjacentHTML("afterend",`<p class="muted demo-note">In questa demo ci sono ${PERSONAS.length} clienti con dialoghi scritti. La versione completa con AI ne ha ${all}, a risposta libera.</p>`);
+    renderHome();
+  }
   renderDock();
 })();
 </script>
